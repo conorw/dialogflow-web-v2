@@ -24,9 +24,11 @@ const sessionClient = new dialogflow.SessionsClient({
 /* We need to set this headers, to make our HTTP calls possible */
 const headers = {
     'Content-Type': 'application/json',
-    'Access-Control-Allow-Headers': 'Content-Type, Cache-Control',
+    'Access-Control-Allow-Headers': 'X-CSRF-Token, X-Requested-With, Accept, Accept-Version, Content-Length, Content-MD5, Content-Type, Date, X-Api-Version',
     'Access-Control-Allow-Origin': '*',
-    'Access-Control-Allow-Methods': '*'
+    'Access-Control-Allow-Methods': '*',
+    'Access-Control-Allow-Credentials': true
+
 }
 
 module.exports = (req, res) => {
