@@ -22,51 +22,46 @@ const sessionClient = new dialogflow.SessionsClient({
 })
 
 /* We need to set this headers, to make our HTTP calls possible */
-const headers = {
-    'Content-Type': 'application/json',
-    'Access-Control-Allow-Headers': 'X-CSRF-Token, X-Requested-With, Accept, Accept-Version, Content-Length, Content-MD5, Content-Type, Date, X-Api-Version',
-    'Access-Control-Allow-Origin': '*',
-    'Access-Control-Allow-Methods': '*',
-    'Access-Control-Allow-Credentials': true
-
-}
+// const headers = {
+//     'Content-Type': 'application/json',
+//     'Access-Control-Allow-Headers': 'X-CSRF-Token, X-Requested-With, Accept, Accept-Version, Content-Length, Content-MD5, Content-Type, Date, X-Api-Version',
+//     'Access-Control-Allow-Origin': '*',
+//     'Access-Control-Allow-Methods': '*',
+//     'Access-Control-Allow-Credentials': true
+// }
 
 module.exports = (req, res) => {
+    res.setHeader('Content-Type', 'application/json')
+    res.setHeader('Access-Control-Allow-Headers',
+        'X-CSRF-Token, X-Requested-With, Accept, Accept-Version, Content-Length, Content-MD5, Content-Type, Date, X-Api-Version')
+    res.setHeader('Access-Control-Allow-Origin', '*')
+    res.setHeader('Access-Control-Allow-Methods', '*')
+    res.setHeader('Access-Control-Allow-Credentials', true)
     /* On GET request return the information about the agent */
     if (req.method == 'GET'){
         agentsClient.getAgent({ parent: `projects/${process.env.SERVICE_ACCOUNT_PROJECT_ID}` },
             {},
             (err, agent) => {
                 if (err){
-                    res.set(headers)
                     res.send(500, err.message)
                 } else {
-                    res.set(headers)
                     res.send(agent)
                 }
             })
     } else if (req.method == 'POST'){
     /* Detect Intent (send a query to dialogflow) */
     /* If no body, session, query, or lang, return 400 */
-        if (!req.body || !req.body.session_id || !req.body.q || !req.body.lang){
-            res.set(headers)
+        if (!req.body || !req.body.session || !req.body.queryInput){
             res.send(400)
         } else {
             /* Prepare dialogflow request */
-            const session_id = req.body.session_id
-            const q = req.body.q
-            const lang = req.body.lang
+            const session_id = req.body.session
 
             const sessionPath = sessionClient.sessionPath(process.env.SERVICE_ACCOUNT_PROJECT_ID,
                 session_id)
             const request = {
                 session: sessionPath,
-                queryInput: {
-                    text: {
-                        text: q,
-                        languageCode: lang
-                    }
-                }
+                queryInput: req.body.queryInput
             }
 
             /* Send our request to Dialogflow */
@@ -74,6 +69,7 @@ module.exports = (req, res) => {
             .detectIntent(request)
             .then(responses => {
                 /* If the response should be formatted (?format=true), then return the format the response */
+                console.log(responses)
                 if (req.query.format == 'true'){
                     const fulfillment = responses[0].queryResult.fulfillmentMessages
 
@@ -225,25 +221,20 @@ module.exports = (req, res) => {
                         }
                     }
 
-                    res.set(headers)
                     res.send(formatted)
                 } else {
-                    res.set(headers)
                     res.send(responses[0])
                 }
             })
             .catch(err => {
-                res.set(headers)
                 res.send(500, err.message)
             })
         }
     } else if (req.method == 'OPTIONS'){
     /* Pass pre-flight HTTP check */
-        res.set(headers)
         res.send(200)
     } else {
     /* Send 404 on undefined method */
-        res.set(headers)
         res.send(404)
     }
 }

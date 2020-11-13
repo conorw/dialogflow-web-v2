@@ -1,3 +1,4 @@
+
 <template>
     <main id="app">
         <!-- TopHead is the header with the information about the app -->
@@ -375,21 +376,6 @@
     </main>
 </template>
 
-<style lang="sass">
-@import '@/style/theme.sass'
-
-body
-    margin: 0
-    padding: 0
-    font-family: var(--font)
-    font-display: swap
-    background-color: var(--background)
-
-.chat
-    max-width: var(--container-width)
-    margin: auto auto
-    padding: 70px 12px 112px 12px
-</style>
 
 <script>
 import WelcomeView from '@/views/WelcomeView.vue'
@@ -590,7 +576,7 @@ export default {
         },
         handle(response){
             /* Speech output */
-            if (response.outputAudio){
+            if (response.outputAudio.data.length){
                 /* Detect MIME type (or fallback to default) */
                 const mime = this.config.codecs[response.outputAudioConfig.audioEncoding] || this.config.codecs.OUTPUT_AUDIO_ENCODING_UNSPECIFIED
                 this.audio.src = `data:${mime};base64,${response.outputAudio}`
@@ -632,3 +618,19 @@ export default {
     }
 }
 </script>
+
+<style lang="sass">
+@import '@/style/theme.sass'
+
+body
+    margin: 0
+    padding: 0
+    font-family: var(--font)
+    font-display: swap
+    background-color: var(--background)
+
+.chat
+    max-width: var(--container-width)
+    margin: auto auto
+    padding: 70px 12px 112px 12px
+</style>
