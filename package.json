@@ -9,6 +9,7 @@
   "dependencies": {
     "audio-recorder-polyfill": "^0.4.0",
     "core-js": "^3.7.0",
+    "dialogflow": "^1.2.0",
     "dialogflow-gateway": "0.1.0",
     "hark": "^1.2.3",
     "langs": "^2.0.0",
