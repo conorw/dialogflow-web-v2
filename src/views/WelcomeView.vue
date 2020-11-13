@@ -2,7 +2,7 @@
     <div class="welcome-view">
         <!-- Agent Icon -->
         <img v-if="agent.avatarUri" class="agent-icon" :alt="agent.displayName" :src="agent.avatarUri">
-        <img v-else class="agent-icon" src="https://console.dialogflow.com/api-client/assets/img/logo-short.png" :alt="agent.displayName">
+        <img v-else class="agent-icon" src="/img/icon.png" :alt="agent.displayName">
 
         <!-- Agent Title -->
         <div class="agent-title">{{agent.displayName}}</div>
