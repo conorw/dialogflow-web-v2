@@ -152,3 +152,11 @@ Using yarn
 ## Inqueries
 
 [Contact the developer](https://mish.co/contact) or [open a issue](https://github.com/mishushakov/dialogflow-web-v2/issues/new)
+
+## PWA Assests
+Assests for the PWA can be generated using the following npm package:
+https://www.npmjs.com/package/pwa-asset-generator
+https://itnext.io/pwa-splash-screen-and-icon-generator-a74ebb8a130
+
+E.g. pwa-asset-generator ./public/img/icons/icon.png ./public/img/icons --index ./public/index.html 
+--manifest ./public/manifest.json

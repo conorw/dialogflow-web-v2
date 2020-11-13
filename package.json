@@ -1,5 +1,5 @@
 {
-  "name": "dialogflow-web-v2",
+  "name": "budibot-training",
   "private": true,
   "scripts": {
     "serve": "vue-cli-service serve --open",
