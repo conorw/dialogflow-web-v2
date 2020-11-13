@@ -160,3 +160,6 @@ https://itnext.io/pwa-splash-screen-and-icon-generator-a74ebb8a130
 
 E.g. pwa-asset-generator ./public/img/icons/icon.png ./public/img/icons --index ./public/index.html 
 --manifest ./public/manifest.json
+
+## Typescript
+Adding typescript: https://medium.com/js-dojo/adding-typescript-to-your-existing-vuejs-2-6-app-aaa896c2d40a
