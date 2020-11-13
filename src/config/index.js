@@ -1,5 +1,5 @@
 export default {
-    endpoint: process.env.BOT_GATEWAY_URL, // <- enter your gateway URL here
+    endpoint: process.env.VUE_APP_BOT_GATEWAY_URL, // <- enter your gateway URL here
     start_suggestions: [], // <- array of suggestions, displayed at the start screen
     fallback_lang: 'en', // <- fallback language code, if history mode or network is unavailable
     voice: 'native', // <- voice of Text-To-Speech; for reference, see: https://developer.mozilla.org/en-US/docs/Web/API/SpeechSynthesisVoice/voiceURI
