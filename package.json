@@ -14,12 +14,14 @@
     "dialogflow-gateway": "0.1.0",
     "hark": "^1.2.3",
     "langs": "^2.0.0",
+    "quill-emoji": "^0.1.8",
+    "quill-image-extend-module": "^1.1.2",
     "register-service-worker": "^1.7.1",
-    "v-emoji-picker": "^2.3.1",
     "vercel": "^20.1.4",
     "vue": "^2.6.12",
     "vue-class-component": "^7.2.6",
-    "vue-property-decorator": "^9.0.2"
+    "vue-property-decorator": "^9.0.2",
+    "vue-quill-editor": "^3.0.6"
   },
   "devDependencies": {
     "@mishushakov/eslint-config": "^1.0.7",
