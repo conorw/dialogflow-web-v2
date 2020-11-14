@@ -7,23 +7,19 @@
                     <slot />
                 </div>
             </transition>
-
+                            <VEmojiPicker
+                    v-show="showDialog"
+                    label-search="Search"
+                    lang="pt-BR"
+                    @select="onSelectEmoji"
+                />
             <div class="chat-field-flexible">
                 <!-- Text input -->
-                <!-- <editor-content :editor="editor" /> -->
-                <!-- <quill-editor
-    ref="myQuillEditor"
-    v-model="content"
-    :options="editorOption"
-    @blur="onEditorBlur($event)"
-    @focus="onEditorFocus($event)"
-    @ready="onEditorReady($event)"
-  /> -->
-                <quill-editor
-                    ref="myQuillEditor"
+                <button @click="toogleDialogEmoji">😃</button>
+                <input
                     v-model="query"
-                    :options="editorOption"
                     class="chat-field-input"
+                    type="text"
                     autofocus
                     :placeholder="
                         (translations[lang()] && translations[lang()].inputTitle) ||
@@ -33,20 +29,14 @@
                         (translations[lang()] && translations[lang()].inputTitle) ||
                             translations[config.fallback_lang].inputTitle
                     "
-                    @keyup.enter="
-                        (evt) => {
-                            console.log(evt);
-                            submit({ text: query });
-                        }
-                    "
+                    @keypress.enter="submit({ text: query })"
                     @focus="
-                        () => {
-                            microphone = false;
-                            should_listen = false;
-                            $emit('typing');
-                        }
+                        microphone = false;
+                        should_listen = false;
+                        $emit('typing');
                     "
-                />
+                >
+
                 <!-- Send message button (arrow button) -->
                 <transition name="chat-field-button-animation" mode="out-in">
                     <button
@@ -91,60 +81,20 @@
 </template>
 
 <script>
-import 'quill/dist/quill.core.css'
-import 'quill/dist/quill.snow.css'
-import 'quill-emoji/dist/quill-emoji.css'
-import { Quill, quillEditor } from 'vue-quill-editor'
-import { container, ImageExtend, QuillWatch } from 'quill-image-extend-module'
-import quillEmoji from 'quill-emoji'
+import { VEmojiPicker, emojisDefault, categoriesDefault } from 'v-emoji-picker'
 import AudioRecorder from 'audio-recorder-polyfill'
 import * as hark from 'hark'
-
-Quill.register('modules/ImageExtend', ImageExtend)
 
 window.MediaRecorder = AudioRecorder
 
 export default {
     name: 'ChatField',
     components: {
-        quillEditor
+        VEmojiPicker
     },
     data(){
-        const toolbarOptions = {
-            container: [['bold', 'italic', 'link', 'image']],
-            handlers: {
-                emoji(){},
-                image(){
-                    QuillWatch.emit(this.quill.id)
-                }
-            }
-        }
-        const shiftEnterPressed = range => {
-            {
-                this.submit({ text: this.query })
-                console.log(range)
-            }
-        }
         return {
             query: '',
-            editorOption: {
-                modules: {
-                    // ...
-                    'toolbar': false,
-                    'emoji-toolbar': true,
-                    'emoji-textarea': true,
-                    'emoji-shortname': true,
-                    'keyboard': {
-                        bindings: {
-                            linebreak: {
-                                key: 13,
-                                shiftKey: true,
-                                handler: shiftEnterPressed
-                            }
-                        }
-                    }
-                }
-            },
             showDialog: false,
             microphone: false,
             recognition: null,
@@ -213,8 +163,15 @@ export default {
             else if (this.recorder) this.recorder.stop()
         }
     },
-    mounted(){},
     methods: {
+        toogleDialogEmoji(){
+            this.showDialog = !this.showDialog
+        },
+        onSelectEmoji(emoji){
+            this.query += emoji.data
+            // Optional
+            // this.toogleDialogEmoji();
+        },
         listen(){
             if (this.should_listen) this.microphone = true
         },
@@ -292,7 +249,5 @@ export default {
 .chat-field-button-animation-enter, .chat-field-button-animation-leave-to
     transform: scale(0)
     opacity: 0
-
-.ql-container .ql-snow
-    border: none
 </style>
+
