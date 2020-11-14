@@ -1,3 +1,4 @@
+import { NowRequest, NowResponse } from '@vercel/node'
 const dialogflow = require('dialogflow')
 // SERVICE_ACCOUNT_PROJECT_ID
 // SERVICE_ACCOUNT_PRIVATE_KEY
@@ -21,29 +22,21 @@ const sessionClient = new dialogflow.SessionsClient({
     }
 })
 
-/* We need to set this headers, to make our HTTP calls possible */
-// const headers = {
-//     'Content-Type': 'application/json',
-//     'Access-Control-Allow-Headers': 'X-CSRF-Token, X-Requested-With, Accept, Accept-Version, Content-Length, Content-MD5, Content-Type, Date, X-Api-Version',
-//     'Access-Control-Allow-Origin': '*',
-//     'Access-Control-Allow-Methods': '*',
-//     'Access-Control-Allow-Credentials': true
-// }
-
-module.exports = (req, res) => {
+export default (req: NowRequest, res: NowResponse) => {
     res.setHeader('Content-Type', 'application/json')
     res.setHeader('Access-Control-Allow-Headers',
         'X-CSRF-Token, X-Requested-With, Accept, Accept-Version, Content-Length, Content-MD5, Content-Type, Date, X-Api-Version')
     res.setHeader('Access-Control-Allow-Origin', '*')
     res.setHeader('Access-Control-Allow-Methods', '*')
-    res.setHeader('Access-Control-Allow-Credentials', true)
+    res.setHeader('Access-Control-Allow-Credentials', 'true')
     /* On GET request return the information about the agent */
     if (req.method == 'GET'){
         agentsClient.getAgent({ parent: `projects/${process.env.SERVICE_ACCOUNT_PROJECT_ID}` },
             {},
             (err, agent) => {
                 if (err){
-                    res.send(500, err.message)
+                    res.statusCode = 500
+                    res.send(err.message)
                 } else {
                     res.send(agent)
                 }
@@ -52,7 +45,8 @@ module.exports = (req, res) => {
     /* Detect Intent (send a query to dialogflow) */
     /* If no body, session, query, or lang, return 400 */
         if (!req.body || !req.body.session || !req.body.queryInput){
-            res.send(400)
+            res.statusCode = 400
+            res.send('Invalid body')
         } else {
             /* Prepare dialogflow request */
             const session_id = req.body.session
@@ -227,7 +221,8 @@ module.exports = (req, res) => {
                 }
             })
             .catch(err => {
-                res.send(500, err.message)
+                res.statusCode = 500
+                res.send(err.message)
             })
         }
     } else if (req.method == 'OPTIONS'){
