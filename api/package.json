@@ -5,7 +5,8 @@
     "vercel-dev": "vercel dev"
   },
   "dependencies": {
-    "dialogflow": "^1.2.0"
+    "dialogflow": "^1.2.0",
+    "@google-cloud/dialogflow": "^3.3.0"
   },
   "devDependencies": {
     "@mishushakov/eslint-config": "^1.0.7",
