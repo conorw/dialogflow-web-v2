@@ -167,4 +167,6 @@ Adding typescript: https://medium.com/js-dojo/adding-typescript-to-your-existing
 ## Vercel environment vars
 npm add -g deploy-env
 add .env file to root *remove \n from the service account key
-deploy-env production && vercel env rm SERVICE_ACCOUNT_PRIVATE_KEY && vercel env add SERVICE_ACCOUNT_PRIVATE_KEY production && vercel deploy --prod
+deploy-env production
+manually add SERVICE_ACCOUNT_PRIVATE_KEY to env vars in vercel dashboard (no quotes)
+vercel deploy --prod

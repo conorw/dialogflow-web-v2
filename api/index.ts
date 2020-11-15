@@ -71,8 +71,7 @@ export default async (req: NowRequest, res: NowResponse) => {
     if (req.method == 'GET'){
         try {
             const agent = await agentsClient.getAgent({ parent: `projects/${process.env.SERVICE_ACCOUNT_PROJECT_ID}` })
-            const intent = await findIntent('default fallback intent')
-            res.send({agent, intent})
+            res.send(agent)
         } catch (error){
             res.statusCode = 500
             res.send(error.message)
