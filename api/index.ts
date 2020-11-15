@@ -9,14 +9,14 @@ import * as dialogflow from '@google-cloud/dialogflow'
 const agentsClient = new dialogflow.AgentsClient({
     credentials: {
         // <-- Initialize with service account
-        private_key: process.env.SERVICE_ACCOUNT_PRIVATE_KEY.replace(/\\n/g, '\n'),
+        private_key: process.env.SERVICE_ACCOUNT_PRIVATE_KEY,
         client_email: process.env.SERVICE_ACCOUNT_EMAIL
     }
 })
 const intentClient = new dialogflow.IntentsClient({
     credentials: {
         // <-- Initialize with service account
-        private_key: process.env.SERVICE_ACCOUNT_PRIVATE_KEY.replace(/\\n/g, '\n'),
+        private_key: process.env.SERVICE_ACCOUNT_PRIVATE_KEY,
         client_email: process.env.SERVICE_ACCOUNT_EMAIL
     }
 })
@@ -24,7 +24,7 @@ const intentClient = new dialogflow.IntentsClient({
 const sessionClient = new dialogflow.SessionsClient({
     credentials: {
         // <-- Initialize with service account
-        private_key: process.env.SERVICE_ACCOUNT_PRIVATE_KEY.replace(/\\n/g, '\n'),
+        private_key: process.env.SERVICE_ACCOUNT_PRIVATE_KEY,
         client_email: process.env.SERVICE_ACCOUNT_EMAIL
     }
 })

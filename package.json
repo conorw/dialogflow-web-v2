@@ -5,7 +5,8 @@
     "serve": "vue-cli-service serve --open",
     "build": "vue-cli-service build",
     "lint": "vue-cli-service lint",
-    "vercel-dev": "vercel dev"
+    "vercel-dev": "vercel dev",
+    "vercel-conf": "deploy-env production && vercel env rm SERVICE_ACCOUNT_PRIVATE_KEY && vercel env add SERVICE_ACCOUNT_PRIVATE_KEY production && vercel deploy --prod"
   },
   "dependencies": {
     "audio-recorder-polyfill": "^0.4.0",
