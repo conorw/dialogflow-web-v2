@@ -163,3 +163,8 @@ E.g. pwa-asset-generator ./public/img/icons/icon.png ./public/img/icons --index 
 
 ## Typescript
 Adding typescript: https://medium.com/js-dojo/adding-typescript-to-your-existing-vuejs-2-6-app-aaa896c2d40a
+
+## Vercel environment vars
+npm add -g deploy-env
+add .env file to root *remove \n from the service account key
+deploy-env production
