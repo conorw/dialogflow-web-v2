@@ -71,7 +71,7 @@ export default async (req: NowRequest, res: NowResponse) => {
     if (req.method == 'GET'){
         try {
             const agent = await agentsClient.getAgent({ parent: `projects/${process.env.SERVICE_ACCOUNT_PROJECT_ID}` })
-            res.send(agent)
+            res.send(agent[0])
         } catch (error){
             res.statusCode = 500
             res.send(error.message)
