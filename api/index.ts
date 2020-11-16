@@ -1,8 +1,6 @@
 import { NowRequest, NowResponse } from '@vercel/node'
 import * as dialogflow from '@google-cloud/dialogflow'
-// SERVICE_ACCOUNT_PROJECT_ID
-// SERVICE_ACCOUNT_PRIVATE_KEY
-// SERVICE_ACCOUNT_EMAIL
+
 /* AgentsClient retrieves information about the agent */
 const agentsClient = new dialogflow.AgentsClient({
     credentials: {
@@ -131,14 +129,16 @@ export default async (req: NowRequest, res: NowResponse) => {
                             && question2
                             && answer
                             && intentName){
-                            console.log(`Creating new intent:${intentName}`)
-                            const intent = await findIntent(intentName.toLowerCase())
+                            const lowerIntentName = intentName.toLowerCase().trim()
+                            console.log(`Creating new intent:${lowerIntentName}`)
+                            const intent = await findIntent(lowerIntentName)
                             console.log(intent)
                             if (intent){
-                                await updateIntent(intent, intentName.toLowerCase(), [question1, question2], answer)
+                                console.log('Update existing intent')
+                                await updateIntent(intent, lowerIntentName, [question1, question2], answer)
                             } else {
                                 console.log('Create new intent')
-                                await createIntent(intentName.toLowerCase(), [question1, question2], answer)
+                                await createIntent(lowerIntentName, [question1, question2], answer)
                             }
                         }
                     }
