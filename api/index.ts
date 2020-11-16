@@ -113,32 +113,37 @@ export default async (req: NowRequest, res: NowResponse) => {
                 const responses = await sessionClient.detectIntent(request)
                 /* If the response should be formatted (?format=true), then return the format the response */
                 const intentresponse = responses[0] as dialogflow.protos.google.cloud.dialogflow.v2.IDetectIntentResponse
-                if (intentresponse.queryResult && intentresponse.queryResult.intent.displayName === 'training'){
+                if (intentresponse.queryResult && intentresponse.queryResult.intent.displayName === 'training.category.details'){
                     console.log('TRAINING!!!')
                     console.log(intentresponse.queryResult.parameters.fields)
                     if (intentresponse.queryResult.parameters
                         && intentresponse.queryResult.parameters.fields
-                        && intentresponse.queryResult.parameters.fields['training-intent']){
+                        && intentresponse.queryResult.parameters.fields['training-answer']){
                         const params = intentresponse.queryResult.parameters.fields
-                        const intentName = params['training-intent'].stringValue
+                        console.log(params)
+                        const intentCategory = params['intent-category'].stringValue
+                        const intentName = params['intent-name'].stringValue
                         const question1 = params['training-question-1'].stringValue
                         const question2 = params['training-question-2'].stringValue
                         const answer = params['training-answer'].stringValue
-                        console.log({intentName, question1, question2, answer})
                         if (question1
                             && question2
                             && answer
-                            && intentName){
+                            && intentName
+                            && intentCategory){
                             const lowerIntentName = intentName.toLowerCase().trim()
-                            console.log(`Creating new intent:${lowerIntentName}`)
-                            const intent = await findIntent(lowerIntentName)
+                            const lowerIntentCategory = intentCategory.toLowerCase().replace(' ', '.').trim()
+                            const combinedName = `${lowerIntentCategory}.${lowerIntentName}`
+                            console.log({combinedName, intentCategory, intentName, question1, question2, answer})
+                            console.log(`Creating new intent:${combinedName}`)
+                            const intent = await findIntent(combinedName)
                             console.log(intent)
                             if (intent){
                                 console.log('Update existing intent')
-                                await updateIntent(intent, lowerIntentName, [question1, question2], answer)
+                                await updateIntent(intent, combinedName, [question1, question2], answer)
                             } else {
                                 console.log('Create new intent')
-                                await createIntent(lowerIntentName, [question1, question2], answer)
+                                await createIntent(combinedName, [question1, question2], answer)
                             }
                         }
                     }
