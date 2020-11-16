@@ -6,7 +6,8 @@
             <div class="top-head-info">
                 <div class="top-head-title">{{agent.displayName}}</div>
                 <div class="top-head-subtitle">{{(translations[lang()] && translations[lang()].poweredBy) || translations[config.fallback_lang].poweredBy}} <a target="_blank" rel="noopener noreferrer" href="https://dialogflow.cloud.ushakov.co" aria-hidden="true">Dialogflow Gateway</a></div>
-                <button class="top-head-button" @click="submit({ text: 'training' })">Start Training</button>
+                <button class="top-head-button start" @click="submit({ text: 'training' })">Start Training</button>
+                <button class="top-head-button stop" @click="submit({ text: 'cancel' })">Stop Training</button>
             </div>
         </div>
         <slot />
@@ -62,8 +63,14 @@
   padding: 1px 2px
   font-size: small
   cursor: pointer
-  border-color: #2196F3
-  color: dodgerblue
+
+.top-head-button.start
+  border-color: #4CAF50
+  color: green
+
+.top-head-button.stop
+  border-color: #f44336
+  color: red
 
 .top-head-button:hover
   background: #2196F3
