@@ -3,8 +3,6 @@ import * as dialogflow from '@google-cloud/dialogflow'
 // SERVICE_ACCOUNT_PROJECT_ID
 // SERVICE_ACCOUNT_PRIVATE_KEY
 // SERVICE_ACCOUNT_EMAIL
-// const serviceAccount = require('./service_account.json') // <-- change service_account to yours
-
 /* AgentsClient retrieves information about the agent */
 const agentsClient = new dialogflow.AgentsClient({
     credentials: {
