@@ -6,6 +6,7 @@
             <div class="top-head-info">
                 <div class="top-head-title">{{agent.displayName}}</div>
                 <div class="top-head-subtitle">{{(translations[lang()] && translations[lang()].poweredBy) || translations[config.fallback_lang].poweredBy}} <a target="_blank" rel="noopener noreferrer" href="https://dialogflow.cloud.ushakov.co" aria-hidden="true">Dialogflow Gateway</a></div>
+                <button class="top-head-button" @click="submit({ text: 'training' })">Start Training</button>
             </div>
         </div>
         <slot />
@@ -53,6 +54,21 @@
     a[href]
         color: var(--text-primary)
         text-decoration: none
+
+.top-head-button
+  border: 1px solid black
+  background-color: white
+  color: black
+  padding: 1px 2px
+  font-size: small
+  cursor: pointer
+  border-color: #2196F3
+  color: dodgerblue
+
+.top-head-button:hover
+  background: #2196F3
+  color: white
+
 </style>
 
 <script>
@@ -62,6 +78,13 @@ export default {
         agent: {
             type: Object,
             default: null
+        }
+    },
+    methods: {
+        submit(submission){
+            if (submission.text && submission.text.length > 0){
+                this.$emit('submit', submission)
+            }
         }
     }
 }

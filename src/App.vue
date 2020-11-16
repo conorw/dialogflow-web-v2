@@ -2,7 +2,7 @@
 <template>
     <main id="app">
         <!-- TopHead is the header with the information about the app -->
-        <TopHead v-if="agent && messages.length > 0" :agent="agent">
+        <TopHead v-if="agent && messages.length > 0" :agent="agent" @submit="send">
             <!-- Audio toggle (on the top right corner), used to toggle the audio output, default mode is defined in the settings -->
             <TopHeadAction
                 :title="muted ? (translations[lang()] && translations[lang()].unMuteTitle) || translations[config.fallback_lang].unMuteTitle : (translations[lang()] && translations[lang()].muteTitle) || translations[config.fallback_lang].muteTitle"
