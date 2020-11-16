@@ -32,21 +32,40 @@ const findIntent = async (intentDisplayName: string) => {
     let parent = intentClient.projectPath(process.env.PERSONALITY_ACCOUNT_PROJECT_ID)
     parent = `${parent}/agent`
     console.log(parent)
+    console.log(`Finding intent: ${intentDisplayName}`)
     const intents = await intentClient.listIntents({parent}) as any[]
-    const intent = intents.find(t => {
+    let intent
+    for (const t of intents){
         if (t){
-            return t.find(r => {
+            intent = t.find(r => {
                 if (r.displayName){
                     console.log(r.displayName.toLowerCase())
                     return r.displayName.toLowerCase() === intentDisplayName.toLowerCase()
                 }
                 return false
             })
+            if (intent){
+                break
+            }
         }
-        return false
-    })
+    }
     console.log(intent)
     return intent
+}
+
+const updateIntent = async (intent: dialogflow.protos.google.cloud.dialogflow.v2.IIntent, displayName: string, questions: string[], answer: string) => {
+    let parent = intentClient.projectPath(process.env.PERSONALITY_ACCOUNT_PROJECT_ID)
+    parent = `${parent}/agent`
+    console.log(parent)
+    if (intent.messages.length){
+        intent.messages[0].text.text.push(answer)
+    } else {
+        intent.messages.push({text: {text: [answer]}})
+    }
+    intent.trainingPhrases.push(...questions.map(t => { return { parts: [{text: t}]} }))
+    const newintent = await intentClient.updateIntent({intent})
+    console.log(newintent)
+    return newintent
 }
 const createIntent = async (displayName: string, questions: string[], answer: string) => {
     let parent = intentClient.projectPath(process.env.PERSONALITY_ACCOUNT_PROJECT_ID)
@@ -97,8 +116,6 @@ export default async (req: NowRequest, res: NowResponse) => {
                 /* Send our request to Dialogflow */
                 const responses = await sessionClient.detectIntent(request)
                 /* If the response should be formatted (?format=true), then return the format the response */
-                console.log('New')
-                console.log(responses)
                 const intentresponse = responses[0] as dialogflow.protos.google.cloud.dialogflow.v2.IDetectIntentResponse
                 if (intentresponse.queryResult && intentresponse.queryResult.intent.displayName === 'training'){
                     console.log('TRAINING!!!')
@@ -107,7 +124,6 @@ export default async (req: NowRequest, res: NowResponse) => {
                         && intentresponse.queryResult.parameters.fields
                         && intentresponse.queryResult.parameters.fields['training-intent']){
                         const params = intentresponse.queryResult.parameters.fields
-                        console.log(params)
                         const intentName = params['training-intent'].stringValue
                         const question1 = params['training-question-1'].stringValue
                         const question2 = params['training-question-2'].stringValue
@@ -118,16 +134,14 @@ export default async (req: NowRequest, res: NowResponse) => {
                             && answer
                             && intentName){
                             console.log(`Creating new intent:${intentName}`)
-                            const intent = await findIntent(`training.${intentName.toLowerCase()}`)
+                            const intent = await findIntent(intentName.toLowerCase())
                             console.log(intent)
                             if (intent){
-                                await intentClient.updateIntent({ intent: intent[0] })
+                                await updateIntent(intent, intentName.toLowerCase(), [question1, question2], answer)
                             } else {
                                 console.log('Create new intent')
-                                // prefix with TRAINING
-                                await createIntent(`training.${intentName.toLowerCase()}`, [question1, question2], answer)
+                                await createIntent(intentName.toLowerCase(), [question1, question2], answer)
                             }
-                            // apiai.createFaqIntent(params['intent-name'], params['intent-question'], params['intent-question1'], params['intent-answer'])
                         }
                     }
                 }
