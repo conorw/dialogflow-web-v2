@@ -184,7 +184,7 @@ export default async (req: NowRequest, res: NowResponse) => {
                             && intentName
                             && intentCategory){
                             const lowerIntentName = intentName.toLowerCase().replace(' ', '.').trim()
-                            const lowerIntentCategory = intentCategory.toLowerCase().replace(' ', '.').trim()
+                            const lowerIntentCategory = intentCategory.toLowerCase().replace(' ', '-').trim()
                             const combinedName = `${lowerIntentCategory}.${lowerIntentName}`
                             console.log({combinedName, intentCategory, intentName, question1, answer})
                             console.log(`Creating new intent:${combinedName}`)
