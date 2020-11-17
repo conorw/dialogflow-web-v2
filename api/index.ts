@@ -124,26 +124,24 @@ export default async (req: NowRequest, res: NowResponse) => {
                         const intentCategory = params['intent-category'].stringValue
                         const intentName = params['intent-name'].stringValue
                         const question1 = params['training-question-1'].stringValue
-                        const question2 = params['training-question-2'].stringValue
                         const answer = params['training-answer'].stringValue
                         if (question1
-                            && question2
                             && answer
                             && intentName
                             && intentCategory){
-                            const lowerIntentName = intentName.toLowerCase().trim()
+                            const lowerIntentName = intentName.toLowerCase().replace(' ', '.').trim()
                             const lowerIntentCategory = intentCategory.toLowerCase().replace(' ', '.').trim()
                             const combinedName = `${lowerIntentCategory}.${lowerIntentName}`
-                            console.log({combinedName, intentCategory, intentName, question1, question2, answer})
+                            console.log({combinedName, intentCategory, intentName, question1, answer})
                             console.log(`Creating new intent:${combinedName}`)
                             const intent = await findIntent(combinedName)
                             console.log(intent)
                             if (intent){
                                 console.log('Update existing intent')
-                                await updateIntent(intent, combinedName, [question1, question2], answer)
+                                await updateIntent(intent, combinedName, [question1], answer)
                             } else {
                                 console.log('Create new intent')
-                                await createIntent(combinedName, [question1, question2], answer)
+                                await createIntent(combinedName, [question1], answer)
                             }
                         }
                     }
