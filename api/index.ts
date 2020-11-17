@@ -36,7 +36,7 @@ const findIntent = async (intentDisplayName: string) => {
     parent = `${parent}/agent`
     console.log(parent)
     console.log(`Finding intent: ${intentDisplayName}`)
-    const intents = await intentClient.listIntents({parent}) as any[]
+    const intents = await intentClient.listIntents({ parent }) as any[]
     let intent
     for (const t of intents){
         if (t){
@@ -59,7 +59,7 @@ const findEntity = async (entityName: string) => {
     let parent = entityClient.projectPath(process.env.TRAINING_ACCOUNT_PROJECT_ID)
     parent = `${parent}/agent`
     console.log(`Finding entitiy: ${entityName}`)
-    const entities = await entityClient.listEntityTypes({parent}) as any[]
+    const entities = await entityClient.listEntityTypes({ parent }) as any[]
     let entity
     for (const t of entities){
         if (t){
@@ -85,10 +85,10 @@ const updateIntent = async (intent: dialogflow.protos.google.cloud.dialogflow.v2
     if (intent.messages.length){
         intent.messages[0].text.text.push(answer)
     } else {
-        intent.messages.push({text: {text: [answer]}})
+        intent.messages.push({ text: { text: [answer] } })
     }
-    intent.trainingPhrases.push(...questions.map(t => { return { parts: [{text: t}]} }))
-    const newintent = await intentClient.updateIntent({intent})
+    intent.trainingPhrases.push(...questions.map(t => { return { parts: [{ text: t }] } }))
+    const newintent = await intentClient.updateIntent({ intent })
     console.log(newintent)
     return newintent
 }
@@ -96,11 +96,13 @@ const createIntent = async (displayName: string, questions: string[], answer: st
     let parent = intentClient.projectPath(process.env.PERSONALITY_ACCOUNT_PROJECT_ID)
     parent = `${parent}/agent`
     console.log(parent)
-    const newintent = await intentClient.createIntent({parent, intent: {
-        displayName,
-        trainingPhrases: questions.map(t => { return { parts: [{text: t}]} }),
-        messages: [{text: {text: [answer]}}]
-    }})
+    const newintent = await intentClient.createIntent({
+        parent, intent: {
+            displayName,
+            trainingPhrases: questions.map(t => { return { parts: [{ text: t }] } }),
+            messages: [{ text: { text: [answer] } }]
+        }
+    })
     console.log(newintent)
     return newintent
 }
@@ -151,10 +153,10 @@ export default async (req: NowRequest, res: NowResponse) => {
                         && intentresponse.queryResult.parameters.fields['training-answer']){
                         const params = intentresponse.queryResult.parameters.fields
                         console.log(params)
-                        const intentCategory = params['intent-category']?.stringValue
-                        const intentName = params['intent-name']?.stringValue
-                        const question1 = params['training-question-1']?.stringValue
-                        const answer = params['training-answer']?.stringValue
+                        const intentCategory = params['intent-category'] ? params['intent-category'].stringValue : ''
+                        const intentName = params['intent-name'] ? params['intent-name'].stringValue : ''
+                        const question1 = params['training-question-1'] ? params['training-question-1'].stringValue : ''
+                        const answer = params['training-answer'] ? params['training-answer'].stringValue : ''
                         // if this is the intent-name question, return the entity options for the category
                         if (intentCategory && !intentName){
                             console.log('Adding category values to response')
@@ -173,7 +175,7 @@ export default async (req: NowRequest, res: NowResponse) => {
                                 {
                                     'platform': 'ACTIONS_ON_GOOGLE',
                                     'suggestions': {
-                                        'suggestions': subCategories.entities.map(t => { return {title: t.value} })
+                                        'suggestions': subCategories.entities.map(t => { return { title: t.value } })
                                     }
                                 }] as any
                                 intentresponse.queryResult.fulfillmentMessages = newFulfillment
@@ -186,7 +188,7 @@ export default async (req: NowRequest, res: NowResponse) => {
                             const lowerIntentName = intentName.toLowerCase().replace(' ', '.').trim()
                             const lowerIntentCategory = intentCategory.toLowerCase().replace(' ', '-').trim()
                             const combinedName = `${lowerIntentCategory}.${lowerIntentName}`
-                            console.log({combinedName, intentCategory, intentName, question1, answer})
+                            console.log({ combinedName, intentCategory, intentName, question1, answer })
                             console.log(`Creating new intent:${combinedName}`)
                             const intent = await findIntent(combinedName)
                             console.log(intent)
