@@ -16,6 +16,13 @@ const intentClient = new dialogflow.IntentsClient({
         client_email: process.env.SERVICE_ACCOUNT_EMAIL
     }
 })
+const entityClient = new dialogflow.EntityTypesClient({
+    credentials: {
+        // <-- Initialize with service account
+        private_key: process.env.SERVICE_ACCOUNT_PRIVATE_KEY.replace(/\\n/gm, '\n'),
+        client_email: process.env.SERVICE_ACCOUNT_EMAIL
+    }
+})
 /* SessionsClient makes text requests */
 const sessionClient = new dialogflow.SessionsClient({
     credentials: {
@@ -48,7 +55,29 @@ const findIntent = async (intentDisplayName: string) => {
     console.log(intent)
     return intent
 }
-
+const findEntity = async (entityName: string) => {
+    let parent = entityClient.projectPath(process.env.TRAINING_ACCOUNT_PROJECT_ID)
+    parent = `${parent}/agent`
+    console.log(`Finding entitiy: ${entityName}`)
+    const entities = await entityClient.listEntityTypes({parent}) as any[]
+    let entity
+    for (const t of entities){
+        if (t){
+            entity = t.find(r => {
+                if (r.displayName){
+                    console.log(r.displayName.toLowerCase())
+                    return r.displayName.toLowerCase() === entityName.toLowerCase()
+                }
+                return false
+            })
+            if (entity){
+                break
+            }
+        }
+    }
+    console.log(entity)
+    return entity
+}
 const updateIntent = async (intent: dialogflow.protos.google.cloud.dialogflow.v2.IIntent, displayName: string, questions: string[], answer: string) => {
     let parent = intentClient.projectPath(process.env.PERSONALITY_ACCOUNT_PROJECT_ID)
     parent = `${parent}/agent`
@@ -116,15 +145,40 @@ export default async (req: NowRequest, res: NowResponse) => {
                 if (intentresponse.queryResult && intentresponse.queryResult.intent.displayName === 'training.category.details'){
                     console.log('TRAINING!!!')
                     console.log(intentresponse.queryResult.parameters.fields)
+
                     if (intentresponse.queryResult.parameters
                         && intentresponse.queryResult.parameters.fields
                         && intentresponse.queryResult.parameters.fields['training-answer']){
                         const params = intentresponse.queryResult.parameters.fields
                         console.log(params)
-                        const intentCategory = params['intent-category'].stringValue
-                        const intentName = params['intent-name'].stringValue
-                        const question1 = params['training-question-1'].stringValue
-                        const answer = params['training-answer'].stringValue
+                        const intentCategory = params['intent-category']?.stringValue
+                        const intentName = params['intent-name']?.stringValue
+                        const question1 = params['training-question-1']?.stringValue
+                        const answer = params['training-answer']?.stringValue
+                        // if this is the intent-name question, return the entity options for the category
+                        if (intentCategory && !intentName){
+                            console.log('Adding category values to response')
+                            const subCategories = await findEntity(`${intentCategory}-options`)
+                            if (subCategories){
+                                const newFulfillment = [{
+                                    'platform': 'ACTIONS_ON_GOOGLE',
+                                    'simpleResponses': {
+                                        'simpleResponses': [
+                                            {
+                                                'textToSpeech': 'INTENT NAME: What name do you want to call this intent?'
+                                            }
+                                        ]
+                                    }
+                                },
+                                {
+                                    'platform': 'ACTIONS_ON_GOOGLE',
+                                    'suggestions': {
+                                        'suggestions': subCategories.entities.map(t => { return {title: t.value} })
+                                    }
+                                }] as any
+                                intentresponse.queryResult.fulfillmentMessages = newFulfillment
+                            }
+                        }
                         if (question1
                             && answer
                             && intentName
