@@ -18,7 +18,7 @@
     display: inline-block
     padding: 8px 12px
     border-radius: 40px
-    border: var(--border)
+    border: var(--suggestion-border)
     color: var(--text-primary)
     cursor: pointer
     margin-right: 6px
