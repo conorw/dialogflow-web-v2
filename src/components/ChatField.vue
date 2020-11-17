@@ -7,16 +7,16 @@
                     <slot />
                 </div>
             </transition>
-                            <VEmojiPicker
-                    v-show="showDialog"
-                    label-search="Search"
-                    lang="pt-BR"
-                    @select="onSelectEmoji"
-                />
+            <VEmojiPicker
+                v-show="showDialog"
+                label-search="Search"
+                lang="pt-BR"
+                @select="onSelectEmoji"
+            />
             <div class="chat-field-flexible">
                 <!-- Text input -->
                 <button @click="toogleDialogEmoji">😃</button>
-                <input
+                <textarea
                     v-model="query"
                     class="chat-field-input"
                     type="text"
@@ -29,13 +29,14 @@
                         (translations[lang()] && translations[lang()].inputTitle) ||
                             translations[config.fallback_lang].inputTitle
                     "
-                    @keypress.enter="submit({ text: query })"
+                    @keydown="inputHandler"
                     @focus="
                         microphone = false;
                         should_listen = false;
                         $emit('typing');
                     "
                 >
+                </textarea>
 
                 <!-- Send message button (arrow button) -->
                 <transition name="chat-field-button-animation" mode="out-in">
@@ -81,7 +82,7 @@
 </template>
 
 <script>
-import { VEmojiPicker, emojisDefault, categoriesDefault } from 'v-emoji-picker'
+import { VEmojiPicker } from 'v-emoji-picker'
 import AudioRecorder from 'audio-recorder-polyfill'
 import * as hark from 'hark'
 
@@ -164,6 +165,12 @@ export default {
         }
     },
     methods: {
+        inputHandler(e){
+            if (e.keyCode === 13 && !e.shiftKey){
+                e.preventDefault()
+                this.submit({ text: this.query })
+            }
+        },
         toogleDialogEmoji(){
             this.showDialog = !this.showDialog
         },

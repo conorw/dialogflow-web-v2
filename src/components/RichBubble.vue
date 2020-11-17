@@ -16,7 +16,6 @@
     word-wrap: break-word
     flex-grow: 0
     white-space: pre-wrap
-
     &::before
         content: var(--bubble-left)
         position: absolute
@@ -30,7 +29,7 @@
         border: 1px solid var(--background-element)
         color: var(--text-element)
         border-top-left-radius: 40px
-
+        border-top-right-radius: 0
         &::before
             content: ''
 
