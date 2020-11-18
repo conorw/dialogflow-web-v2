@@ -1,8 +1,8 @@
 <!DOCTYPE html><html lang="en"><head>
     <meta charset="utf-8">
-    <title>budibot-training</title>
-    <meta name="description" content="appdesc">
-    <link rel="canonical" href="appurl">
+    <title><%= process.env.VUE_APP_NAME %></title>
+    <meta name="description" content="<%= process.env.VUE_APP_DESC %>">
+    <link rel="canonical" href="<%= process.env.VUE_APP_URL %>">
 
     <!-- Mobile Stuff -->
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -11,16 +11,16 @@
     <link rel="icon" href="<%= BASE_URL %>favicon.ico">
 
     <!-- OpenGraph -->
-    <meta property="og:title" content="budibot-training">
-    <meta property="og:description" content="appdesc">
+    <meta property="og:title" content="<%= process.env.VUE_APP_NAME %>">
+    <meta property="og:description" content="<%= process.env.VUE_APP_DESC %>">
     <meta property="og:image" content="<%= BASE_URL %>img/opengraph.png">
     <meta property="og:type" content="website">
-    <meta property="og:url" content="appurl">
+    <meta property="og:url" content="<%= process.env.VUE_APP_URL %>">
 
     <!-- Twitter -->
     <meta name="twitter:card" content="summary">
-    <meta name="twitter:title" content="budibot-training">
-    <meta name="twitter:description" content="appdesc">
+    <meta name="twitter:title" content="<%= process.env.VUE_APP_NAME %>">
+    <meta name="twitter:description" content="<%= process.env.VUE_APP_DESC %>">
     <meta name="twitter:image" content="<%= BASE_URL %>img/opengraph.png">
 
 
