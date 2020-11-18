@@ -167,7 +167,7 @@ export default async (req: NowRequest, res: NowResponse) => {
                                     'simpleResponses': {
                                         'simpleResponses': [
                                             {
-                                                'textToSpeech': 'INTENT NAME: What name do you want to call this intent?'
+                                                'textToSpeech': 'MEMORABLE NAME: Give your question a name so you can add more details when you are finished'
                                             }
                                         ]
                                     }
