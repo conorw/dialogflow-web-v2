@@ -1,6 +1,5 @@
 {
-  "name": "budibot-training",
-  "short_name": "budibot-training",
+  "short_name": "Bot Training",
   "icons": [
     {
       "src": "img/icons/manifest-icon-192.png",
