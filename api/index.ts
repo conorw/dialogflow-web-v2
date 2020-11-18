@@ -85,9 +85,20 @@ const updateIntent = async (intent: dialogflow.protos.google.cloud.dialogflow.v2
     if (intent.messages.length){
         intent.messages[0].text.text.push(answer)
     } else {
+        // check for duplicates before adding
+        // eslint-disable-next-line no-lonely-if
+        // if (!intent.messages[0].text.text.contains(answer)){
         intent.messages.push({ text: { text: [answer] } })
+        // }
     }
-    intent.trainingPhrases.push(...questions.map(t => { return { parts: [{ text: t }] } }))
+    if (intent.trainingPhrases){
+        // check for duplicates before adding
+        // questions = questions.filter(t=>intent.trainingPhrases.map(t=>t.parts).contains(t))
+        intent.trainingPhrases.parts.push(...questions.map(t => { return {text: t } }))
+    } else {
+        intent.trainingPhrases.push({ parts: [...questions.map(t => { return {text: t } })]})
+    }
+
     const newintent = await intentClient.updateIntent({ intent })
     console.log(newintent)
     return newintent
