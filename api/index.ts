@@ -91,10 +91,11 @@ const updateIntent = async (intent: dialogflow.protos.google.cloud.dialogflow.v2
         intent.messages.push({ text: { text: [answer] } })
         // }
     }
-    if (intent.trainingPhrases){
+    console.log(intent.trainingPhrases)
+    if (intent.trainingPhrases.length){
         // check for duplicates before adding
         // questions = questions.filter(t=>intent.trainingPhrases.map(t=>t.parts).contains(t))
-        intent.trainingPhrases.parts.push(...questions.map(t => { return {text: t } }))
+        intent.trainingPhrases[0].parts.push(...questions.map(t => { return {text: t } }))
     } else {
         intent.trainingPhrases.push({ parts: [...questions.map(t => { return {text: t } })]})
     }
