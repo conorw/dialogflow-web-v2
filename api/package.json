@@ -6,7 +6,8 @@
   },
   "dependencies": {
     "dialogflow": "^1.2.0",
-    "@google-cloud/dialogflow": "^3.3.0"
+    "@google-cloud/dialogflow": "^3.3.0",
+    "airtable": "^0.10.1"
   },
   "devDependencies": {
     "@mishushakov/eslint-config": "^1.0.7",
