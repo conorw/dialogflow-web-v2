@@ -1,5 +1,8 @@
 import { NowRequest, NowResponse } from '@vercel/node'
 import * as dialogflow from '@google-cloud/dialogflow'
+import Airtable from 'airtable'
+
+const base = new Airtable({apiKey: process.env.AIRTABLE_API_KEY}).base(process.env.AIRTABLE_BASE)
 
 /* AgentsClient retrieves information about the agent */
 const agentsClient = new dialogflow.AgentsClient({
@@ -95,14 +98,27 @@ const updateIntent = async (intent: dialogflow.protos.google.cloud.dialogflow.v2
     if (intent.trainingPhrases.length){
         // check for duplicates before adding
         // questions = questions.filter(t=>intent.trainingPhrases.map(t=>t.parts).contains(t))
-        intent.trainingPhrases[0].parts.push(...questions.map(t => { return {text: t } }))
+        intent.trainingPhrases[0].parts.push(...questions.map(t => { return { text: t } }))
     } else {
-        intent.trainingPhrases.push({ parts: [...questions.map(t => { return {text: t } })]})
+        intent.trainingPhrases.push({ parts: [...questions.map(t => { return { text: t } })] })
     }
 
     const newintent = await intentClient.updateIntent({ intent })
     console.log(newintent)
     return newintent
+}
+const saveFeedback = async (answer: string, name: string) => {
+    const url = process.env.SERVICE_ACCOUNT_PROJECT_ID
+
+    try {
+        await base('feedback').create([
+            {
+                'fields': { answer, name, url }
+            }
+        ])
+    } catch (error){
+        console.log(error)
+    }
 }
 const createIntent = async (displayName: string, questions: string[], answer: string) => {
     let parent = intentClient.projectPath(process.env.PERSONALITY_ACCOUNT_PROJECT_ID)
@@ -156,7 +172,21 @@ export default async (req: NowRequest, res: NowResponse) => {
                 const responses = await sessionClient.detectIntent(request)
                 /* If the response should be formatted (?format=true), then return the format the response */
                 const intentresponse = responses[0] as dialogflow.protos.google.cloud.dialogflow.v2.IDetectIntentResponse
-                if (intentresponse.queryResult && intentresponse.queryResult.intent.displayName === 'training.category.details'){
+                if (intentresponse.queryResult && intentresponse.queryResult.intent.displayName === 'feedback'){
+                    console.log('FEEDBACK')
+                    if (intentresponse.queryResult.parameters
+                        && intentresponse.queryResult.parameters.fields
+                        && intentresponse.queryResult.parameters.fields['feedback-answer']
+                        && intentresponse.queryResult.parameters.fields['feedback-name']){
+                        const params = intentresponse.queryResult.parameters.fields
+                        console.log(params)
+                        const feedbackName = params['feedback-name'].stringValue
+                        const feedbackAnswer = params['feedback-answer'].stringValue
+                        if (feedbackName && feedbackAnswer){
+                            await saveFeedback(feedbackAnswer, feedbackName)
+                        }
+                    }
+                } else if (intentresponse.queryResult && intentresponse.queryResult.intent.displayName === 'training.category.details'){
                     console.log('TRAINING!!!')
                     console.log(intentresponse.queryResult.parameters.fields)
 
