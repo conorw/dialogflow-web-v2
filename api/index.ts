@@ -1,8 +1,6 @@
 import { NowRequest, NowResponse } from '@vercel/node'
 import * as dialogflow from '@google-cloud/dialogflow'
-import Airtable from 'airtable'
-
-const base = new Airtable({apiKey: process.env.AIRTABLE_API_KEY}).base(process.env.AIRTABLE_BASE)
+import { saveFeedback } from './common/airtable'
 
 /* AgentsClient retrieves information about the agent */
 const agentsClient = new dialogflow.AgentsClient({
@@ -106,19 +104,6 @@ const updateIntent = async (intent: dialogflow.protos.google.cloud.dialogflow.v2
     const newintent = await intentClient.updateIntent({ intent })
     console.log(newintent)
     return newintent
-}
-const saveFeedback = async (answer: string, name: string) => {
-    const url = process.env.SERVICE_ACCOUNT_PROJECT_ID
-
-    try {
-        await base('feedback').create([
-            {
-                'fields': { answer, name, url }
-            }
-        ])
-    } catch (error){
-        console.log(error)
-    }
 }
 const createIntent = async (displayName: string, questions: string[], answer: string) => {
     let parent = intentClient.projectPath(process.env.PERSONALITY_ACCOUNT_PROJECT_ID)
