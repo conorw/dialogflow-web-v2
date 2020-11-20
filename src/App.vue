@@ -6,7 +6,7 @@
             v-if="agent && messages.length > 0"
             :agent="agent"
             :voices="voices"
-            v-model:selectedvoice="config.voice"
+            :selectedvoice.sync="config.voice"
             @submit="send">
             <!-- Audio toggle (on the top right corner), used to toggle the audio output, default mode is defined in the settings -->
             <TopHeadAction

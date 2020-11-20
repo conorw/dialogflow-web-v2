@@ -39,7 +39,7 @@
                     Stop Training
                 </button>
                 Voice:
-                <select v-model="initialvoice" @change="$emit('update:selectedvoice', initialvoice)" >
+                <select @change="onchange($event)">
                     <option v-for="option in voices" :key="option.voiceURI" :value="option.voiceURI">
                         {{option.name}}
                     </option>
@@ -67,12 +67,11 @@ export default {
             default: ''
         }
     },
-    data(){
-        return {
-            initialvoice: this.selectedvoice
-        }
-    },
     methods: {
+        onchange(event){
+            console.log(event)
+            this.$emit('update:selectedvoice', event.target.value)
+        },
         submit(submission){
             if (submission.text && submission.text.length > 0){
                 this.$emit('submit', submission)
