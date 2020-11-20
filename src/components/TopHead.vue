@@ -1,19 +1,86 @@
 <template>
     <header class="top-head">
         <div class="top-head-container">
-            <img v-if="agent.avatarUri" class="top-head-icon" :alt="agent.displayName" :src="agent.avatarUri">
-            <img v-else class="top-head-icon" src="/img/icon.png" :alt="agent.displayName">
+            <img
+                v-if="agent.avatarUri"
+                class="top-head-icon"
+                :alt="agent.displayName"
+                :src="agent.avatarUri"
+            >
+            <img
+                v-else
+                class="top-head-icon"
+                src="/img/icon.png"
+                :alt="agent.displayName"
+            >
             <div class="top-head-info">
                 <div class="top-head-title">{{agent.displayName}}</div>
-                <div class="top-head-subtitle">{{(translations[lang()] && translations[lang()].poweredBy) || translations[config.fallback_lang].poweredBy}} <a target="_blank" rel="noopener noreferrer" href="https://dialogflow.cloud.ushakov.co" aria-hidden="true">Dialogflow Gateway</a></div>
-                <button class="top-head-button start" @click="submit({ text: 'training' })">Start Training</button>
-                <button class="top-head-button stop" @click="submit({ text: 'cancel' })">Stop Training</button>
+                <div class="top-head-subtitle">
+                    {{(translations[lang()] && translations[lang()].poweredBy) ||
+                        translations[config.fallback_lang].poweredBy}}
+                    <a
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        href="https://dialogflow.cloud.ushakov.co"
+                        aria-hidden="true"
+                    >Dialogflow Gateway</a
+                    >
+                </div>
+                <button
+                    class="top-head-button start"
+                    @click="submit({ text: 'training' })"
+                >
+                    Start Training
+                </button>
+                <button
+                    class="top-head-button stop"
+                    @click="submit({ text: 'cancel' })"
+                >
+                    Stop Training
+                </button>
+                Voice:
+                <select v-model="initialvoice" @change="$emit('update:selectedvoice', initialvoice)" >
+                    <option v-for="option in voices" :key="option.voiceURI" :value="option.voiceURI">
+                        {{option.name}}
+                    </option>
+                </select>
             </div>
         </div>
         <slot />
     </header>
 </template>
 
+<script>
+export default {
+    name: 'TopHead',
+    props: {
+        agent: {
+            type: Object,
+            default: null
+        },
+        voices: {
+            type: Array,
+            default: null
+        },
+        selectedvoice: {
+            type: String,
+            default: ''
+        }
+    },
+    data(){
+        return {
+            initialvoice: this.selectedvoice
+        }
+    },
+    methods: {
+        submit(submission){
+            if (submission.text && submission.text.length > 0){
+                this.$emit('submit', submission)
+            }
+        }
+    }
+}
+</script>
 <style lang="sass" scoped>
 @import '@/style/mixins'
 
@@ -75,24 +142,5 @@
 .top-head-button:hover
   background: #2196F3
   color: white
-
 </style>
 
-<script>
-export default {
-    name: 'TopHead',
-    props: {
-        agent: {
-            type: Object,
-            default: null
-        }
-    },
-    methods: {
-        submit(submission){
-            if (submission.text && submission.text.length > 0){
-                this.$emit('submit', submission)
-            }
-        }
-    }
-}
-</script>

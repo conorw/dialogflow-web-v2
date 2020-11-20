@@ -2,7 +2,12 @@
 <template>
     <main id="app">
         <!-- TopHead is the header with the information about the app -->
-        <TopHead v-if="agent && messages.length > 0" :agent="agent" @submit="send">
+        <TopHead
+            v-if="agent && messages.length > 0"
+            :agent="agent"
+            :voices="voices"
+            v-model:selectedvoice="config.voice"
+            @submit="send">
             <!-- Audio toggle (on the top right corner), used to toggle the audio output, default mode is defined in the settings -->
             <TopHeadAction
                 :title="muted ? (translations[lang()] && translations[lang()].unMuteTitle) || translations[config.fallback_lang].unMuteTitle : (translations[lang()] && translations[lang()].muteTitle) || translations[config.fallback_lang].muteTitle"
@@ -346,7 +351,6 @@
                 </div>
             </section>
         </section>
-
         <!-- ChatField is made for submitting queries and displaying suggestions -->
         <ChatField ref="input" @submit="send" @listening="stop_feedback" @typing="stop_feedback">
             <!-- RichSuggesion chips
@@ -430,6 +434,7 @@ export default {
             muted: true,
             loading: false,
             error: null,
+            voices: [],
             client: new Client(this.config.endpoint),
             audio: new Audio()
         }
@@ -495,7 +500,13 @@ export default {
     created(){
         /* Mute audio to comply with auto-play policies */
         this.audio.muted = true
-
+        this.voices = speechSynthesis.getVoices()
+        this.config.voice = this.voices.length ? this.voices[0].voiceURI : this.config.voice
+        speechSynthesis.onvoiceschanged = () => {
+            this.voices = speechSynthesis.getVoices()
+            this.config.voice = this.voices.length ? this.voices[0].voiceURI : this.config.voice
+            console.log(`Voices #: ${this.voices.length}`, this.voices)
+        }
         /* If history is enabled, the messages are retrieved from sessionStorage */
         if (this.history() && sessionStorage.getItem('message_history') !== null){
             this.messages = JSON.parse(sessionStorage.getItem('message_history'))
@@ -528,6 +539,10 @@ export default {
         }
     },
     methods: {
+        voiceChanged(data){
+            this.config.voice = data
+            console.log(data)
+        },
         send(submission){
             let request
 
@@ -604,6 +619,7 @@ export default {
 
                 const speech = new SpeechSynthesisUtterance(text)
                 speech.voiceURI = this.config.voice
+                console.log(speech.voiceURI)
                 speech.lang = this.lang()
                 speech.onend = () => this.$refs.input.listen()
 

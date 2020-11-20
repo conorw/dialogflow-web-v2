@@ -2,7 +2,7 @@ export default {
     endpoint: process.env.VUE_APP_BOT_GATEWAY_URL, // <- enter your gateway URL here
     start_suggestions: [], // <- array of suggestions, displayed at the start screen
     fallback_lang: 'en', // <- fallback language code, if history mode or network is unavailable
-    voice: 'native', // <- voice of Text-To-Speech; for reference, see: https://developer.mozilla.org/en-US/docs/Web/API/SpeechSynthesisVoice/voiceURI
+    voice: process.env.VUE_APP_VOICE || 'native', // <- voice of Text-To-Speech; for reference, see: https://developer.mozilla.org/en-US/docs/Web/API/SpeechSynthesisVoice/voiceURI
     codecs: { // <- tells browser the mime types of audio in Dialogflow
         OUTPUT_AUDIO_ENCODING_UNSPECIFIED: 'audio/wav',
         OUTPUT_AUDIO_ENCODING_LINEAR_16: 'audio/wav',
