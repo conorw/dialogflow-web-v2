@@ -42,7 +42,6 @@ export default async (req: NowRequest, res: NowResponse) => {
                 /* If the response should be formatted (?format=true), then return the format the response */
                 const intentresponse = responses[0] as dialogflow.protos.google.cloud.dialogflow.v2.IDetectIntentResponse
                 if (intentresponse.queryResult && intentresponse.queryResult.intent.displayName === 'feedback'){
-                    console.log('FEEDBACK')
                     if (intentresponse.queryResult.parameters
                         && intentresponse.queryResult.parameters.fields
                         && intentresponse.queryResult.parameters.fields['feedback-answer']
