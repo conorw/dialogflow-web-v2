@@ -47,7 +47,6 @@ export default async (req: NowRequest, res: NowResponse) => {
                         && intentresponse.queryResult.parameters.fields['feedback-answer']
                         && intentresponse.queryResult.parameters.fields['feedback-name']){
                         const params = intentresponse.queryResult.parameters.fields
-                        console.log(params)
                         const feedbackName = params['feedback-name'].stringValue
                         const feedbackAnswer = params['feedback-answer'].stringValue
                         if (feedbackName && feedbackAnswer){
