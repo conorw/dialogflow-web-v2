@@ -33,8 +33,7 @@ export const sessionClient = new dialogflow.SessionsClient({
 export const findIntent = async (intentDisplayName: string) => {
     let parent = intentClient.projectPath(process.env.PERSONALITY_ACCOUNT_PROJECT_ID)
     parent = `${parent}/agent`
-    console.log(parent)
-    console.log(`Finding intent: ${intentDisplayName}`)
+    console.log(`Finding intent: ${intentDisplayName} | Parent: ${parent}`)
     const intents = await intentClient.listIntents({ parent }) as any[]
     let intent
     for (const t of intents){
