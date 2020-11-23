@@ -1,4 +1,3 @@
-
 <template>
     <main id="app">
         <!-- TopHead is the header with the information about the app -->
@@ -7,11 +6,18 @@
             :agent="agent"
             :voices="voices"
             :selectedvoice.sync="config.voice"
-            @submit="send">
+            @submit="send"
+        >
             <!-- Audio toggle (on the top right corner), used to toggle the audio output, default mode is defined in the settings -->
             <TopHeadAction
-                :title="muted ? (translations[lang()] && translations[lang()].unMuteTitle) || translations[config.fallback_lang].unMuteTitle : (translations[lang()] && translations[lang()].muteTitle) || translations[config.fallback_lang].muteTitle"
-                :icon="muted ? 'volume_off': 'volume_up'"
+                :title="
+                    muted
+                        ? (translations[lang()] && translations[lang()].unMuteTitle) ||
+                            translations[config.fallback_lang].unMuteTitle
+                        : (translations[lang()] && translations[lang()].muteTitle) ||
+                            translations[config.fallback_lang].muteTitle
+                "
+                :icon="muted ? 'volume_off' : 'volume_up'"
                 @click.native="muted = !muted"
             />
         </TopHead>
@@ -24,29 +30,85 @@
 
             <!-- Messages Table -->
             <section v-else aria-live="polite">
+                <section class="bot-profile" aria-live="polite">
+                    <img
+                        v-if="agent.avatarUri"
+                        class="top-head-icon"
+                        :alt="agent.displayName"
+                        :src="agent.avatarUri"
+                    >
+                    <img
+                        v-else
+                        class="top-head-icon"
+                        src="/img/icon.png"
+                        :alt="agent.displayName"
+                    >
+                </section>
                 <div v-for="message in messages" id="message" :key="message.responseId">
                     <!-- My message -->
-                    <RichComponent me><RichBubble v-if="message.queryResult.queryText" :text="message.queryResult.queryText" me /></RichComponent>
+                    <RichComponent
+                        me
+                    >
+                        <RichBubble
+                            v-if="message.queryResult.queryText"
+                            :text="message.queryResult.queryText"
+                            me
+                        />
+                    </RichComponent>
 
                     <!-- Dialogflow Components -->
-                    <RichComponent v-for="(component, component_id) in message.queryResult.fulfillmentMessages" :key="component_id" :fullwidth="component.carouselSelect !== undefined || component.rbmCarouselRichCard !== undefined || component.payload && component.payload.richContent !== undefined">
+                    <RichComponent
+                        v-for="(component, component_id) in message.queryResult
+                            .fulfillmentMessages"
+                        :key="component_id"
+                        :fullwidth="
+                            component.carouselSelect !== undefined ||
+                                component.rbmCarouselRichCard !== undefined ||
+                                (component.payload &&
+                                    component.payload.richContent !== undefined)
+                        "
+                    >
                         <!-- Text (https://cloud.google.com/dialogflow/docs/reference/rest/v2beta1/projects.agent.intents#Text) -->
-                        <RichBubble v-if="component.text" :text="component.text.text[0] || ((translations[lang()] && translations[lang()].noContent) || translations[config.fallback_lang].noContent)" />
+                        <RichBubble
+                            v-if="component.text"
+                            :text="
+                                component.text.text[0] ||
+                                    (translations[lang()] && translations[lang()].noContent) ||
+                                    translations[config.fallback_lang].noContent
+                            "
+                        />
 
                         <!-- SimpleResponses (https://cloud.google.com/dialogflow/docs/reference/rest/v2beta1/projects.agent.intents#SimpleResponses) -->
                         <RichBubble
                             v-if="component.simpleResponses"
-                            :text="component.simpleResponses.simpleResponses[0].displayText || component.simpleResponses.simpleResponses[0].textToSpeech || ((translations[lang()] && translations[lang()].noContent) || translations[config.fallback_lang].noContent)"
+                            :text="
+                                component.simpleResponses.simpleResponses[0].displayText ||
+                                    component.simpleResponses.simpleResponses[0].textToSpeech ||
+                                    (translations[lang()] && translations[lang()].noContent) ||
+                                    translations[config.fallback_lang].noContent
+                            "
                         />
 
                         <!-- RbmText (https://cloud.google.com/dialogflow/docs/reference/rest/v2beta1/projects.agent.intents#rbmtext) -->
                         <div v-if="component.rbmText">
-                            <RichBubble :text="component.rbmText.text || ((translations[lang()] && translations[lang()].noContent) || translations[config.fallback_lang].noContent)" />
-                            <div v-for="(suggestion, suggestion_id) in component.rbmText.rbmSuggestion" :key="suggestion_id">
+                            <RichBubble
+                                :text="
+                                    component.rbmText.text ||
+                                        (translations[lang()] && translations[lang()].noContent) ||
+                                        translations[config.fallback_lang].noContent
+                                "
+                            />
+                            <div
+                                v-for="(suggestion, suggestion_id) in component.rbmText
+                                    .rbmSuggestion"
+                                :key="suggestion_id"
+                            >
                                 <RichCardButton
                                     v-if="suggestion.reply"
                                     :title="suggestion.reply.text"
-                                    @click.native="send({text: suggestion.reply.text.postbackData})"
+                                    @click.native="
+                                        send({ text: suggestion.reply.text.postbackData })
+                                    "
                                 />
 
                                 <RichCardButton
@@ -62,7 +124,8 @@
                             v-if="component.card"
                             :title="component.card.title"
                             :subtitle="component.card.subtitle"
-                            :image-uri="component.card.imageUri">
+                            :image-uri="component.card.imageUri"
+                        >
                             <RichCardButton
                                 v-for="(button, button_id) in component.card.buttons"
                                 :key="button_id"
@@ -78,7 +141,8 @@
                             :subtitle="component.basicCard.subtitle"
                             :image-uri="component.basicCard.image.imageUri"
                             :image-title="component.basicCard.image.accessibilityText"
-                            :text="component.basicCard.formattedText">
+                            :text="component.basicCard.formattedText"
+                        >
                             <RichCardButton
                                 v-for="(button, button_id) in component.basicCard.buttons"
                                 :key="button_id"
@@ -91,13 +155,22 @@
                         <RichCard
                             v-if="component.rbmStandaloneRichCard"
                             :title="component.rbmStandaloneRichCard.cardContent.title"
-                            :image-uri="component.rbmStandaloneRichCard.cardContent.media.fileUri"
-                            :text="component.rbmStandaloneRichCard.cardContent.description">
-                            <div v-for="(suggestion, suggestion_id) in component.rbmStandaloneRichCard.cardContent.suggestions" :key="suggestion_id">
+                            :image-uri="
+                                component.rbmStandaloneRichCard.cardContent.media.fileUri
+                            "
+                            :text="component.rbmStandaloneRichCard.cardContent.description"
+                        >
+                            <div
+                                v-for="(suggestion, suggestion_id) in component
+                                    .rbmStandaloneRichCard.cardContent.suggestions"
+                                :key="suggestion_id"
+                            >
                                 <RichCardButton
                                     v-if="suggestion.reply"
                                     :title="suggestion.reply.text"
-                                    @click.native="send({text: suggestion.reply.text.postbackData})"
+                                    @click.native="
+                                        send({ text: suggestion.reply.text.postbackData })
+                                    "
                                 />
                                 <RichCardButton
                                     v-if="suggestion.action"
@@ -116,23 +189,30 @@
                                 :image-uri="item.image.imageUri"
                                 :image-title="item.image.accessibilityText"
                                 :text="item.description"
-                                @click.native="send({text: item.info.key})"
+                                @click.native="send({ text: item.info.key })"
                             />
                         </RichCarousel>
 
                         <!-- RbmCarouselCard (https://cloud.google.com/dialogflow/docs/reference/rest/v2beta1/projects.agent.intents#rbmcarouselcard) -->
                         <RichCarousel v-if="component.rbmCarouselRichCard">
                             <RichCard
-                                v-for="(card, card_id) in component.rbmCarouselRichCard.cardContents"
+                                v-for="(card, card_id) in component.rbmCarouselRichCard
+                                    .cardContents"
                                 :key="card_id"
                                 :title="card.title"
                                 :image-uri="card.media.fileUri"
-                                :text="card.description">
-                                <div v-for="(suggestion, suggestion_id) in card.suggestions" :key="suggestion_id">
+                                :text="card.description"
+                            >
+                                <div
+                                    v-for="(suggestion, suggestion_id) in card.suggestions"
+                                    :key="suggestion_id"
+                                >
                                     <RichCardButton
                                         v-if="suggestion.reply"
                                         :title="suggestion.reply.text"
-                                        @click.native="send({text: suggestion.reply.text.postbackData})"
+                                        @click.native="
+                                            send({ text: suggestion.reply.text.postbackData })
+                                        "
                                     />
                                     <RichCardButton
                                         v-if="suggestion.action"
@@ -147,7 +227,8 @@
                         <RichList
                             v-if="component.listSelect"
                             :title="component.listSelect.title"
-                            :subtitle="component.listSelect.subtitle">
+                            :subtitle="component.listSelect.subtitle"
+                        >
                             <RichListItem
                                 v-for="item in component.listSelect.items"
                                 :key="item.info.key"
@@ -155,22 +236,36 @@
                                 :description="item.description"
                                 :image-uri="item.image.imageUri"
                                 :image-title="item.image.accessibilityText"
-                                @click.native="send({text: item.info.key})"
+                                @click.native="send({ text: item.info.key })"
                             />
                         </RichList>
 
                         <!-- Image (https://cloud.google.com/dialogflow/docs/reference/rest/v2beta1/projects.agent.intents#Image) -->
-                        <RichPicture v-if="component.image" :uri="component.image.imageUri" :title="component.image.accessibilityText" />
+                        <RichPicture
+                            v-if="component.image"
+                            :uri="component.image.imageUri"
+                            :title="component.image.accessibilityText"
+                        />
 
                         <!-- RichMedia (https://cloud.google.com/dialogflow/docs/reference/rest/v2beta1/projects.agent.intents#MediaContent) -->
-                        <div v-if="component.mediaContent && component.mediaContent.mediaObjects">
+                        <div
+                            v-if="
+                                component.mediaContent && component.mediaContent.mediaObjects
+                            "
+                        >
                             <RichMedia
                                 v-for="(media, media_id) in component.mediaContent.mediaObjects"
                                 :key="media_id"
                                 :name="media.name"
                                 :description="media.description"
-                                :icon-uri="media.icon ? media.icon.imageUri : media.largeImage.imageUri"
-                                :icon-title="media.icon ? media.icon.accessibilityText : media.largeImage.accessibilityText"
+                                :icon-uri="
+                                    media.icon ? media.icon.imageUri : media.largeImage.imageUri
+                                "
+                                :icon-title="
+                                    media.icon
+                                        ? media.icon.accessibilityText
+                                        : media.largeImage.accessibilityText
+                                "
                                 :uri="media.contentUrl"
                             />
                         </div>
@@ -183,7 +278,8 @@
                             :image-uri="component.tableCard.image.imageUri"
                             :image-title="component.tableCard.image.accessibilityText"
                             :header="component.tableCard.columnProperties"
-                            :rows="component.tableCard.rows">
+                            :rows="component.tableCard.rows"
+                        >
                             <RichCardButton
                                 v-for="(button, button_id) in component.tableCard.buttons"
                                 :key="button_id"
@@ -194,14 +290,18 @@
 
                         <!-- Dialogflow Messenger Components -->
                         <section v-if="component.payload && component.payload.richContent">
-                            <div v-for="(stack, stack_id) in component.payload.richContent" :key="stack_id">
+                            <div
+                                v-for="(stack, stack_id) in component.payload.richContent"
+                                :key="stack_id"
+                            >
                                 <RichComponent v-for="(item, item_id) in stack" :key="item_id">
                                     <!-- Info response type (https://cloud.google.com/dialogflow/docs/integrations/dialogflow-messenger#info_response_type) -->
                                     <RichCard
                                         v-if="item.type == 'info'"
                                         :title="item.title"
                                         :subtitle="item.subtitle"
-                                        :image-uri="item.image.src.rawUrl">
+                                        :image-uri="item.image.src.rawUrl"
+                                    >
                                         <RichCardButton :uri="item.actionLink" />
                                     </RichCard>
 
@@ -213,17 +313,25 @@
                                     />
 
                                     <!-- Image response type (https://cloud.google.com/dialogflow/docs/integrations/dialogflow-messenger#image_response_type) -->
-                                    <RichPicture v-if="item.type == 'image'" :uri="item.rawUrl" :title="item.accessibilityText" />
+                                    <RichPicture
+                                        v-if="item.type == 'image'"
+                                        :uri="item.rawUrl"
+                                        :title="item.accessibilityText"
+                                    />
 
                                     <!-- Button response type (https://cloud.google.com/dialogflow/docs/integrations/dialogflow-messenger#button_response_type) -->
-                                    <RichCardButton v-if="item.type == 'button'" :uri="item.link" :title="item.text" />
+                                    <RichCardButton
+                                        v-if="item.type == 'button'"
+                                        :uri="item.link"
+                                        :title="item.text"
+                                    />
 
                                     <!-- List response type (https://cloud.google.com/dialogflow/docs/integrations/dialogflow-messenger#list_response_type) -->
                                     <RichListItem
                                         v-if="item.type == 'list'"
                                         :title="item.title"
                                         :description="item.subtitle"
-                                        @click.native="send({text: item.title})"
+                                        @click.native="send({ text: item.title })"
                                     />
 
                                     <!-- Accordion response type (https://cloud.google.com/dialogflow/docs/integrations/dialogflow-messenger#accordion_response_type) -->
@@ -240,12 +348,26 @@
                     </RichComponent>
 
                     <!-- Actions on Google Components -->
-                    <section v-if="message.queryResult.webhookPayload && message.queryResult.webhookPayload.google">
-                        <RichComponent v-for="(component, component_id) in message.queryResult.webhookPayload.google.richResponse.items" :key="component_id">
+                    <section
+                        v-if="
+                            message.queryResult.webhookPayload &&
+                                message.queryResult.webhookPayload.google
+                        "
+                    >
+                        <RichComponent
+                            v-for="(component, component_id) in message.queryResult
+                                .webhookPayload.google.richResponse.items"
+                            :key="component_id"
+                        >
                             <!-- Simple response (https://developers.google.com/actions/assistant/responses#simple_response) -->
                             <RichBubble
                                 v-if="component.simpleResponse"
-                                :text="component.simpleResponse.displayText || component.simpleResponse.textToSpeech || ((translations[lang()] && translations[lang()].noContent) || translations[config.fallback_lang].noContent)"
+                                :text="
+                                    component.simpleResponse.displayText ||
+                                        component.simpleResponse.textToSpeech ||
+                                        (translations[lang()] && translations[lang()].noContent) ||
+                                        translations[config.fallback_lang].noContent
+                                "
                             />
 
                             <!-- Basic card (https://developers.google.com/actions/assistant/responses#basic_card) -->
@@ -255,7 +377,8 @@
                                 :subtitle="component.basicCard.subtitle"
                                 :image-uri="component.basicCard.image.url"
                                 :image-title="component.basicCard.image.accessibilityText"
-                                :text="component.basicCard.formattedText">
+                                :text="component.basicCard.formattedText"
+                            >
                                 <RichCardButton
                                     v-for="(button, button_id) in component.basicCard.buttons"
                                     :key="button_id"
@@ -279,9 +402,15 @@
                             </RichList>
 
                             <!-- RichMedia responses (https://developers.google.com/actions/assistant/responses#media_responses) -->
-                            <div v-if="component.mediaResponse && component.mediaResponse.mediaObjects">
+                            <div
+                                v-if="
+                                    component.mediaResponse &&
+                                        component.mediaResponse.mediaObjects
+                                "
+                            >
                                 <RichMedia
-                                    v-for="(media, media_id) in component.mediaResponse.mediaObjects"
+                                    v-for="(media, media_id) in component.mediaResponse
+                                        .mediaObjects"
                                     :key="media_id"
                                     :name="media.name"
                                     :description="media.description"
@@ -299,7 +428,8 @@
                                 :image-uri="component.tableCard.image.url"
                                 :image-title="component.tableCard.image.accessibilityText"
                                 :header="component.tableCard.columnProperties"
-                                :rows="component.tableCard.rows">
+                                :rows="component.tableCard.rows"
+                            >
                                 <RichCardButton
                                     v-for="(button, button_id) in component.tableCard.buttons"
                                     :key="button_id"
@@ -310,12 +440,18 @@
                         </RichComponent>
 
                         <!-- Visual Selection Responses (https://developers.google.com/actions/assistant/responses#visual_selection_responses) -->
-                        <RichComponent v-for="(component, component_id) in message.queryResult.webhookPayload.google.systemIntent" :key="component_id" :fullwidth="component.carouselSelect !== undefined">
+                        <RichComponent
+                            v-for="(component, component_id) in message.queryResult
+                                .webhookPayload.google.systemIntent"
+                            :key="component_id"
+                            :fullwidth="component.carouselSelect !== undefined"
+                        >
                             <!-- RichList (https://developers.google.com/actions/assistant/responses#list) -->
                             <RichList
                                 v-if="component.listSelect"
                                 :title="component.listSelect.title"
-                                :subtitle="component.listSelect.subtitle">
+                                :subtitle="component.listSelect.subtitle"
+                            >
                                 <RichListItem
                                     v-for="item in component.listSelect.items"
                                     :key="item.optionInfo.key"
@@ -323,7 +459,7 @@
                                     :description="item.description"
                                     :image-uri="item.image.url"
                                     :image-title="item.image.accessibilityText"
-                                    @click.native="send({text: item.optionInfo.key})"
+                                    @click.native="send({ text: item.optionInfo.key })"
                                 />
                             </RichList>
 
@@ -336,7 +472,7 @@
                                     :image-uri="item.image.url"
                                     :image-title="item.image.accessibilityText"
                                     :text="item.description"
-                                    @click.native="send({text: item.optionInfo.key})"
+                                    @click.native="send({ text: item.optionInfo.key })"
                                 />
                             </RichCarousel>
                         </RichComponent>
@@ -344,15 +480,34 @@
                 </div>
                 <div v-if="loading" id="message">
                     <!-- My message (Loading) -->
-                    <RichComponent me><RichBubble aria-hidden="true" me loading /></RichComponent>
+                    <RichComponent
+                        me
+                    >
+                        <RichBubble
+                            aria-hidden="true"
+                            me
+                            loading
+                        />
+                    </RichComponent>
 
                     <!-- Default / Webhook bubble (Loading) -->
-                    <RichComponent><RichBubble aria-hidden="true" loading /></RichComponent>
+                    <RichComponent
+                    >
+                        <RichBubble
+                            aria-hidden="true"
+                            loading
+                        />
+                    </RichComponent>
                 </div>
             </section>
         </section>
         <!-- ChatField is made for submitting queries and displaying suggestions -->
-        <ChatField ref="input" @submit="send" @listening="stop_feedback" @typing="stop_feedback">
+        <ChatField
+            ref="input"
+            @submit="send"
+            @listening="stop_feedback"
+            @typing="stop_feedback"
+        >
             <!-- RichSuggesion chips
                 https://developers.google.com/actions/assistant/responses#suggestion_chips
                 https://cloud.google.com/dialogflow/docs/reference/rest/v2beta1/projects.agent.intents#QuickReplies
@@ -362,7 +517,7 @@
                 v-for="(suggestion, suggestion_id) in suggestions.text_suggestions"
                 :key="'text-' + suggestion_id"
                 :title="suggestion"
-                @click.native="send({text: suggestion})"
+                @click.native="send({ text: suggestion })"
             />
 
             <!-- Link suggestion chips
@@ -379,7 +534,6 @@
         </ChatField>
     </main>
 </template>
-
 
 <script>
 import WelcomeView from '@/views/WelcomeView.vue'
@@ -440,7 +594,7 @@ export default {
         }
     },
     computed: {
-        /* The code below is used to extract suggestions from last message, to display it on ChatInput */
+    /* The code below is used to extract suggestions from last message, to display it on ChatInput */
         suggestions(){
             if (this.messages.length > 0){
                 const last_message = this.messages[this.messages.length - 1]
@@ -449,11 +603,28 @@ export default {
 
                 /* Dialogflow Suggestions */
                 for (const component in last_message.queryResult.fulfillmentMessages){
-                    if (last_message.queryResult.fulfillmentMessages[component].suggestions) text_suggestions.push(...last_message.queryResult.fulfillmentMessages[component].suggestions.suggestions.map(suggestion => suggestion.title))
-                    if (last_message.queryResult.fulfillmentMessages[component].linkOutSuggestion) link_suggestions.push(last_message.queryResult.fulfillmentMessages[component].linkOutSuggestion)
-                    if (last_message.queryResult.fulfillmentMessages[component].quickReplies) text_suggestions.push(...last_message.queryResult.fulfillmentMessages[component].quickReplies.quickReplies)
-                    if (last_message.queryResult.fulfillmentMessages[component].payload && last_message.queryResult.fulfillmentMessages[component].payload.richContent){
-                        last_message.queryResult.fulfillmentMessages[component].payload.richContent.forEach(stack => {
+                    if (
+                        last_message.queryResult.fulfillmentMessages[component].suggestions
+                    ){ text_suggestions.push(...last_message.queryResult.fulfillmentMessages[
+                    component
+                    ].suggestions.suggestions.map(suggestion => suggestion.title)) }
+                    if (
+                        last_message.queryResult.fulfillmentMessages[component]
+                        .linkOutSuggestion
+                    ){ link_suggestions.push(last_message.queryResult.fulfillmentMessages[component]
+                    .linkOutSuggestion) }
+                    if (
+                        last_message.queryResult.fulfillmentMessages[component].quickReplies
+                    ){ text_suggestions.push(...last_message.queryResult.fulfillmentMessages[component]
+                    .quickReplies.quickReplies) }
+                    if (
+                        last_message.queryResult.fulfillmentMessages[component].payload &&
+            last_message.queryResult.fulfillmentMessages[component].payload
+            .richContent
+                    ){
+                        last_message.queryResult.fulfillmentMessages[
+                        component
+                        ].payload.richContent.forEach(stack => {
                             const chips = stack.find(item => item.type == 'chips')
                             if (chips) link_suggestions.push(...chips.options)
                         })
@@ -461,14 +632,27 @@ export default {
                 }
 
                 /* Google Suggestions */
-                if (last_message.queryResult.webhookPayload && last_message.queryResult.webhookPayload.google){
-                    for (const component in last_message.queryResult.webhookPayload.google){
-                        if (last_message.queryResult.webhookPayload.google[component].suggestions) text_suggestions.push(...last_message.queryResult.webhookPayload.google[component].suggestions.map(suggestion => suggestion.title))
-                        if (last_message.queryResult.webhookPayload.google[component].linkOutSuggestion) link_suggestions.push(last_message.queryResult.webhookPayload.google[component].linkOutSuggestion)
+                if (
+                    last_message.queryResult.webhookPayload &&
+          last_message.queryResult.webhookPayload.google
+                ){
+                    for (const component in last_message.queryResult.webhookPayload
+                    .google){
+                        if (
+                            last_message.queryResult.webhookPayload.google[component]
+                            .suggestions
+                        ){ text_suggestions.push(...last_message.queryResult.webhookPayload.google[
+                        component
+                        ].suggestions.map(suggestion => suggestion.title)) }
+                        if (
+                            last_message.queryResult.webhookPayload.google[component]
+                            .linkOutSuggestion
+                        ){ link_suggestions.push(last_message.queryResult.webhookPayload.google[component]
+                        .linkOutSuggestion) }
                     }
                 }
 
-                return {text_suggestions, link_suggestions}
+                return { text_suggestions, link_suggestions }
             }
 
             return {
@@ -477,7 +661,7 @@ export default {
         }
     },
     watch: {
-        /* This function is triggered, when new messages arrive */
+    /* This function is triggered, when new messages arrive */
         messages(messages){
             if (this.history()) sessionStorage.setItem('message_history', JSON.stringify(messages)) // <- Save history if the feature is enabled
         },
@@ -486,8 +670,11 @@ export default {
             setTimeout(() => {
                 const app = document.querySelector('#app') // <- We need to scroll down #app, to prevent the whole page jumping to bottom, when using in iframe
                 if (app.querySelector('#message')){
-                    const message = app.querySelectorAll('#message')[app.querySelectorAll('#message').length - 1].offsetTop - 70
-                    window.scrollTo({top: message, behavior: 'smooth'})
+                    const message =
+            app.querySelectorAll('#message')[
+            app.querySelectorAll('#message').length - 1
+            ].offsetTop - 70
+                    window.scrollTo({ top: message, behavior: 'smooth' })
                 }
             }, 2) // <- wait for render (timeout) and then smoothly scroll #app down to the last message
         },
@@ -498,13 +685,17 @@ export default {
         }
     },
     created(){
-        /* Mute audio to comply with auto-play policies */
+    /* Mute audio to comply with auto-play policies */
         this.audio.muted = true
         this.voices = speechSynthesis.getVoices()
-        this.config.voice = this.voices.length ? this.voices[0].voiceURI : this.config.voice
+        this.config.voice = this.voices.length
+            ? this.voices[0].voiceURI
+            : this.config.voice
         speechSynthesis.onvoiceschanged = () => {
             this.voices = speechSynthesis.getVoices()
-            this.config.voice = this.voices.length ? this.voices[0].voiceURI : this.config.voice
+            this.config.voice = this.voices.length
+                ? this.voices[0].voiceURI
+                : this.config.voice
             console.log(`Voices #: ${this.voices.length}`, this.voices)
         }
         /* If history is enabled, the messages are retrieved from sessionStorage */
@@ -515,9 +706,7 @@ export default {
         /* Session should be persistent (in case of page reload, the context should stay) */
         if (this.history() && sessionStorage.getItem('session') !== null){
             this.session = sessionStorage.getItem('session')
-        }
-
-        else {
+        } else {
             this.session = uuidv1()
             if (this.history()) sessionStorage.setItem('session', this.session)
         }
@@ -525,10 +714,9 @@ export default {
         /* Cache Agent (this will save bandwith) */
         if (this.history() && sessionStorage.getItem('agent') !== null){
             this.agent = JSON.parse(sessionStorage.getItem('agent'))
-        }
-
-        else {
-            this.client.get()
+        } else {
+            this.client
+            .get()
             .then(agent => {
                 this.agent = agent
                 if (this.history()) sessionStorage.setItem('agent', JSON.stringify(agent))
@@ -556,10 +744,8 @@ export default {
                         }
                     }
                 }
-            }
-
-            /* Audio request */
-            else if (submission.audio){
+            } else if (submission.audio){
+                /* Audio request */
                 request = {
                     session: this.session,
                     queryInput: {
@@ -577,7 +763,8 @@ export default {
             this.error = null
 
             /* Send the request to endpoint */
-            this.client.send(request)
+            this.client
+            .send(request)
             .then(response => {
                 this.messages.push(response)
                 this.handle(response) // <- trigger the handle function (explanation below)
@@ -592,27 +779,43 @@ export default {
             /* Speech output */
             if (response.outputAudio.data.length){
                 /* Detect MIME type (or fallback to default) */
-                const mime = this.config.codecs[response.outputAudioConfig.audioEncoding] || this.config.codecs.OUTPUT_AUDIO_ENCODING_UNSPECIFIED
+                const mime =
+          this.config.codecs[response.outputAudioConfig.audioEncoding] ||
+          this.config.codecs.OUTPUT_AUDIO_ENCODING_UNSPECIFIED
                 this.audio.src = `data:${mime};base64,${response.outputAudio}`
                 this.audio.onended = () => this.$refs.input.listen()
 
                 if (!this.muted) this.audio.play()
-            }
-
-            else {
+            } else {
                 let text = '' // <- init a text variable
 
                 /* Dialogflow Text/SimpleResponses */
                 for (const component in response.queryResult.fulfillmentMessages){
                     if (response.queryResult.fulfillmentMessages[component].text) text += `${response.queryResult.fulfillmentMessages[component].text.text[0]}. `
-                    if (response.queryResult.fulfillmentMessages[component].simpleResponses && response.queryResult.fulfillmentMessages[component].simpleResponses.simpleResponses[0].textToSpeech) text += `${response.queryResult.fulfillmentMessages[component].simpleResponses.simpleResponses[0].textToSpeech}. `
+                    if (
+                        response.queryResult.fulfillmentMessages[component]
+                        .simpleResponses &&
+            response.queryResult.fulfillmentMessages[component].simpleResponses
+            .simpleResponses[0].textToSpeech
+                    ) text += `${response.queryResult.fulfillmentMessages[component].simpleResponses.simpleResponses[0].textToSpeech}. `
                     if (response.queryResult.fulfillmentMessages[component].rbmText) text += `${response.queryResult.fulfillmentMessages[component].rbmText.text}. `
                 }
 
                 /* Actions on Google Simple response */
-                if (response.queryResult.webhookPayload && response.queryResult.webhookPayload.google){
-                    for (const component in response.queryResult.webhookPayload.google.richResponse.items){
-                        if (response.queryResult.webhookPayload.google.richResponse.items[component].simpleResponse && response.queryResult.webhookPayload.google.richResponse.items[component].simpleResponse.textToSpeech) text += `${response.queryResult.webhookPayload.google.richResponse.items[component].simpleResponse.textToSpeech}. `
+                if (
+                    response.queryResult.webhookPayload &&
+          response.queryResult.webhookPayload.google
+                ){
+                    for (const component in response.queryResult.webhookPayload.google
+                    .richResponse.items){
+                        if (
+                            response.queryResult.webhookPayload.google.richResponse.items[
+                            component
+                            ].simpleResponse &&
+              response.queryResult.webhookPayload.google.richResponse.items[
+              component
+              ].simpleResponse.textToSpeech
+                        ) text += `${response.queryResult.webhookPayload.google.richResponse.items[component].simpleResponse.textToSpeech}. `
                     }
                 }
 
@@ -648,4 +851,15 @@ body
     max-width: var(--container-width)
     margin: auto auto
     padding: 70px 12px 112px 12px
+
+.bot-profile
+    position: absolute
+    left: 0
+
+.bot-profile img
+    width: 30vw
+
+@media only screen and (max-width: 600px)
+  .bot-profile
+    display: none
 </style>
