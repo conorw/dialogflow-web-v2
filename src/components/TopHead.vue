@@ -15,7 +15,7 @@
             >
             <div class="top-head-info">
                 <div class="top-head-title">{{agent.displayName}}</div>
-                <div class="top-head-subtitle">
+                <!-- <div class="top-head-subtitle">
                     {{(translations[lang()] && translations[lang()].poweredBy) ||
                         translations[config.fallback_lang].poweredBy}}
                     <a
@@ -25,25 +25,38 @@
                         aria-hidden="true"
                     >Dialogflow Gateway</a
                     >
-                </div>
+                </div> -->
                 <button
                     class="top-head-button start"
+                    title="Start training"
+                    aria-label="Start training"
                     @click="submit({ text: 'training' })"
                 >
-                    Start Training
+                    <i class="material-icons" aria-hidden="true">model_training</i>
                 </button>
                 <button
+                    aria-label="Cancel"
+                    title="Cancel"
                     class="top-head-button stop"
                     @click="submit({ text: 'cancel' })"
                 >
-                    Stop Training
+                    <i class="material-icons" aria-hidden="true">cancel</i>
                 </button>
-                Voice:
-                <select @change="onchange($event)">
-                    <option v-for="option in voices" :key="option.voiceURI" :value="option.voiceURI">
-                        {{option.name}}
-                    </option>
-                </select>
+                <span style="display:none">Voice:
+                    <select @change="onchange($event)">
+                        <option v-for="option in voices" :key="option.voiceURI" :value="option.voiceURI">
+                            {{option.name}}
+                        </option>
+                    </select>
+                </span>
+                <button
+                    class="top-head-button feedback"
+                    aria-label="Feedback"
+                    title="Feedback"
+                    @click="submit({ text: 'feedback' })"
+                >
+                    <i class="material-icons" aria-hidden="true">feedback</i>
+                </button>
             </div>
         </div>
         <slot />
@@ -123,23 +136,25 @@ export default {
         text-decoration: none
 
 .top-head-button
-  border: 1px solid black
-  background-color: white
+  background-color: transparent
+  border: 0
   color: black
   padding: 1px 2px
   font-size: small
   cursor: pointer
 
 .top-head-button.start
-  border-color: #4CAF50
   color: green
 
 .top-head-button.stop
-  border-color: #f44336
   color: red
+
+.top-head-button.feedback
+  color: blue
 
 .top-head-button:hover
   background: #2196F3
   color: white
+
 </style>
 

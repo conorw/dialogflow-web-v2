@@ -541,7 +541,6 @@ export default {
     methods: {
         voiceChanged(data){
             this.config.voice = data
-            console.log(data)
         },
         send(submission){
             let request
