@@ -2,6 +2,24 @@
     <div class="rich-bubble" tabindex="0" :class="{'me': me, 'loading': loading}">{{text}}</div>
 </template>
 
+<script>
+export default {
+    name: 'RichBubble',
+    props: {
+        text: {
+            type: String,
+            required: false,
+            default: ''
+        },
+        me: {
+            type: Boolean
+        },
+        loading: {
+            type: Boolean
+        }
+    }
+}
+</script>
 <style lang="sass" scoped>
 .rich-bubble
     padding: 12px
@@ -53,22 +71,3 @@
     100%
         opacity: 0
 </style>
-
-<script>
-export default {
-    name: 'RichBubble',
-    props: {
-        text: {
-            type: String,
-            required: false,
-            default: ''
-        },
-        me: {
-            type: Boolean
-        },
-        loading: {
-            type: Boolean
-        }
-    }
-}
-</script>

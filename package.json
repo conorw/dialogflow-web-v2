@@ -12,6 +12,7 @@
     "@google-cloud/dialogflow": "^3.3.0",
     "airtable": "^0.10.1",
     "audio-recorder-polyfill": "^0.4.0",
+    "axios": "^0.21.0",
     "core-js": "^3.7.0",
     "dialogflow": "^1.2.0",
     "dialogflow-gateway": "0.1.0",
