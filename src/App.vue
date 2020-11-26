@@ -21,29 +21,29 @@
                 @click.native="muted = !muted"
             />
         </TopHead>
+        <section class="bot-profile" aria-live="polite">
+            <img
+                v-if="agent.avatarUri"
+                class="top-head-icon"
+                :alt="agent.displayName"
+                :src="agent.avatarUri"
+            >
+            <img
+                v-else
+                class="top-head-icon"
+                src="/img/icon.png"
+                :alt="agent.displayName"
+            >
+            <div class="bot-title">{{agent.displayName}}</div>
+        </section>
         <section class="chat">
             <!-- Error component is for displaying errors -->
             <ErrorMessage v-if="error" :message="error" />
 
             <!-- Welcome component is for onboarding experience and language picker -->
             <WelcomeView v-if="agent && messages.length == 0" :agent="agent" />
-
             <!-- Messages Table -->
             <section v-else aria-live="polite">
-                <section class="bot-profile" aria-live="polite">
-                    <img
-                        v-if="agent.avatarUri"
-                        class="top-head-icon"
-                        :alt="agent.displayName"
-                        :src="agent.avatarUri"
-                    >
-                    <img
-                        v-else
-                        class="top-head-icon"
-                        src="/img/icon.png"
-                        :alt="agent.displayName"
-                    >
-                </section>
                 <div v-for="message in messages" id="message" :key="message.responseId">
                     <!-- My message -->
                     <RichComponent
@@ -853,13 +853,21 @@ body
     padding: 70px 12px 112px 12px
 
 .bot-profile
-    position: absolute
-    left: 0
+    position: -webkit-sticky
+    position: sticky
+    top: 15%
 
-.bot-profile img
+.bot-profile
     width: 30vw
 
 @media only screen and (max-width: 600px)
   .bot-profile
     display: none
+
+.bot-title
+    font-size: xx-large
+    font-weight: bold
+    color: var(--text-title)
+    line-height: 25px
+    text-align: center
 </style>
