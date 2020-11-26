@@ -378,6 +378,25 @@ export const handleSearchIntent = async (intentresponse: dialogflow.protos.googl
                     }
                 }] as any
                 intentresponse.queryResult.fulfillmentMessages = newFulfillment
+            } else {
+                const newFulfillment = [{
+                    'platform': 'ACTIONS_ON_GOOGLE',
+                    'basicCard': {
+                        'title': 'No Results',
+                        'subtitle': 'Sorry, I didn\'t find any answers online.',
+                        'formattedText': 'Try asking in a different way. Or would you like to open google search?',
+                        'image': {},
+                        'buttons': [
+                            {
+                                'title': 'View on Google',
+                                'openUriAction': {
+                                    'uri': `https://www.google.com/search?q=${encodeURIComponent(q)}`
+                                }
+                            }
+                        ]
+                    }
+                }] as any
+                intentresponse.queryResult.fulfillmentMessages = newFulfillment
             }
         }
     }

@@ -6,9 +6,9 @@ export interface searchResult{
     AbstractURL: string
 }
 export const search = async (q: string) : Promise<searchResult> => {
-    const res = await axios.default.get(`https://api.duckduckgo.com/?q=${q}&format=json`)
+    const res = await axios.default.get(`https://api.duckduckgo.com/?q=${encodeURIComponent(q)}&format=json`)
     console.log(res)
-    if (res.data && res.status === 200){
+    if (res.data && res.status === 200 && res.data.AbstractText){
         return {
             Engine: 'DuckDuckGo',
             AbstractSource: res.data.AbstractSource,
