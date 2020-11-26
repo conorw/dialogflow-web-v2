@@ -860,6 +860,9 @@ body
 .bot-profile
     width: 30vw
 
+.bot-profile img
+    width: 100%
+
 @media only screen and (max-width: 600px)
   .bot-profile
     display: none
