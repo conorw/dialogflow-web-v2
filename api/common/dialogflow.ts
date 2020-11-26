@@ -130,6 +130,41 @@ export const handleTrainingIntent = async (intentresponse: dialogflow.protos.goo
         const intentName = params['intent-name'] ? params['intent-name'].stringValue : ''
         const question1 = params['training-question-1'] ? params['training-question-1'].stringValue : ''
         const answer = params['training-answer'] ? params['training-answer'].stringValue : ''
+        const trainingCategories = [{ title: 'general' },
+            { title: 'emoji' },
+            { title: 'about-bot' },
+            { title: 'about-user' },
+            { title: 'greeting' }]
+        if (!intentCategory && answer){
+            console.log('Adding category values to response')
+            const newFulfillment = [{
+                'platform': 'ACTIONS_ON_GOOGLE',
+                'simpleResponses': {
+                    'simpleResponses': [
+                        {
+                            'textToSpeech': `CATEGORY: You need to tell me what category this new skill belongs in?
+\n
+"about-bot" if the question will be about the bot
+\n
+"about-user" if its something the user might say about themselves
+\n
+"emoji" if you are going to train me how to reply to an emoji
+\n
+"greeting" if you are going to train me how to reply to things like "hello" and "goodbye"
+\n
+"general" if you dont know what category the question or phrase might belong to.`
+                        }
+                    ]
+                }
+            },
+            {
+                'platform': 'ACTIONS_ON_GOOGLE',
+                'suggestions': {
+                    'suggestions': trainingCategories
+                }
+            }] as any
+            intentresponse.queryResult.fulfillmentMessages = newFulfillment
+        }
         // if this is the intent-name question, return the entity options for the category
         if (intentCategory && !intentName){
             console.log('Adding category values to response')
@@ -140,7 +175,9 @@ export const handleTrainingIntent = async (intentresponse: dialogflow.protos.goo
                     'simpleResponses': {
                         'simpleResponses': [
                             {
-                                'textToSpeech': 'MEMORABLE NAME: Give your question a name so you can add more details when you are finished'
+                                'textToSpeech': `MEMORABLE NAME: 
+Give your question a name so you can add more details when you are finished.
+If a suitable option is not available below, just type a new name`
                             }
                         ]
                     }
