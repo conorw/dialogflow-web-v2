@@ -208,7 +208,7 @@ export default {
         onSelectEmoji(emoji){
             this.query += emoji.data
             // Optional
-            // this.toogleDialogEmoji();
+            this.toogleDialogEmoji()
         },
         listen(){
             if (this.should_listen) this.microphone = true
