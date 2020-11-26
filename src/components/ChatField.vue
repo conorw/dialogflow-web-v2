@@ -15,7 +15,6 @@
             />
             <div class="chat-field-flexible">
                 <!-- Text input -->
-                <button @click="toogleDialogEmoji">😃</button>
                 <textarea
                     v-model="query"
                     class="chat-field-input"
@@ -35,8 +34,7 @@
                         should_listen = false;
                         $emit('typing');
                     "
-                >
-                </textarea>
+                />
 
                 <!-- Send message button (arrow button) -->
                 <transition name="chat-field-button-animation" mode="out-in">
@@ -76,6 +74,39 @@
                         <i class="material-icons" aria-hidden="true">mic</i>
                     </button>
                 </transition>
+            </div>
+            <div class="training-options">
+                <button
+                    aria-label="Emoji"
+                    class="top-head-button emoji"
+                    @click="toogleDialogEmoji"
+                >
+                    <i class="material-icons" aria-hidden="true">emoji_emotions</i>
+                </button>
+                <button
+                    class="top-head-button start"
+                    title="Start training"
+                    aria-label="Start training"
+                    @click="submit({ text: 'training' })"
+                >
+                    <i class="material-icons" aria-hidden="true">model_training</i>
+                </button>
+                <button
+                    aria-label="Cancel"
+                    title="Cancel"
+                    class="top-head-button stop"
+                    @click="submit({ text: 'cancel' })"
+                >
+                    <i class="material-icons" aria-hidden="true">cancel</i>
+                </button>
+                <button
+                    class="top-head-button feedback"
+                    aria-label="Feedback"
+                    title="Feedback"
+                    @click="submit({ text: 'feedback' })"
+                >
+                    <i class="material-icons" aria-hidden="true">feedback</i>
+                </button>
             </div>
         </div>
     </div>
@@ -256,5 +287,28 @@ export default {
 .chat-field-button-animation-enter, .chat-field-button-animation-leave-to
     transform: scale(0)
     opacity: 0
-</style>
 
+.top-head-button
+  background-color: transparent
+  border: 0
+  color: black
+  padding: 1px 2px
+  font-size: small
+  cursor: pointer
+
+.top-head-button.start
+  color: green
+
+.top-head-button.stop
+  color: red
+
+.top-head-button.feedback
+  color: blue
+
+.top-head-button.emoji
+  color: goldenrod
+
+.top-head-button:hover
+  background: #2196F3
+  color: white
+</style>

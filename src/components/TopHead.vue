@@ -26,22 +26,6 @@
                     >Dialogflow Gateway</a
                     >
                 </div> -->
-                <button
-                    class="top-head-button start"
-                    title="Start training"
-                    aria-label="Start training"
-                    @click="submit({ text: 'training' })"
-                >
-                    <i class="material-icons" aria-hidden="true">model_training</i>
-                </button>
-                <button
-                    aria-label="Cancel"
-                    title="Cancel"
-                    class="top-head-button stop"
-                    @click="submit({ text: 'cancel' })"
-                >
-                    <i class="material-icons" aria-hidden="true">cancel</i>
-                </button>
                 <span style="display:none">Voice:
                     <select @change="onchange($event)">
                         <option v-for="option in voices" :key="option.voiceURI" :value="option.voiceURI">
@@ -49,14 +33,6 @@
                         </option>
                     </select>
                 </span>
-                <button
-                    class="top-head-button feedback"
-                    aria-label="Feedback"
-                    title="Feedback"
-                    @click="submit({ text: 'feedback' })"
-                >
-                    <i class="material-icons" aria-hidden="true">feedback</i>
-                </button>
             </div>
         </div>
         <slot />
@@ -134,27 +110,6 @@ export default {
     a[href]
         color: var(--text-primary)
         text-decoration: none
-
-.top-head-button
-  background-color: transparent
-  border: 0
-  color: black
-  padding: 1px 2px
-  font-size: small
-  cursor: pointer
-
-.top-head-button.start
-  color: green
-
-.top-head-button.stop
-  color: red
-
-.top-head-button.feedback
-  color: blue
-
-.top-head-button:hover
-  background: #2196F3
-  color: white
 
 </style>
 
