@@ -256,6 +256,7 @@ export default {
 .chat-field-input
     font-size: 16px
     width: 100%
+    height: 50px
     box-sizing: border-box
     border: none
     padding: 10px 0 10px 12px
