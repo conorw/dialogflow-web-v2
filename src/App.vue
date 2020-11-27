@@ -732,7 +732,6 @@ export default {
         },
         send(submission){
             let request
-
             /* Text request */
             if (submission.text){
                 request = {

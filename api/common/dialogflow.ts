@@ -16,6 +16,11 @@ export const intentClient = new dialogflow.IntentsClient({
         client_email: process.env.SERVICE_ACCOUNT_EMAIL
     }
 })
+const trainingCategories = [{ title: 'general' },
+    { title: 'emoji' },
+    { title: 'about-bot' },
+    { title: 'about-user' },
+    { title: 'greeting' }]
 export const entityClient = new dialogflow.EntityTypesClient({
     credentials: {
         // <-- Initialize with service account
@@ -31,11 +36,14 @@ export const sessionClient = new dialogflow.SessionsClient({
         client_email: process.env.SERVICE_ACCOUNT_EMAIL
     }
 })
-export const findIntent = async (intentDisplayName: string) => {
+export const findAllIntents = async (intentView: 'INTENT_VIEW_FULL' | 'INTENT_VIEW_UNSPECIFIED' = 'INTENT_VIEW_UNSPECIFIED') => {
     let parent = intentClient.projectPath(process.env.PERSONALITY_ACCOUNT_PROJECT_ID)
     parent = `${parent}/agent`
-    console.log(`Finding intent: ${intentDisplayName} | Parent: ${parent}`)
-    const intents = await intentClient.listIntents({ parent }) as any[]
+    console.log(`Finding intents: Parent: ${parent}`)
+    return await intentClient.listIntents({ parent, intentView }) as dialogflow.protos.google.cloud.dialogflow.v2.IIntent[][]
+}
+export const findIntent = async (intentDisplayName: string) => {
+    const intents = await findAllIntents()
     let intent
     for (const t of intents){
         if (t){
@@ -122,19 +130,14 @@ export const handleTrainingIntent = async (intentresponse: dialogflow.protos.goo
     console.log(intentresponse.queryResult.parameters.fields)
 
     if (intentresponse.queryResult.parameters
-                        && intentresponse.queryResult.parameters.fields
-                        && intentresponse.queryResult.parameters.fields['training-answer']){
+        && intentresponse.queryResult.parameters.fields
+        && intentresponse.queryResult.parameters.fields['training-answer']){
         const params = intentresponse.queryResult.parameters.fields
         console.log(params)
         const intentCategory = params['intent-category'] ? params['intent-category'].stringValue : ''
         const intentName = params['intent-name'] ? params['intent-name'].stringValue : ''
         const question1 = params['training-question-1'] ? params['training-question-1'].stringValue : ''
         const answer = params['training-answer'] ? params['training-answer'].stringValue : ''
-        const trainingCategories = [{ title: 'general' },
-            { title: 'emoji' },
-            { title: 'about-bot' },
-            { title: 'about-user' },
-            { title: 'greeting' }]
         if (!intentCategory && answer){
             console.log('Adding category values to response')
             const newFulfillment = [{
@@ -192,9 +195,9 @@ If a suitable option is not available below, just type a new name`
             }
         }
         if (question1
-                            && answer
-                            && intentName
-                            && intentCategory){
+            && answer
+            && intentName
+            && intentCategory){
             const lowerIntentName = intentName.toLowerCase().replace(' ', '.').trim()
             const lowerIntentCategory = intentCategory.toLowerCase().replace(' ', '-').trim()
             const combinedName = `${lowerIntentCategory}.${lowerIntentName}`
@@ -213,6 +216,7 @@ If a suitable option is not available below, just type a new name`
     }
     return intentresponse
 }
+
 export const getFormattedFulfillment = (intentresponse: dialogflow.protos.google.cloud.dialogflow.v2.IDetectIntentResponse) => {
     const fulfillment = intentresponse.queryResult.fulfillmentMessages
 
@@ -231,13 +235,13 @@ export const getFormattedFulfillment = (intentresponse: dialogflow.protos.google
         /* Recognize Dialogflow, Messenger and Webhook components */
         if (
             fulfillment[component].platform == 'PLATFORM_UNSPECIFIED' ||
-                            fulfillment[component].platform == 'FACEBOOK' ||
-                            fulfillment[component].platform == 'SLACK' ||
-                            fulfillment[component].platform == 'TELEGRAM' ||
-                            fulfillment[component].platform == 'KIK' ||
-                            fulfillment[component].platform == 'VIBER' ||
-                            fulfillment[component].platform == 'SKYPE' ||
-                            fulfillment[component].platform == 'LINE'
+            fulfillment[component].platform == 'FACEBOOK' ||
+            fulfillment[component].platform == 'SLACK' ||
+            fulfillment[component].platform == 'TELEGRAM' ||
+            fulfillment[component].platform == 'KIK' ||
+            fulfillment[component].platform == 'VIBER' ||
+            fulfillment[component].platform == 'SKYPE' ||
+            fulfillment[component].platform == 'LINE'
         ){
             if (fulfillment[component].text){
                 /* Text */
@@ -264,7 +268,7 @@ export const getFormattedFulfillment = (intentresponse: dialogflow.protos.google
                         title: fulfillment[component].card.buttons[button].text,
                         openUriAction: {
                             uri:
-                                                fulfillment[component].card.buttons[button].postback
+                                fulfillment[component].card.buttons[button].postback
                         }
                     })
                 }
@@ -307,7 +311,7 @@ export const getFormattedFulfillment = (intentresponse: dialogflow.protos.google
                 formatted.components.push({
                     name: 'SIMPLE_RESPONSE',
                     content:
-                                        fulfillment[component].simpleResponses.simpleResponses[0]
+                        fulfillment[component].simpleResponses.simpleResponses[0]
                 })
             }
 
@@ -386,12 +390,12 @@ export const handleSearchIntent = async (intentresponse: dialogflow.protos.googl
     console.log(intentresponse.queryResult.parameters.fields)
 
     if (intentresponse.queryResult.parameters
-                        && intentresponse.queryResult.parameters.fields
-                        && intentresponse.queryResult.parameters.fields.q){
+        && intentresponse.queryResult.parameters.fields
+        && intentresponse.queryResult.parameters.fields.q){
         const params = intentresponse.queryResult.parameters.fields
         const service = params.service ? params.service.stringValue : ''
         const q = params.q ? params.q.stringValue : ''
-        console.log('Searching...', {params, service, q, intentresponse})
+        console.log('Searching...', { params, service, q, intentresponse })
         // if this is the intent-name question, return the entity options for the category
         if (q){
             console.log('Searching web')
