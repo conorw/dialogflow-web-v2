@@ -161,7 +161,7 @@ export const handleTrainingIntent = async (intentresponse: dialogflow.protos.goo
 
     if (intentresponse.queryResult.parameters
         && intentresponse.queryResult.parameters.fields
-        && intentresponse.queryResult.parameters.fields['training-answer']){
+        && intentresponse.queryResult.parameters.fields.answer){
         const params = intentresponse.queryResult.parameters.fields
         console.log(params)
         const intentCategory = params.category ? params.category.stringValue : ''
@@ -242,6 +242,7 @@ If a suitable option is not available below, just type a new name`
                 console.log('Create new intent')
                 await createIntent(combinedName, [question1], answer)
             }
+            await updateParentContext(intentresponse.queryResult.outputContexts, combinedName, question1, answer)
         }
     }
     return intentresponse
@@ -262,22 +263,14 @@ export const handleTrainingFollowUpIntent = async (intentresponse: dialogflow.pr
         const followUpintentName = params['followup-training-name'] ? params['followup-training-name'].stringValue : ''
         const question1 = params['followup-training-question-1'] ? params['followup-training-question-1'].stringValue : ''
         const answer = params['followup-training-answer'] ? params['followup-training-answer'].stringValue : ''
-        // console.log('PARAMS', {
-        //     question1,
-        //     answer,
-        //     followUpintentName,
-        //     intentCategory,
-        //     intentName,
-        //     contexts: intentresponse.queryResult.outputContexts
-        // })
+
         if (question1
             && answer
             && intentName
             && intentCategory){
             const lowerIntentName = intentName.toLowerCase().replace(/ /gi, '.').trim()
             const lowerFollowUpIntentName = followUpintentName.toLowerCase().replace(/ /gi, '.').trim()
-            const lowerIntentCategory = intentCategory.toLowerCase().replace(/ /gi, '-').trim()
-            const previousContext = `${lowerIntentCategory}.${lowerIntentName}`
+            const previousContext = lowerIntentName
             const combinedName = `${previousContext}.${lowerFollowUpIntentName}`
             console.log('followup names', { combinedName, intentCategory, intentName, question1, answer })
             console.log(`Creating followup intent:${combinedName}`, { previousContext })
@@ -290,13 +283,9 @@ export const handleTrainingFollowUpIntent = async (intentresponse: dialogflow.pr
                 console.log('Create new followup intent')
                 await createIntent(combinedName, [question1], answer, previousContext)
             }
-            parentContext.parameters.fields = {...parentContext.parameters.fields,
-                'intent': { stringValue: combinedName },
-                'question': { stringValue: question1 },
-                'answer': { stringValue: answer }
-            }
-            intentresponse.queryResult.outputContexts = intentresponse.queryResult.outputContexts.filter(t => t.name.toLowerCase() !== FOLLOWUP_PARENT)
-            intentresponse.queryResult.outputContexts.push(parentContext)
+            // intentresponse.queryResult.outputContexts = intentresponse.queryResult.outputContexts.filter(t => !t.name.toLowerCase().includes(FOLLOWUP_PARENT))
+            // intentresponse.queryResult.outputContexts.push(parentContext)
+            await updateParentContext(intentresponse.queryResult.outputContexts, combinedName, question1, answer)
         }
     }
     return intentresponse
@@ -470,11 +459,24 @@ export const handleFeedbackIntent = async (intentresponse: dialogflow.protos.goo
     }
     return intentresponse
 }
-export const setContextParams = async (name: string,
-    parameters: dialogflow.protos.google.protobuf.IStruct) => {
-    await conextClient.updateContext({
-        context: { name, parameters }
-    })
+export const updateParentContext = async (contexts: dialogflow.protos.google.cloud.dialogflow.v2.IContext[],
+    combinedName: string,
+    question1: string,
+    answer: string) => {
+    try {
+        const parentContext = contexts.find(t => t.name.toLowerCase().includes(FOLLOWUP_PARENT))
+        if (parentContext){
+            parentContext.parameters.fields = {...parentContext.parameters.fields,
+                'name': { stringValue: combinedName },
+                'question': { stringValue: question1 },
+                'answer': { stringValue: answer }
+            }
+            const ret = await conextClient.updateContext({context: parentContext})
+            return ret
+        }
+    } catch (error){
+        console.log(error)
+    }
 }
 export const handleSearchIntent = async (intentresponse: dialogflow.protos.google.cloud.dialogflow.v2.IDetectIntentResponse) => {
     console.log('SEARCH!!!')
