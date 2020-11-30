@@ -164,10 +164,10 @@ export const handleTrainingIntent = async (intentresponse: dialogflow.protos.goo
         && intentresponse.queryResult.parameters.fields['training-answer']){
         const params = intentresponse.queryResult.parameters.fields
         console.log(params)
-        const intentCategory = params['intent-category'] ? params['intent-category'].stringValue : ''
-        const intentName = params['intent-name'] ? params['intent-name'].stringValue : ''
-        const question1 = params['training-question-1'] ? params['training-question-1'].stringValue : ''
-        const answer = params['training-answer'] ? params['training-answer'].stringValue : ''
+        const intentCategory = params.category ? params.category.stringValue : ''
+        const intentName = params.name ? params.name.stringValue : ''
+        const question1 = params.question ? params.question.stringValue : ''
+        const answer = params.answer ? params.answer.stringValue : ''
         if (!intentCategory && answer){
             console.log('Adding category values to response')
             const newFulfillment = [{
@@ -253,12 +253,12 @@ export const handleTrainingFollowUpIntent = async (intentresponse: dialogflow.pr
         && intentresponse.queryResult.allRequiredParamsPresent){
         const params = intentresponse.queryResult.parameters.fields
         const parentContext = intentresponse.queryResult.outputContexts.find(t => t.name.toLowerCase().includes(FOLLOWUP_PARENT))
-        const newContext = intentresponse.queryResult.outputContexts.find(t => t.name.toLowerCase().includes(FOLLOWUP_CONTEXT))
+        // const newContext = intentresponse.queryResult.outputContexts.find(t => t.name.toLowerCase().includes(FOLLOWUP_CONTEXT))
 
-        console.log('CONTEXTS', {parentContext, newContext})
+        console.log('CONTEXTS', {parentContext})
 
-        const intentCategory = parentContext.parameters.fields['intent-category'].stringValue
-        const intentName = parentContext.parameters.fields['intent-name'].stringValue
+        const intentCategory = parentContext.parameters.fields.category.stringValue
+        const intentName = parentContext.parameters.fields.name.stringValue
         const followUpintentName = params['followup-training-name'] ? params['followup-training-name'].stringValue : ''
         const question1 = params['followup-training-question-1'] ? params['followup-training-question-1'].stringValue : ''
         const answer = params['followup-training-answer'] ? params['followup-training-answer'].stringValue : ''
@@ -290,17 +290,13 @@ export const handleTrainingFollowUpIntent = async (intentresponse: dialogflow.pr
                 console.log('Create new followup intent')
                 await createIntent(combinedName, [question1], answer, previousContext)
             }
-            intentresponse.queryResult.outputContexts = intentresponse.queryResult.outputContexts.map(ctx => {
-                ctx.parameters.fields = {...ctx.parameters.fields,
-                    'intent-name': { stringValue: combinedName },
-                    'intent-name.original': { stringValue: combinedName },
-                    'training-question-1': { stringValue: question1 },
-                    'training-question-1.original': { stringValue: question1 },
-                    'training-answer': { stringValue: answer },
-                    'training-answer.original': { stringValue: answer }
-                }
-                return ctx
-            })
+            parentContext.parameters.fields = {...parentContext.parameters.fields,
+                'intent': { stringValue: combinedName },
+                'question': { stringValue: question1 },
+                'answer': { stringValue: answer }
+            }
+            intentresponse.queryResult.outputContexts = intentresponse.queryResult.outputContexts.filter(t => t.name.toLowerCase() !== FOLLOWUP_PARENT)
+            intentresponse.queryResult.outputContexts.push(parentContext)
         }
     }
     return intentresponse
