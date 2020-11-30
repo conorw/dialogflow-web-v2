@@ -1,6 +1,5 @@
 import { NowRequest, NowResponse } from '@vercel/node'
 import { findAllIntents } from '../common/dialogflow'
-const flatMap = (a, cb) => [].concat(...a.map(cb))
 export default async (req: NowRequest, res: NowResponse) => {
     res.setHeader('Content-Type', 'application/json')
     res.setHeader('Access-Control-Allow-Headers',

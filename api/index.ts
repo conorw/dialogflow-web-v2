@@ -1,5 +1,5 @@
 import { NowRequest, NowResponse } from '@vercel/node'
-import { agentsClient, sessionClient, getFormattedFulfillment, handleTrainingIntent, handleFeedbackIntent, handleSearchIntent } from './common/dialogflow'
+import { agentsClient, sessionClient, getFormattedFulfillment, handleTrainingIntent, handleFeedbackIntent, handleSearchIntent, handleTrainingFollowUpIntent } from './common/dialogflow'
 import * as dialogflow from '@google-cloud/dialogflow'
 
 export default async (req: NowRequest, res: NowResponse) => {
@@ -36,16 +36,28 @@ export default async (req: NowRequest, res: NowResponse) => {
             }
 
             try {
+                console.log(request)
                 /* Send our request to Dialogflow */
                 const responses = await sessionClient.detectIntent(request)
                 /* If the response should be formatted (?format=true), then return the format the response */
                 let intentresponse = responses[0] as dialogflow.protos.google.cloud.dialogflow.v2.IDetectIntentResponse
-                if (intentresponse.queryResult && intentresponse.queryResult.intent.displayName === 'feedback'){
-                    intentresponse = await handleFeedbackIntent(intentresponse)
-                } else if (intentresponse.queryResult && intentresponse.queryResult.intent.displayName === 'training.category.details'){
-                    intentresponse = await handleTrainingIntent(intentresponse)
-                } else if (intentresponse.queryResult && intentresponse.queryResult.intent.displayName === 'web.search'){
-                    intentresponse = await handleSearchIntent(intentresponse)
+                if (intentresponse.queryResult){
+                    switch (intentresponse.queryResult.intent.displayName){
+                    case 'feedback':
+                        intentresponse = await handleFeedbackIntent(intentresponse)
+                        break
+                    case 'training.category.details':
+                        intentresponse = await handleTrainingIntent(intentresponse)
+                        break
+                    case 'training.category.details.followup':
+                        intentresponse = await handleTrainingFollowUpIntent(intentresponse)
+                        break
+                    case 'web.search':
+                        intentresponse = await handleSearchIntent(intentresponse)
+                        break
+                    default:
+                        break
+                    }
                 }
                 if (req.query.format == 'true'){
                     const formatted = getFormattedFulfillment(intentresponse)
