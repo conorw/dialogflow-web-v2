@@ -100,17 +100,17 @@ export const findEntity = async (entityName: string) => {
     return entity
 }
 export const updateIntent = async (intent: dialogflow.protos.google.cloud.dialogflow.v2.IIntent, displayName: string, questions: string[], answer: string) => {
-    let parent = intentClient.projectPath(process.env.PERSONALITY_ACCOUNT_PROJECT_ID)
-    parent = `${parent}/agent`
+    // let parent = intentClient.projectPath(process.env.PERSONALITY_ACCOUNT_PROJECT_ID)
+    // parent = `${parent}/agent`
     // console.log(parent)
     if (intent.messages.length){
         intent.messages[0].text.text.push(answer)
     } else {
         // check for duplicates before adding
         // eslint-disable-next-line no-lonely-if
-        // if (!intent.messages[0].text.text.contains(answer)){
-        intent.messages.push({ text: { text: [answer] } })
-        // }
+        if (!intent.messages[0].text.text.find(t => t.toLocaleLowerCase() === answer.toLowerCase())){
+            intent.messages.push({ text: { text: [answer] } })
+        }
     }
     // console.log(intent.trainingPhrases)
     if (intent.trainingPhrases.length){
@@ -256,7 +256,7 @@ export const handleTrainingFollowUpIntent = async (intentresponse: dialogflow.pr
         const parentContext = intentresponse.queryResult.outputContexts.find(t => t.name.toLowerCase().includes(FOLLOWUP_PARENT))
         // const newContext = intentresponse.queryResult.outputContexts.find(t => t.name.toLowerCase().includes(FOLLOWUP_CONTEXT))
 
-        console.log('CONTEXTS', {parentContext})
+        console.log('CONTEXTS', { parentContext })
 
         const intentCategory = parentContext.parameters.fields.category.stringValue
         const intentName = parentContext.parameters.fields.name.stringValue
@@ -466,12 +466,13 @@ export const updateParentContext = async (contexts: dialogflow.protos.google.clo
     try {
         const parentContext = contexts.find(t => t.name.toLowerCase().includes(FOLLOWUP_PARENT))
         if (parentContext){
-            parentContext.parameters.fields = {...parentContext.parameters.fields,
+            parentContext.parameters.fields = {
+                ...parentContext.parameters.fields,
                 'name': { stringValue: combinedName },
                 'question': { stringValue: question1 },
                 'answer': { stringValue: answer }
             }
-            const ret = await conextClient.updateContext({context: parentContext})
+            const ret = await conextClient.updateContext({ context: parentContext })
             return ret
         }
     } catch (error){
