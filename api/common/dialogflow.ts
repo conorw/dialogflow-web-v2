@@ -48,6 +48,7 @@ const trainingCategories = [{ title: 'general' },
     { title: 'greeting' }]
 
 const FOLLOWUP_CONTEXT = 'trainingcategorydetails-custom'
+const FOLLOWUP_PARENT = 'parent-intent'
 
 export const findAllIntents = async (intentView: 'INTENT_VIEW_FULL' | 'INTENT_VIEW_UNSPECIFIED' = 'INTENT_VIEW_UNSPECIFIED') => {
     let parent = intentClient.projectPath(process.env.PERSONALITY_ACCOUNT_PROJECT_ID)
@@ -251,19 +252,24 @@ export const handleTrainingFollowUpIntent = async (intentresponse: dialogflow.pr
     if (intentresponse.queryResult.parameters
         && intentresponse.queryResult.allRequiredParamsPresent){
         const params = intentresponse.queryResult.parameters.fields
-        const intentCategory = intentresponse.queryResult.outputContexts[0].parameters.fields['intent-category'].stringValue
-        const intentName = intentresponse.queryResult.outputContexts[0].parameters.fields['intent-name'].stringValue
+        const parentContext = intentresponse.queryResult.outputContexts.find(t => t.name.toLowerCase().includes(FOLLOWUP_PARENT))
+        const newContext = intentresponse.queryResult.outputContexts.find(t => t.name.toLowerCase().includes(FOLLOWUP_CONTEXT))
+
+        console.log('CONTEXTS', {parentContext, newContext})
+
+        const intentCategory = parentContext.parameters.fields['intent-category'].stringValue
+        const intentName = parentContext.parameters.fields['intent-name'].stringValue
         const followUpintentName = params['followup-training-name'] ? params['followup-training-name'].stringValue : ''
         const question1 = params['followup-training-question-1'] ? params['followup-training-question-1'].stringValue : ''
         const answer = params['followup-training-answer'] ? params['followup-training-answer'].stringValue : ''
-        console.log('PARAMS', {
-            question1,
-            answer,
-            followUpintentName,
-            intentCategory,
-            intentName,
-            contexts: intentresponse.queryResult.outputContexts
-        })
+        // console.log('PARAMS', {
+        //     question1,
+        //     answer,
+        //     followUpintentName,
+        //     intentCategory,
+        //     intentName,
+        //     contexts: intentresponse.queryResult.outputContexts
+        // })
         if (question1
             && answer
             && intentName
