@@ -1,5 +1,5 @@
 import { NowRequest, NowResponse } from '@vercel/node'
-import { agentsClient, sessionClient, getFormattedFulfillment, handleTrainingIntent, handleFeedbackIntent, handleSearchIntent, handleTrainingFollowUpIntent, handleTrainingIntentList } from './common/dialogflow'
+import { agentsClient, sessionClient, getFormattedFulfillment, handleTrainingIntent, handleFeedbackIntent, handleSearchIntent, handleTrainingFollowUpIntent, handleTrainingIntentList, handleTopicIntent } from './common/dialogflow'
 import * as dialogflow from '@google-cloud/dialogflow'
 
 export default async (req: NowRequest, res: NowResponse) => {
@@ -42,9 +42,13 @@ export default async (req: NowRequest, res: NowResponse) => {
                 /* If the response should be formatted (?format=true), then return the format the response */
                 let intentresponse = responses[0] as dialogflow.protos.google.cloud.dialogflow.v2.IDetectIntentResponse
                 if (intentresponse.queryResult){
+                    console.log(intentresponse.queryResult.intent.displayName)
                     switch (intentresponse.queryResult.intent.displayName){
                     case 'feedback':
                         intentresponse = await handleFeedbackIntent(intentresponse)
+                        break
+                    case 'troubling.topics':
+                        intentresponse = await handleTopicIntent(intentresponse)
                         break
                     case 'training.category.details':
                         intentresponse = await handleTrainingIntent(intentresponse)

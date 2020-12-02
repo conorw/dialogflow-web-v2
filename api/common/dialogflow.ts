@@ -1,5 +1,5 @@
 import * as dialogflow from '@google-cloud/dialogflow'
-import { saveFeedback } from './airtable'
+import { saveFeedback, saveTopic } from './airtable'
 import { search } from './search'
 /* AgentsClient retrieves information about the agent */
 export const agentsClient = new dialogflow.AgentsClient({
@@ -455,6 +455,18 @@ export const handleFeedbackIntent = async (intentresponse: dialogflow.protos.goo
         const feedbackAnswer = params['feedback-answer'].stringValue
         if (feedbackName && feedbackAnswer){
             await saveFeedback(feedbackAnswer, feedbackName)
+        }
+    }
+    return intentresponse
+}
+export const handleTopicIntent = async (intentresponse: dialogflow.protos.google.cloud.dialogflow.v2.IDetectIntentResponse) => {
+    if (intentresponse.queryResult.parameters
+        && intentresponse.queryResult.parameters.fields
+        && intentresponse.queryResult.parameters.fields['feedback-answer']){
+        const params = intentresponse.queryResult.parameters.fields
+        const feedbackAnswer = params['feedback-answer'].stringValue
+        if (feedbackAnswer){
+            await saveTopic(feedbackAnswer)
         }
     }
     return intentresponse

@@ -115,6 +115,14 @@
                 >
                     <i class="material-icons" aria-hidden="true">feedback</i>
                 </button>
+                <button
+                    class="top-head-button topics"
+                    aria-label="Troubling Topics"
+                    title="Troubling Topics"
+                    @click="submit({ text: 'Add Troubling Topics' })"
+                >
+                    <i class="material-icons" aria-hidden="true">report</i>
+                </button>
             </div>
         </div>
     </div>
@@ -310,6 +318,9 @@ export default {
 
 .top-head-button.stop
   color: red
+
+.top-head-button.topics
+  color: orange
 
 .top-head-button.feedback
   color: blue
