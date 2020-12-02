@@ -537,3 +537,26 @@ export const handleSearchIntent = async (intentresponse: dialogflow.protos.googl
     }
     return intentresponse
 }
+export const handleTrainingIntentList = async (intentresponse: dialogflow.protos.google.cloud.dialogflow.v2.IDetectIntentResponse) => {
+    console.log('INTENT LIST!!!')
+    const newFulfillment = [{
+        'platform': 'ACTIONS_ON_GOOGLE',
+        'basicCard': {
+            'title': 'View All Training',
+            'subtitle': process.env.VUE_APP_NAME,
+            'formattedText': 'View all the current personality training that your group has done.',
+            'image': {},
+            'buttons': [
+                {
+                    'title': 'View Now',
+                    'openUriAction': {
+                        'uri': `${process.env.VUE_APP_BOT_GATEWAY_URL}/intents`
+                    }
+                }
+            ]
+        }
+    }] as any
+    intentresponse.queryResult.fulfillmentMessages = newFulfillment
+
+    return intentresponse
+}

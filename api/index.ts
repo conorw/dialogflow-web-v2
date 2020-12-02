@@ -1,5 +1,5 @@
 import { NowRequest, NowResponse } from '@vercel/node'
-import { agentsClient, sessionClient, getFormattedFulfillment, handleTrainingIntent, handleFeedbackIntent, handleSearchIntent, handleTrainingFollowUpIntent } from './common/dialogflow'
+import { agentsClient, sessionClient, getFormattedFulfillment, handleTrainingIntent, handleFeedbackIntent, handleSearchIntent, handleTrainingFollowUpIntent, handleTrainingIntentList } from './common/dialogflow'
 import * as dialogflow from '@google-cloud/dialogflow'
 
 export default async (req: NowRequest, res: NowResponse) => {
@@ -48,6 +48,9 @@ export default async (req: NowRequest, res: NowResponse) => {
                         break
                     case 'training.category.details':
                         intentresponse = await handleTrainingIntent(intentresponse)
+                        break
+                    case 'training.intents':
+                        intentresponse = await handleTrainingIntentList(intentresponse)
                         break
                     case 'training.category.details.followup':
                         intentresponse = await handleTrainingFollowUpIntent(intentresponse)
