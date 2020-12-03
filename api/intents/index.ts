@@ -55,9 +55,9 @@ export default async (req: NowRequest, res: NowResponse) => {
                 if (intent){
                     intent.forEach(t => {
                         const user_says = t.trainingPhrases.map(t => t.parts.map(r => r.text)).reduce((a, b) => a.concat(b), [])
-                        phraseCount = phraseCount + user_says?.length
+                        phraseCount = phraseCount + user_says.length
                         const bot_says = t.messages.map(r => r.text.text).reduce((a, b) => a.concat(b), [])
-                        responseCount = responseCount + bot_says?.length
+                        responseCount = responseCount + bot_says.length
                         intentList.push({intent_name: t.displayName,
                             user_says,
                             bot_says
