@@ -50,7 +50,7 @@ const trainingCategories = [{ title: 'general' },
 const FOLLOWUP_CONTEXT = 'trainingcategorydetails-custom'
 const FOLLOWUP_PARENT = 'parent-intent'
 
-export const findAllIntents = async (intentView: 'INTENT_VIEW_FULL' | 'INTENT_VIEW_UNSPECIFIED' = 'INTENT_VIEW_UNSPECIFIED') => {
+export const findAllIntents = async (intentView: 'INTENT_VIEW_FULL' | 'INTENT_VIEW_UNSPECIFIED' = 'INTENT_VIEW_FULL') => {
     let parent = intentClient.projectPath(process.env.PERSONALITY_ACCOUNT_PROJECT_ID)
     parent = `${parent}/agent`
     // console.log(`Finding intents: Parent: ${parent}`)
@@ -120,9 +120,10 @@ export const updateIntent = async (intent: dialogflow.protos.google.cloud.dialog
     } else {
         intent.trainingPhrases.push({ parts: [...questions.map(t => { return { text: t } })] })
     }
+    intent.trainingPhrases.push({ parts: [...questions.map(t => { return { text: t } })] })
 
     const newintent = await intentClient.updateIntent({ intent })
-    console.log(newintent)
+    console.log('NEW INTENT', { newintent })
     return newintent
 }
 export const createIntent = async (displayName: string, questions: string[], answer: string, inputContext?: string) => {
