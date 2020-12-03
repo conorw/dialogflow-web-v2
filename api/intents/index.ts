@@ -48,13 +48,19 @@ export default async (req: NowRequest, res: NowResponse) => {
         try {
             const intents = await findAllIntents('INTENT_VIEW_FULL')
             const intentList = []
+            let phraseCount = 0
+            let responseCount = 0
             // res.send(intents)
             intents.forEach(intent => {
                 if (intent){
                     intent.forEach(t => {
+                        const user_says = t.trainingPhrases.map(t => t.parts.map(r => r.text)).reduce((a, b) => a.concat(b), [])
+                        phraseCount = phraseCount + user_says.length
+                        const bot_says = t.messages.map(r => r.text.text).reduce((a, b) => a.concat(b), [])
+                        responseCount = responseCount + bot_says.length
                         intentList.push({intent_name: t.displayName,
-                            user_says: t.trainingPhrases.map(t => t.parts.map(r => r.text)).reduce((a, b) => a.concat(b), []),
-                            bot_says: t.messages.map(r => r.text.text).reduce((a, b) => a.concat(b), [])
+                            user_says,
+                            bot_says
                         })
                     })
                 }
@@ -82,7 +88,11 @@ export default async (req: NowRequest, res: NowResponse) => {
                 color: white;
               }
               </style>`
-            const html = `<!DOCTYPE html><head>${style}<meta charset="UTF-8"></head><body>${json2table(sorted, 'tbl')} </body></html>`
+            const html = `<!DOCTYPE html><head>${style}<meta charset="UTF-8"></head><body>${json2table(sorted, 'tbl')}<br>
+            Total Intents: <strong>${intentList.length}</strong><br>
+            Training Phrases: <strong>${phraseCount}</strong><br>
+            Training Responses: <strong>${responseCount}</strong><br>
+            </body></html>`
             res.writeHead(200, {
                 'Content-Type': 'text/html',
                 'Content-Length': html.length,
