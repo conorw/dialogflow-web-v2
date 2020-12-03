@@ -123,14 +123,6 @@
                 >
                     <i class="material-icons" aria-hidden="true">report</i>
                 </button>
-                <button
-                    class="top-head-button help"
-                    aria-label="How To Train"
-                    title="How To Train"
-                    @click="submit({ text: 'Add Troubling Topics' })"
-                >
-                    <i class="material-icons" aria-hidden="true">help</i>
-                </button>
             </div>
         </div>
     </div>
