@@ -1,5 +1,40 @@
 import { NowRequest, NowResponse } from '@vercel/node'
 import { findAllIntents } from '../common/dialogflow'
+
+const json2table = (json, classes) => {
+    const cols = Object.keys(json[0])
+
+    let headerRow = ''
+    let bodyRows = ''
+
+    classes = classes || ''
+
+    function capitalizeFirstLetter(string){
+        return string.charAt(0).toUpperCase() + string.slice(1)
+    }
+
+    cols.map(col => {
+        headerRow += `<th>${capitalizeFirstLetter(col)}</th>`
+    })
+
+    json.map(row => {
+        bodyRows += '<tr>'
+
+        cols.map(colName => {
+            bodyRows += `<td>${row[colName]}</td>`
+        })
+
+        bodyRows += '</tr>'
+    })
+
+    return `<table class="${
+        classes
+    }"><thead><tr>${
+        headerRow
+    }</tr></thead><tbody>${
+        bodyRows
+    }</tbody></table>`
+}
 export default async (req: NowRequest, res: NowResponse) => {
     res.setHeader('Content-Type', 'application/json')
     res.setHeader('Access-Control-Allow-Headers',
@@ -23,9 +58,16 @@ export default async (req: NowRequest, res: NowResponse) => {
                     })
                 }
             })
-            res.send(intentList.sort((a, b) => {
+            const sorted = intentList.sort((a, b) => {
                 return a.name.localeCompare(b.name)
-            }))
+            })
+            const html = `<!DOCTYPE html> <body>${json2table(sorted, 'table')} </body></html>`
+            res.writeHead(200, {
+                'Content-Type': 'text/html',
+                'Content-Length': html.length,
+                'Expires': new Date().toUTCString()
+            })
+            res.write(html)
         } catch (error){
             res.statusCode = 500
             res.send(error.message)
