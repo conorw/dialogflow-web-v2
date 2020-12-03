@@ -1,7 +1,8 @@
+/* eslint-disable no-param-reassign */
 import { NowRequest, NowResponse } from '@vercel/node'
 import { findAllIntents } from '../common/dialogflow'
 
-const json2table = (json, classes) => {
+const json2table = (json: any, classes: string) => {
     const cols = Object.keys(json[0])
 
     let headerRow = ''
@@ -9,19 +10,19 @@ const json2table = (json, classes) => {
 
     classes = classes || ''
 
-    function capitalizeFirstLetter(string){
+    const capitalizeFirstLetter = (string: string) => {
         return string.charAt(0).toUpperCase() + string.slice(1)
     }
 
-    cols.map(col => {
+    cols.forEach(col => {
         headerRow += `<th>${capitalizeFirstLetter(col)}</th>`
     })
 
-    json.map(row => {
+    json.forEach(row => {
         bodyRows += '<tr>'
 
-        cols.map(colName => {
-            bodyRows += `<td>${row[colName]}</td>`
+        cols.forEach(colName => {
+            bodyRows += `<td>${Array.isArray(row[colName]) ? row[colName].join('<br>') : row[colName]}</td>`
         })
 
         bodyRows += '</tr>'
@@ -61,7 +62,27 @@ export default async (req: NowRequest, res: NowResponse) => {
             const sorted = intentList.sort((a, b) => {
                 return a.name.localeCompare(b.name)
             })
-            const html = `<!DOCTYPE html><head><meta charset="UTF-8"></head><body>${json2table(sorted, 'table')} </body></html>`
+            const style = `<style>
+            .tbl {
+                font-family: Arial, Helvetica, sans-serif;
+                border-collapse: collapse;
+                width: 100%;
+              }
+              .tbl td, .tbl th {
+                border: 1px solid #ddd;
+                padding: 8px;
+              }
+              .tbl tr:nth-child(even){background-color: #f2f2f2;}
+              .tbl tr:hover {background-color: #ddd;}
+              .tbl th {
+                padding-top: 12px;
+                padding-bottom: 12px;
+                text-align: left;
+                background-color: #4CAF50;
+                color: white;
+              }
+              </style>`
+            const html = `<!DOCTYPE html><head>${style}<meta charset="UTF-8"></head><body>${json2table(sorted, 'tbl')} </body></html>`
             res.writeHead(200, {
                 'Content-Type': 'text/html',
                 'Content-Length': html.length,
