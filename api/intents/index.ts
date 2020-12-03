@@ -61,7 +61,7 @@ export default async (req: NowRequest, res: NowResponse) => {
             const sorted = intentList.sort((a, b) => {
                 return a.name.localeCompare(b.name)
             })
-            const html = `<!DOCTYPE html> <body>${json2table(sorted, 'table')} </body></html>`
+            const html = `<!DOCTYPE html><head><meta charset="UTF-8"></head><body>${json2table(sorted, 'table')} </body></html>`
             res.writeHead(200, {
                 'Content-Type': 'text/html',
                 'Content-Length': html.length,
