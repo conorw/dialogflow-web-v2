@@ -11,7 +11,7 @@ const json2table = (json: any, classes: string) => {
     classes = classes || ''
 
     const capitalizeFirstLetter = (string: string) => {
-        return string.charAt(0).toUpperCase() + string.slice(1)
+        return (string.charAt(0).toUpperCase() + string.slice(1)).replace('_', ' ')
     }
 
     cols.forEach(col => {
@@ -52,15 +52,15 @@ export default async (req: NowRequest, res: NowResponse) => {
             intents.forEach(intent => {
                 if (intent){
                     intent.forEach(t => {
-                        intentList.push({name: t.displayName,
-                            statements: t.trainingPhrases.map(t => t.parts.map(r => r.text)).reduce((a, b) => a.concat(b), []),
-                            responses: t.messages.map(r => r.text.text).reduce((a, b) => a.concat(b), [])
+                        intentList.push({intent_name: t.displayName,
+                            user_says: t.trainingPhrases.map(t => t.parts.map(r => r.text)).reduce((a, b) => a.concat(b), []),
+                            bot_says: t.messages.map(r => r.text.text).reduce((a, b) => a.concat(b), [])
                         })
                     })
                 }
             })
             const sorted = intentList.sort((a, b) => {
-                return a.name.localeCompare(b.name)
+                return a.intent_name.localeCompare(b.intent_name)
             })
             const style = `<style>
             .tbl {
