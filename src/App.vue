@@ -854,7 +854,7 @@ body
 .bot-profile
     position: -webkit-sticky
     position: sticky
-    top: 15%
+    top: 5%
 
 .bot-profile
     width: 30vw
