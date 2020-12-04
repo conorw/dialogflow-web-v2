@@ -5,8 +5,8 @@
                 href="https://newaccount1607080294888.freshdesk.com/support/solutions"
                 target="_blank"> <button
                     class="top-head-button help"
-                    aria-label="How To Train"
-                    title="How To Train"
+                    aria-label="Help"
+                    title="Help"
                 >
                     <i class="material-icons" aria-hidden="true">help</i>
                 </button></a>
