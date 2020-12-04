@@ -2,7 +2,7 @@
     <header class="top-head">
         <div class="top-head-container">
             <a
-                href="https://www.loom.com/share/932c24be5d1045e6928865917d1cdf2a"
+                href="https://newaccount1607080294888.freshdesk.com/support/solutions"
                 target="_blank"> <button
                     class="top-head-button help"
                     aria-label="How To Train"
