@@ -2,7 +2,7 @@
     <main id="app">
         <!-- TopHead is the header with the information about the app -->
         <TopHead
-            v-if="agent && messages.length > 0"
+            v-if="agent"
             :agent="agent"
             :voices="voices"
             :selectedvoice.sync="config.voice"
