@@ -7,6 +7,9 @@ import { register_service_worker } from './utils'
 
 register_service_worker()
 
+import vmodal from 'vue-js-modal'
+Vue.use(vmodal)
+
 Vue.config.productionTip = false
 Vue.prototype.config = config // <- set config to global scope
 Vue.prototype.translations = translations // <- set translations to global scope

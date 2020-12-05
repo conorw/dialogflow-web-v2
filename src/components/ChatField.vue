@@ -84,52 +84,74 @@
                     <i class="material-icons" aria-hidden="true">emoji_emotions</i>
                 </button>
                 <button
-                    class="top-head-button start"
-                    title="Start training"
-                    aria-label="Start training"
-                    @click="submit({ text: 'training' })"
+                    class="top-head-button gif"
+                    aria-label="GIF"
+                    title="GIF"
+                    @click="openGiphy"
                 >
-                    <i class="material-icons" aria-hidden="true">model_training</i>
+                    <i class="material-icons" aria-hidden="true">gif</i>
                 </button>
                 <button
-                    class="top-head-button traininglist"
-                    title="View Training List"
-                    aria-label="View Training List"
-                    @click="submit({ text: 'View Training List' })"
+                    class="top-head-button stickers"
+                    aria-label="stickers"
+                    title="stickers"
+                    @click="openStickers"
                 >
-                    <i class="material-icons" aria-hidden="true">view_list</i>
+                    stickers
                 </button>
-                <button
-                    aria-label="Cancel"
-                    title="Cancel"
-                    class="top-head-button stop"
-                    @click="submit({ text: 'cancel' })"
-                >
-                    <i class="material-icons" aria-hidden="true">cancel</i>
-                </button>
-                <button
-                    class="top-head-button feedback"
-                    aria-label="Feedback"
-                    title="Feedback"
-                    @click="submit({ text: 'feedback' })"
-                >
-                    <i class="material-icons" aria-hidden="true">feedback</i>
-                </button>
-                <button
-                    class="top-head-button topics"
-                    aria-label="Troubling Topics"
-                    title="Troubling Topics"
-                    @click="submit({ text: 'Add Troubling Topics' })"
-                >
-                    <i class="material-icons" aria-hidden="true">report</i>
-                </button>
+                <span class="training-icons">
+                    <button
+                        class="top-head-button start"
+                        title="Start training"
+                        aria-label="Start training"
+                        @click="submit({ text: 'training' })"
+                    >
+                        <i class="material-icons" aria-hidden="true">model_training</i>
+                    </button>
+                    <button
+                        class="top-head-button traininglist"
+                        title="View Training List"
+                        aria-label="View Training List"
+                        @click="submit({ text: 'View Training List' })"
+                    >
+                        <i class="material-icons" aria-hidden="true">view_list</i>
+                    </button>
+                    <button
+                        aria-label="Cancel"
+                        title="Cancel"
+                        class="top-head-button stop"
+                        @click="submit({ text: 'cancel' })"
+                    >
+                        <i class="material-icons" aria-hidden="true">cancel</i>
+                    </button>
+                    <button
+                        class="top-head-button feedback"
+                        aria-label="Feedback"
+                        title="Feedback"
+                        @click="submit({ text: 'feedback' })"
+                    >
+                        <i class="material-icons" aria-hidden="true">feedback</i>
+                    </button>
+                    <button
+                        class="top-head-button topics"
+                        aria-label="Troubling Topics"
+                        title="Troubling Topics"
+                        @click="submit({ text: 'Add Troubling Topics' })"
+                    >
+                        <i class="material-icons" aria-hidden="true">report</i>
+                    </button>
+                </span>
             </div>
         </div>
+        <modal name="example" height="auto" width="80%">
+            <giphy-search :api="getApi" @select="select" />
+        </modal>
     </div>
 </template>
 
 <script>
 import { VEmojiPicker } from 'v-emoji-picker'
+import GiphySearch from '@/components/GiphySearch'
 import AudioRecorder from 'audio-recorder-polyfill'
 import * as hark from 'hark'
 
@@ -138,7 +160,8 @@ window.MediaRecorder = AudioRecorder
 export default {
     name: 'ChatField',
     components: {
-        VEmojiPicker
+        VEmojiPicker,
+        GiphySearch
     },
     data(){
         return {
@@ -147,10 +170,14 @@ export default {
             microphone: false,
             recognition: null,
             recorder: null,
-            should_listen: false
+            should_listen: false,
+            api: ''
         }
     },
     computed: {
+        getApi(){
+            return this.api
+        },
         microphone_supported(){
             return (
                 window.webkitSpeechRecognition ||
@@ -212,6 +239,18 @@ export default {
         }
     },
     methods: {
+        openGiphy(){
+            this.api = 'gifs'
+            this.$modal.show('example')
+        },
+        openStickers(){
+            this.api = 'stickers'
+            this.$modal.show('example')
+        },
+        select(gif){
+            this.$modal.hide('example')
+            this.submit({text: gif})
+        },
         inputHandler(e){
             if (e.keyCode === 13 && !e.shiftKey){
                 e.preventDefault()
@@ -329,9 +368,12 @@ export default {
   color: goldenrod
 
 .top-head-button.emoji
-  color: grey
+  color: coral
 
 .top-head-button:hover
   background: #2196F3
   color: white
+
+.training-icons
+    float: right
 </style>
