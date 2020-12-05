@@ -97,7 +97,7 @@
                     title="stickers"
                     @click="openStickers"
                 >
-                    stickers
+                    <i class="material-icons" aria-hidden="true">add_reaction</i>
                 </button>
                 <span class="training-icons">
                     <button
