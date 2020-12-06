@@ -110,20 +110,20 @@
                         <i class="material-icons" aria-hidden="true">model_training</i>
                     </button>
                     <button
-                        class="top-head-button traininglist"
-                        title="View Training List"
-                        aria-label="View Training List"
-                        @click="submit({ text: 'View Training List' })"
-                    >
-                        <i class="material-icons" aria-hidden="true">view_list</i>
-                    </button>
-                    <button
                         aria-label="Cancel"
                         title="Cancel"
                         class="top-head-button stop"
                         @click="submit({ text: 'cancel' })"
                     >
                         <i class="material-icons" aria-hidden="true">cancel</i>
+                    </button>
+                    <button
+                        class="top-head-button traininglist"
+                        title="View Training List"
+                        aria-label="View Training List"
+                        @click="submit({ text: 'View Training List' })"
+                    >
+                        <i class="material-icons" aria-hidden="true">view_list</i>
                     </button>
                     <button
                         class="top-head-button feedback"

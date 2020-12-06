@@ -41,7 +41,7 @@ export default {
             this.$emit('select', gif)
         },
         getGifs(){
-            const limit = 6
+            const limit = 4
             const url = `/api/giphy?q=${
                 this.searchTerm
             }&limit=${limit}&api=${this.api}`

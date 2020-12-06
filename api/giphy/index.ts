@@ -3,9 +3,9 @@ import { NowRequest, NowResponse } from '@vercel/node'
 const giphy = require('giphy-api')(process.env.GIPHY_KEY)
 
 export default async (req: NowRequest, res: NowResponse) => {
-    let limit = req.query.limit || 6
+    let limit = req.query.limit || 4
     if (limit > 10){
-        limit = 6
+        limit = 4
     }
     res.setHeader('Content-Type', 'application/json')
     res.setHeader('Access-Control-Allow-Headers',

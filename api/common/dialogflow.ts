@@ -508,21 +508,23 @@ export const handleSearchIntent = async (intentresponse: dialogflow.protos.googl
             console.log('Searching web')
             const searchResult = await search(q)
             if (searchResult){
+                const buttons = []
+                if (searchResult.AbstractURL){
+                    buttons.push({
+                        'title': `View on ${searchResult.AbstractSource}`,
+                        'openUriAction': {
+                            'uri': searchResult.AbstractURL
+                        }
+                    })
+                }
                 const newFulfillment = [{
                     'platform': 'ACTIONS_ON_GOOGLE',
                     'basicCard': {
-                        'title': 'Search Result',
-                        'subtitle': `Powered by ${searchResult.Engine} & ${searchResult.AbstractSource}`,
+                        'title': '',
+                        'subtitle': `Powered by ${searchResult.Engine} ${searchResult.AbstractSource ? `& ${searchResult.AbstractSource}` : ''}`,
                         'formattedText': searchResult.AbstractText,
                         'image': {},
-                        'buttons': [
-                            {
-                                'title': `View on ${searchResult.AbstractSource}`,
-                                'openUriAction': {
-                                    'uri': searchResult.AbstractURL
-                                }
-                            }
-                        ]
+                        buttons
                     }
                 }] as any
                 intentresponse.queryResult.fulfillmentMessages = newFulfillment
