@@ -66,14 +66,15 @@ export default {
 <style scoped>
 
 .gif-container {
-    padding: 1em;
+    padding: 0;
     display: flex;
     flex-wrap: wrap;
     flex-direction: row;
     justify-content: center;
 }
 .gif-container img {
-    max-width: 33%;
+    margin: 2px;
+    max-width: 48%;
 }
 .gif-container img:hover{
     box-shadow: 0 0 100px gold;
