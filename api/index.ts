@@ -1,5 +1,5 @@
 import { NowRequest, NowResponse } from '@vercel/node'
-import { agentsClient, sessionClient, getFormattedFulfillment, handleTrainingIntent, handleFeedbackIntent, handleSearchIntent, handleTrainingFollowUpIntent, handleTrainingIntentList, handleTopicIntent } from './common/dialogflow'
+import { agentsClient, sessionClient, getFormattedFulfillment, handleTrainingIntent, handleFeedbackIntent, handleSearchIntent, handleTrainingFollowUpIntent, handleTrainingIntentList, handleTopicIntent, handleFallbackIntent } from './common/dialogflow'
 import * as dialogflow from '@google-cloud/dialogflow'
 
 export default async (req: NowRequest, res: NowResponse) => {
@@ -43,6 +43,10 @@ export default async (req: NowRequest, res: NowResponse) => {
                 let intentresponse = responses[0] as dialogflow.protos.google.cloud.dialogflow.v2.IDetectIntentResponse
                 if (intentresponse.queryResult){
                     console.log(intentresponse.queryResult.intent.displayName)
+
+                    if (intentresponse.queryResult.intent.isFallback){
+                        intentresponse = await handleFallbackIntent(intentresponse)
+                    }
                     switch (intentresponse.queryResult.intent.displayName){
                     case 'feedback':
                         intentresponse = await handleFeedbackIntent(intentresponse)

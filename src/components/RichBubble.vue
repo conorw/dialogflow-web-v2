@@ -8,7 +8,7 @@
     <div v-else class="rich-bubble" tabindex="0" :class="{'me': me, 'loading': loading}">{{text}}</div>
 </template>
 
-<script>
+<script lang="ts">
 export default {
     name: 'RichBubble',
     props: {
@@ -25,7 +25,10 @@ export default {
         }
     },
     methods: {
-        isURL(str){
+        isURL(str: string){
+            if (!str.startsWith('http')){
+                return false
+            }
             const pattern = new RegExp('^(https?:\\/\\/)?' + // protocol
             '((([a-z\\d]([a-z\\d-]*[a-z\\d])*)\\.?)+[a-z]{2,}|' + // domain name
             '((\\d{1,3}\\.){3}\\d{1,3}))' + // OR ip (v4) address

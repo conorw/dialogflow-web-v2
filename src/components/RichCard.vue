@@ -9,6 +9,33 @@
         </div>
     </div>
 </template>
+<script>
+export default {
+    name: 'RichCard',
+    props: {
+        text: {
+            type: String,
+            default: null
+        },
+        imageUri: {
+            type: String,
+            default: null
+        },
+        imageTitle: {
+            type: String,
+            default: null
+        },
+        subtitle: {
+            type: String,
+            default: null
+        },
+        title: {
+            type: String,
+            default: null
+        }
+    }
+}
+</script>
 
 <style lang="sass" scoped>
 .rich-card
@@ -51,30 +78,3 @@
     padding-top: 16px
 </style>
 
-<script>
-export default {
-    name: 'RichCard',
-    props: {
-        text: {
-            type: String,
-            default: null
-        },
-        imageUri: {
-            type: String,
-            default: null
-        },
-        imageTitle: {
-            type: String,
-            default: null
-        },
-        subtitle: {
-            type: String,
-            default: null
-        },
-        title: {
-            type: String,
-            default: null
-        }
-    }
-}
-</script>

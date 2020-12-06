@@ -1,3 +1,4 @@
+/* eslint-disable no-param-reassign */
 import * as dialogflow from '@google-cloud/dialogflow'
 import { saveFeedback, saveTopic } from './airtable'
 import { search } from './search'
@@ -47,7 +48,6 @@ const trainingCategories = [{ title: 'general' },
     { title: 'about-user' },
     { title: 'greeting' }]
 
-const FOLLOWUP_CONTEXT = 'trainingcategorydetails-custom'
 const FOLLOWUP_PARENT = 'parent-intent'
 
 export const findAllIntents = async (intentView: 'INTENT_VIEW_FULL' | 'INTENT_VIEW_UNSPECIFIED' = 'INTENT_VIEW_FULL') => {
@@ -460,6 +460,22 @@ export const handleFeedbackIntent = async (intentresponse: dialogflow.protos.goo
     }
     return intentresponse
 }
+export const handleFallbackIntent = async (intentresponse: dialogflow.protos.google.cloud.dialogflow.v2.IDetectIntentResponse) => {
+    if (intentresponse.queryResult.outputContexts){
+        let count = intentresponse.queryResult.outputContexts[0].parameters.fields['no-match'].numberValue || 0
+        console.log('fallback', {params: intentresponse.queryResult.outputContexts[0].parameters.fields})
+        if (count > 2){
+            intentresponse = await addSearchToResponse(intentresponse.queryResult.queryText, intentresponse, 'Sorry. I still dont know how to reply so I have searched the internet..')
+            intentresponse.queryResult.outputContexts[0].parameters.fields['no-match'].numberValue = 0
+            await conextClient.updateContext({ context: intentresponse.queryResult.outputContexts[0] })
+        } else {
+            count = count + 1
+            intentresponse.queryResult.outputContexts[0].parameters.fields['no-match'].numberValue = count
+            await conextClient.updateContext({ context: intentresponse.queryResult.outputContexts[0] })
+        }
+    }
+    return intentresponse
+}
 export const handleTopicIntent = async (intentresponse: dialogflow.protos.google.cloud.dialogflow.v2.IDetectIntentResponse) => {
     if (intentresponse.queryResult.parameters
         && intentresponse.queryResult.parameters.fields
@@ -506,53 +522,58 @@ export const handleSearchIntent = async (intentresponse: dialogflow.protos.googl
         // if this is the intent-name question, return the entity options for the category
         if (q){
             console.log('Searching web')
-            const searchResult = await search(q)
-            if (searchResult){
-                const buttons = []
-                if (searchResult.AbstractURL){
-                    buttons.push({
-                        'title': `View on ${searchResult.AbstractSource}`,
-                        'openUriAction': {
-                            'uri': searchResult.AbstractURL
-                        }
-                    })
-                }
-                const newFulfillment = [{
-                    'platform': 'ACTIONS_ON_GOOGLE',
-                    'basicCard': {
-                        'title': '',
-                        'subtitle': `Powered by ${searchResult.Engine} ${searchResult.AbstractSource ? `& ${searchResult.AbstractSource}` : ''}`,
-                        'formattedText': searchResult.AbstractText,
-                        'image': {},
-                        buttons
-                    }
-                }] as any
-                intentresponse.queryResult.fulfillmentMessages = newFulfillment
-            } else {
-                const newFulfillment = [{
-                    'platform': 'ACTIONS_ON_GOOGLE',
-                    'basicCard': {
-                        'title': 'No Results',
-                        'subtitle': 'Sorry, I didn\'t find any answers online.',
-                        'formattedText': 'Try asking in a different way. Or would you like to open google search?',
-                        'image': {},
-                        'buttons': [
-                            {
-                                'title': 'View on Google',
-                                'openUriAction': {
-                                    'uri': `https://www.google.com/search?q=${encodeURIComponent(q)}`
-                                }
-                            }
-                        ]
-                    }
-                }] as any
-                intentresponse.queryResult.fulfillmentMessages = newFulfillment
-            }
+            // eslint-disable-next-line no-param-reassign
+            intentresponse = await addSearchToResponse(q, intentresponse)
         }
     }
     return intentresponse
 }
-export const handleTrainingIntentList = async (intentresponse: dialogflow.protos.google.cloud.dialogflow.v2.IDetectIntentResponse) => {
+const addSearchToResponse = async (q: string, intentresponse, title?: string) => {
+    const searchResult = await search(q)
+    if (searchResult){
+        const buttons = []
+        if (searchResult.AbstractURL){
+            buttons.push({
+                'title': `View on ${searchResult.AbstractSource}`,
+                'openUriAction': {
+                    'uri': searchResult.AbstractURL
+                }
+            })
+        }
+        const newFulfillment = [{
+            'platform': 'ACTIONS_ON_GOOGLE',
+            'basicCard': {
+                title,
+                'subtitle': `Powered by ${searchResult.Engine} ${searchResult.AbstractSource ? `& ${searchResult.AbstractSource}` : ''}`,
+                'formattedText': searchResult.AbstractText,
+                'image': {},
+                buttons
+            }
+        }] as any
+        intentresponse.queryResult.fulfillmentMessages = newFulfillment
+    } else {
+        const newFulfillment = [{
+            'platform': 'ACTIONS_ON_GOOGLE',
+            'basicCard': {
+                'title': 'No Results',
+                'subtitle': 'Sorry, I didn\'t find any answers online.',
+                'formattedText': 'Try asking in a different way. Or would you like to open google search?',
+                'image': {},
+                'buttons': [
+                    {
+                        'title': 'View on Google',
+                        'openUriAction': {
+                            'uri': `https://www.google.com/search?q=${encodeURIComponent(q)}`
+                        }
+                    }
+                ]
+            }
+        }] as any
+        intentresponse.queryResult.fulfillmentMessages = newFulfillment
+    }
+    return intentresponse
+}
+export const handleTrainingIntentList = (intentresponse: dialogflow.protos.google.cloud.dialogflow.v2.IDetectIntentResponse) => {
     console.log('INTENT LIST!!!')
     const newFulfillment = [{
         'platform': 'ACTIONS_ON_GOOGLE',

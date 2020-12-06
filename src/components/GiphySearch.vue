@@ -41,7 +41,7 @@ export default {
             this.$emit('select', gif)
         },
         getGifs(){
-            const limit = 4
+            const limit = 5
             const url = `/api/giphy?q=${
                 this.searchTerm
             }&limit=${limit}&api=${this.api}`
@@ -74,7 +74,7 @@ export default {
 }
 .gif-container img {
     margin: 2px;
-    max-width: 48%;
+    max-width: 30%;
 }
 .gif-container img:hover{
     box-shadow: 0 0 100px gold;
