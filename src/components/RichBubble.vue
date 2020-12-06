@@ -40,7 +40,7 @@ export default {
 <style lang="sass" scoped>
 
 .img
-    max-height: 50%
+    max-width: 40%
 
 .rich-bubble
     padding: 12px

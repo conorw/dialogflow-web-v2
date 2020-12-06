@@ -97,7 +97,8 @@
                     title="stickers"
                     @click="openStickers"
                 >
-                    <i class="material-icons" aria-hidden="true">add_reaction</i>
+                    <img
+                        src="/img/stickers.png">
                 </button>
                 <span class="training-icons">
                     <button
@@ -348,6 +349,8 @@ export default {
   background-color: transparent
   border: 0
   color: black
+  width: 30px
+  margin: 2px 2px
   padding: 1px 2px
   font-size: small
   cursor: pointer
@@ -366,6 +369,9 @@ export default {
 
 .top-head-button.emoji
   color: goldenrod
+
+.top-head-button.stickers img
+  width: 100%
 
 .top-head-button.emoji
   color: coral

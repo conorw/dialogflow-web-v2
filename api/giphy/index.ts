@@ -3,6 +3,10 @@ import { NowRequest, NowResponse } from '@vercel/node'
 const giphy = require('giphy-api')(process.env.GIPHY_KEY)
 
 export default async (req: NowRequest, res: NowResponse) => {
+    let limit = req.query.limit || 6
+    if (limit > 10){
+        limit = 6
+    }
     res.setHeader('Content-Type', 'application/json')
     res.setHeader('Access-Control-Allow-Headers',
         'X-CSRF-Token, X-Requested-With, Accept, Accept-Version, Content-Length, Content-MD5, Content-Type, Date, X-Api-Version')
@@ -16,7 +20,7 @@ export default async (req: NowRequest, res: NowResponse) => {
                 api: req.query.api || 'stickers',
                 rating: 'pg',
                 q: req.query.q,
-                limit: 10
+                limit
             })
             res.send(ret)
         } catch (error){
