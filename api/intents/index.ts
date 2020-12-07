@@ -1,6 +1,6 @@
 /* eslint-disable no-param-reassign */
 import { NowRequest, NowResponse } from '@vercel/node'
-import { getCheatSheet } from '../common/airtable'
+import { getCheatSheet, saveProgress } from '../common/airtable'
 import { findAllIntents } from '../common/dialogflow'
 
 const json2table = (json: any, classes: string) => {
@@ -98,6 +98,16 @@ export default async (req: NowRequest, res: NowResponse) => {
             <h2>Cheat Sheet - Some Example Questions You May Have Missed</h2>
             ${json2table(cheatsheet, 'tbl')}
             </body></html>`
+
+            // save this data to airtable
+            await saveProgress({
+                Bot: process.env.SERVICE_ACCOUNT_PROJECT_ID,
+                Group: process.env.VUE_APP_NAME,
+                UpdateDate: new Date().toISOString().split('T')[0],
+                Intents: intentList.length,
+                Phrases: phraseCount,
+                Responses: responseCount
+            })
             res.writeHead(200, {
                 'Content-Type': 'text/html',
                 'Content-Length': Buffer.byteLength(html),
