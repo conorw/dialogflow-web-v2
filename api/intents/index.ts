@@ -51,7 +51,7 @@ export default async (req: NowRequest, res: NowResponse) => {
                 getCheatSheet(),
                 getProgress(process.env.VUE_APP_NAME)])
             const progressStr = progress.map(t => {
-                return `['${t.UpdateDate}',${t.Intents},${t.Phrases},${t.Responses},${t.Total} ]`
+                return `['${t.UpdateDate}',${t.Intents},${t.Phrases},${t.Responses},${t.Score} ]`
             })
             const intentList = []
             let phraseCount = 0
@@ -139,7 +139,7 @@ export default async (req: NowRequest, res: NowResponse) => {
                 Intents: intentList.length,
                 Phrases: phraseCount,
                 Responses: responseCount,
-                Total: phraseCount + responseCount
+                Score: phraseCount + responseCount
             })
             res.writeHead(200, {
                 'Content-Type': 'text/html',
