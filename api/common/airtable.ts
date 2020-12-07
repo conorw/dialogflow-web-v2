@@ -22,7 +22,6 @@ export const saveProgress = async (progress: any) => {
         const filter = `AND({Group}="${progress.Group}", {UpdateDate}=DATETIME_PARSE("${progress.UpdateDate}",""))`
         const exists = await base('progress').select({filterByFormula: filter}).all()
         if (exists.length > 0){
-            console.log(exists)
             await base('progress').update([
                 {
                     id: exists[0].id,
@@ -40,7 +39,15 @@ export const saveProgress = async (progress: any) => {
         console.log(error)
     }
 }
-
+export const getProgress = async (group: string) => {
+    try {
+        const filter = `{Group}="${group}"`
+        const exists = await base('progress').select({filterByFormula: filter, sort: [{field: 'UpdateDate'}]}).all()
+        return exists.map(t => t.fields)
+    } catch (error){
+        console.log(error)
+    }
+}
 export const saveTopic = async (answer: string) => {
     const url = process.env.SERVICE_ACCOUNT_PROJECT_ID
 

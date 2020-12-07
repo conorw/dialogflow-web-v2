@@ -1,6 +1,6 @@
 /* eslint-disable no-param-reassign */
 import { NowRequest, NowResponse } from '@vercel/node'
-import { getCheatSheet, saveProgress } from '../common/airtable'
+import { getCheatSheet, getProgress, saveProgress } from '../common/airtable'
 import { findAllIntents } from '../common/dialogflow'
 
 const json2table = (json: any, classes: string) => {
@@ -47,8 +47,12 @@ export default async (req: NowRequest, res: NowResponse) => {
     /* On GET request return the information about the agent */
     if (req.method == 'GET'){
         try {
-            const [intents, cheatsheet] = await Promise.all([findAllIntents('INTENT_VIEW_FULL'),
-                getCheatSheet()])
+            const [intents, cheatsheet, progress] = await Promise.all([findAllIntents('INTENT_VIEW_FULL'),
+                getCheatSheet(),
+                getProgress(process.env.VUE_APP_NAME)])
+            const progressStr = progress.map(t => {
+                return `['${t.UpdateDate}',${t.Intents},${t.Phrases},${t.Responses},${t.Phrases + t.Responses} ]`
+            })
             const intentList = []
             let phraseCount = 0
             let responseCount = 0
@@ -90,10 +94,36 @@ export default async (req: NowRequest, res: NowResponse) => {
                 color: white;
               }
               </style>`
-            const html = `<!DOCTYPE html><head>${style}<meta charset="UTF-8"></head><body>${json2table(sorted, 'tbl')}<br>
+            const script = `<script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+            <script>
+                google.charts.load('current', {packages: ['corechart', 'line']});
+                google.charts.setOnLoadCallback(drawBasic);
+                function drawBasic() {
+                    var data = google.visualization.arrayToDataTable([
+                        ['Date', 'Intents', 'Phrases', 'Responses', 'Score'],
+                        ${progressStr}
+                      ]);
+                      var options = {
+                        title: '${process.env.VUE_APP_NAME}',
+                        curveType: 'function',
+                        legend: { position: 'bottom' }
+                      };
+                      var chart = new google.visualization.LineChart(document.getElementById('chart_div'));
+                      chart.draw(data, options);
+                  }
+            </script>`
+            const html = `<!DOCTYPE html><head>${style}${script}<meta charset="UTF-8"></head>
+            <body>
+            <h1>${process.env.VUE_APP_NAME} - Progress</h1>
+            <h2>Totals</h2>
+            Score (Phrases + Responses): <strong>${phraseCount + responseCount}</strong><br>
             Total Intents: <strong>${intentList.length}</strong><br>
             Training Phrases: <strong>${phraseCount}</strong><br>
             Training Responses: <strong>${responseCount}</strong><br>
+            <div id="chart_div"></div>
+            <br>
+            <h2>Training List</h2>
+            ${json2table(sorted, 'tbl')}<br>
             <hr>
             <h2>Cheat Sheet - Some Example Questions You May Have Missed</h2>
             ${json2table(cheatsheet, 'tbl')}
