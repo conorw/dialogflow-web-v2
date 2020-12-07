@@ -21,7 +21,6 @@ export const saveProgress = async (progress: any) => {
     try {
         const filter = `AND({Group}="${progress.Group}", {UpdateDate}=DATETIME_PARSE("${progress.UpdateDate}",""))`
         const exists = await base('progress').select({filterByFormula: filter}).all()
-        console.log('find', {filter, exists})
         if (exists.length > 0){
             console.log(exists)
             await base('progress').update([
