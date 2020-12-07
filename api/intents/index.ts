@@ -51,7 +51,7 @@ export default async (req: NowRequest, res: NowResponse) => {
                 getCheatSheet(),
                 getProgress(process.env.VUE_APP_NAME)])
             const progressStr = progress.map(t => {
-                return `['${t.UpdateDate}',${t.Intents},${t.Phrases},${t.Responses},${t.Phrases + t.Responses} ]`
+                return `['${t.UpdateDate}',${t.Intents},${t.Phrases},${t.Responses},${t.Total} ]`
             })
             const intentList = []
             let phraseCount = 0
@@ -111,7 +111,7 @@ export default async (req: NowRequest, res: NowResponse) => {
                         legend: { position: 'bottom' }
                       };
                       var chart = new google.visualization.LineChart(document.getElementById('chart_div'));
-                      chart.draw(data, options);
+                      chart.draw(data, google.charts.Line.convertOptions(options));
                   }
             </script>`
             const html = `<!DOCTYPE html><head>${style}${script}<meta charset="UTF-8"></head>
@@ -138,7 +138,8 @@ export default async (req: NowRequest, res: NowResponse) => {
                 UpdateDate: new Date().toISOString().split('T')[0],
                 Intents: intentList.length,
                 Phrases: phraseCount,
-                Responses: responseCount
+                Responses: responseCount,
+                Total: phraseCount + responseCount
             })
             res.writeHead(200, {
                 'Content-Type': 'text/html',
