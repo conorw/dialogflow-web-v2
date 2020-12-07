@@ -51,7 +51,7 @@ export default async (req: NowRequest, res: NowResponse) => {
                 getCheatSheet(),
                 getProgress(process.env.VUE_APP_NAME)])
             const progressStr = progress.map(t => {
-                return `['${t.UpdateDate}',${t.Intents},${t.Phrases},${t.Responses},${t.Score} ]`
+                return `['${t.UpdateDate}',${t.Phrases},${t.Responses},${t.Score} ]`
             })
             const intentList = []
             let phraseCount = 0
@@ -102,15 +102,16 @@ export default async (req: NowRequest, res: NowResponse) => {
                 google.charts.setOnLoadCallback(drawBasic);
                 function drawBasic() {
                     var data = google.visualization.arrayToDataTable([
-                        ['Date', 'Intents', 'Phrases', 'Responses', 'Score'],
+                        ['Date', 'Phrases', 'Responses', 'Score'],
                         ${progressStr}
                       ]);
                       var options = {
-                        title: '${process.env.VUE_APP_NAME}',
+                        chart: {title: '${process.env.VUE_APP_NAME}',
+                        subtitle: 'How much personaility training your group has done'},
                         curveType: 'function',
                         legend: { position: 'bottom' }
                       };
-                      var chart = new google.visualization.LineChart(document.getElementById('chart_div'));
+                      var chart = new google.charts.Line(document.getElementById('chart_div'));
                       chart.draw(data, google.charts.Line.convertOptions(options));
                   }
             </script>`
@@ -119,10 +120,9 @@ export default async (req: NowRequest, res: NowResponse) => {
             <h1>${process.env.VUE_APP_NAME} - Progress</h1>
             <h2>Totals</h2>
             Score (Phrases + Responses): <strong>${phraseCount + responseCount}</strong><br>
-            Total Intents: <strong>${intentList.length}</strong><br>
             Training Phrases: <strong>${phraseCount}</strong><br>
             Training Responses: <strong>${responseCount}</strong><br>
-            <div id="chart_div"></div>
+            <div style="margin:15px" id="chart_div"></div>
             <br>
             <h2>Training List</h2>
             ${json2table(sorted, 'tbl')}<br>
