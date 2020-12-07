@@ -75,8 +75,10 @@ export default async (req: NowRequest, res: NowResponse) => {
                 return a.intent_name.localeCompare(b.intent_name)
             })
             const style = `<style>
-            .tbl {
+            body{
                 font-family: Arial, Helvetica, sans-serif;
+            }
+            .tbl {
                 border-collapse: collapse;
                 width: 100%;
               }
