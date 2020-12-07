@@ -75,6 +75,7 @@ export default {
 .gif-container img {
     margin: 2px;
     max-width: 30%;
+    max-height: 200px;
 }
 .gif-container img:hover{
     box-shadow: 0 0 100px gold;
