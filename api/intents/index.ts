@@ -1,7 +1,8 @@
 /* eslint-disable no-param-reassign */
 import { NowRequest, NowResponse } from '@vercel/node'
-import { getCheatSheet, getProgress, saveProgress } from '../common/airtable'
-import { findAllIntents } from '../common/dialogflow'
+import { getCheatSheet, getProgress, saveProgress } from '../../common/airtable'
+import { findAllIntents } from '../../common/dialogflow'
+import { setCORSHeaders } from '../../common/utils'
 
 const json2table = (json: any, classes: string) => {
     const cols = Object.keys(json[0])
@@ -38,12 +39,7 @@ const json2table = (json: any, classes: string) => {
     }</tbody></table>`
 }
 export default async (req: NowRequest, res: NowResponse) => {
-    res.setHeader('Content-Type', 'application/json')
-    res.setHeader('Access-Control-Allow-Headers',
-        'X-CSRF-Token, X-Requested-With, Accept, Accept-Version, Content-Length, Content-MD5, Content-Type, Date, X-Api-Version')
-    res.setHeader('Access-Control-Allow-Origin', '*')
-    res.setHeader('Access-Control-Allow-Methods', '*')
-    res.setHeader('Access-Control-Allow-Credentials', 'true')
+    res = setCORSHeaders(res)
     /* On GET request return the information about the agent */
     if (req.method == 'GET'){
         try {

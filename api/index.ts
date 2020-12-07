@@ -1,14 +1,11 @@
+/* eslint-disable no-param-reassign */
 import { NowRequest, NowResponse } from '@vercel/node'
-import { agentsClient, sessionClient, getFormattedFulfillment, handleTrainingIntent, handleFeedbackIntent, handleSearchIntent, handleTrainingFollowUpIntent, handleTrainingIntentList, handleTopicIntent, handleFallbackIntent } from './common/dialogflow'
+import { agentsClient, sessionClient, getFormattedFulfillment, handleTrainingIntent, handleFeedbackIntent, handleSearchIntent, handleTrainingFollowUpIntent, handleTrainingIntentList, handleTopicIntent, handleFallbackIntent } from '../common/dialogflow'
 import * as dialogflow from '@google-cloud/dialogflow'
+import { setCORSHeaders } from '../common/utils'
 
 export default async (req: NowRequest, res: NowResponse) => {
-    res.setHeader('Content-Type', 'application/json')
-    res.setHeader('Access-Control-Allow-Headers',
-        'X-CSRF-Token, X-Requested-With, Accept, Accept-Version, Content-Length, Content-MD5, Content-Type, Date, X-Api-Version')
-    res.setHeader('Access-Control-Allow-Origin', '*')
-    res.setHeader('Access-Control-Allow-Methods', '*')
-    res.setHeader('Access-Control-Allow-Credentials', 'true')
+    res = setCORSHeaders(res)
     /* On GET request return the information about the agent */
     if (req.method == 'GET'){
         try {

@@ -1,24 +1,16 @@
 /* eslint-disable no-param-reassign */
 import { NowRequest, NowResponse } from '@vercel/node'
-import { setCORSHeaders } from '../../common/utils'
-const giphy = require('giphy-api')(process.env.GIPHY_KEY)
+import { getCheatSheet, getProgress, saveProgress } from '../../common/airtable'
+import { findAllIntents } from '../../common/dialogflow'
+import { json2table, setCORSHeaders } from '../../common/utils'
+
 
 export default async (req: NowRequest, res: NowResponse) => {
-    let limit = req.query.limit || 4
-    if (limit > 10){
-        limit = 4
-    }
     res = setCORSHeaders(res)
     /* On GET request return the information about the agent */
     if (req.method == 'GET'){
         try {
-            const ret = await giphy.search({
-                api: req.query.api || 'stickers',
-                rating: 'pg',
-                q: req.query.q,
-                limit
-            })
-            res.send(ret)
+            res.send([])
         } catch (error){
             res.statusCode = 500
             res.send(error.message)
