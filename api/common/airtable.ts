@@ -30,3 +30,12 @@ export const saveTopic = async (answer: string) => {
         console.log(error)
     }
 }
+
+export const getCheatSheet = async () => {
+    try {
+        const ret = await base('cheatsheet').select({sort: [{field: 'Category'}]}).all()
+        return ret.map(t => t.fields)
+    } catch (error){
+        console.log(error)
+    }
+}

@@ -1,5 +1,6 @@
 /* eslint-disable no-param-reassign */
 import { NowRequest, NowResponse } from '@vercel/node'
+import { getCheatSheet } from '../common/airtable'
 import { findAllIntents } from '../common/dialogflow'
 
 const json2table = (json: any, classes: string) => {
@@ -46,7 +47,8 @@ export default async (req: NowRequest, res: NowResponse) => {
     /* On GET request return the information about the agent */
     if (req.method == 'GET'){
         try {
-            const intents = await findAllIntents('INTENT_VIEW_FULL')
+            const [intents, cheatsheet] = await Promise.all([findAllIntents('INTENT_VIEW_FULL'),
+                getCheatSheet()])
             const intentList = []
             let phraseCount = 0
             let responseCount = 0
@@ -92,6 +94,9 @@ export default async (req: NowRequest, res: NowResponse) => {
             Total Intents: <strong>${intentList.length}</strong><br>
             Training Phrases: <strong>${phraseCount}</strong><br>
             Training Responses: <strong>${responseCount}</strong><br>
+            <hr>
+            <h2>Cheat Sheet - Some Example Questions You May Have Missed</h2>
+            ${json2table(cheatsheet, 'tbl')}
             </body></html>`
             res.writeHead(200, {
                 'Content-Type': 'text/html',

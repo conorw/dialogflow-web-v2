@@ -117,14 +117,17 @@
                     >
                         <i class="material-icons" aria-hidden="true">cancel</i>
                     </button>
-                    <button
-                        class="top-head-button traininglist"
-                        title="View Training List"
-                        aria-label="View Training List"
-                        @click="submit({ text: 'View Training List' })"
-                    >
-                        <i class="material-icons" aria-hidden="true">view_list</i>
-                    </button>
+                    <a
+                        href="/api/intents"
+                        target="_blank">
+                        <button
+                            class="top-head-button traininglist"
+                            title="View Training List"
+                            aria-label="View Training List"
+                        >
+                            <i class="material-icons" aria-hidden="true">view_list</i>
+                        </button>
+                    </a>
                     <button
                         class="top-head-button feedback"
                         aria-label="Feedback"
