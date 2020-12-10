@@ -875,4 +875,5 @@ body
 
 .confidence-score
     font-size: x-small
+    color: lightgray
 </style>

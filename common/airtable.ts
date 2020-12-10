@@ -48,6 +48,14 @@ export const getProgress = async (group: string) => {
         console.log(error)
     }
 }
+export const getBots = async () => {
+    try {
+        const exists = await base('bots').select().all()
+        return exists.map(t => t.fields)
+    } catch (error){
+        console.log(error)
+    }
+}
 export const saveTopic = async (answer: string) => {
     const url = process.env.SERVICE_ACCOUNT_PROJECT_ID
 

@@ -1,8 +1,7 @@
 /* eslint-disable no-param-reassign */
 import { NowRequest, NowResponse } from '@vercel/node'
-import { getCheatSheet, getProgress, saveProgress } from '../../common/airtable'
-import { findAllIntents } from '../../common/dialogflow'
-import { json2table, setCORSHeaders } from '../../common/utils'
+import { getBots } from '../../common/airtable'
+import { setCORSHeaders } from '../../common/utils'
 
 
 export default async (req: NowRequest, res: NowResponse) => {
@@ -10,7 +9,8 @@ export default async (req: NowRequest, res: NowResponse) => {
     /* On GET request return the information about the agent */
     if (req.method == 'GET'){
         try {
-            res.send([])
+            const bots = await getBots()
+            res.send(bots)
         } catch (error){
             res.statusCode = 500
             res.send(error.message)
