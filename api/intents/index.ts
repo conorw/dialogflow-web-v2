@@ -102,12 +102,13 @@ export default async (req: NowRequest, res: NowResponse) => {
                         ${progressStr}
                       ]);
                       var options = {
+                        title: 'How much personaility training your group has done',
                         chart: {title: '${process.env.VUE_APP_NAME}',
                         subtitle: 'How much personaility training your group has done'},
                         curveType: 'function',
                         legend: { position: 'bottom' }
                       };
-                      var chart = new google.charts.Line(document.getElementById('chart_div'));
+                      var chart = new google.visualization.LineChart(document.getElementById('chart_div'));
                       chart.draw(data, google.charts.Line.convertOptions(options));
                   }
             </script>`
