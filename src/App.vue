@@ -346,7 +346,7 @@
                             </div>
                         </section>
                     </RichComponent>
-
+                    <div class="confidence-score">Intent Confidence: {{message.queryResult.intent.isFallback? 0 : (Math.round(message.queryResult.intentDetectionConfidence*100))}}%</div>
                     <!-- Actions on Google Components -->
                     <section
                         v-if="
@@ -872,4 +872,7 @@ body
     color: var(--text-title)
     line-height: 25px
     text-align: center
+
+.confidence-score
+    font-size: x-small
 </style>
