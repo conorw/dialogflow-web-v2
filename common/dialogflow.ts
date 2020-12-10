@@ -43,10 +43,10 @@ export const conextClient = new dialogflow.ContextsClient({
 })
 
 const trainingCategories = [{ title: 'general' },
-    { title: 'emoji' },
-    { title: 'about-bot' },
-    { title: 'about-user' },
-    { title: 'greeting' }]
+{ title: 'emoji' },
+{ title: 'about-bot' },
+{ title: 'about-user' },
+{ title: 'greeting' }]
 
 const FOLLOWUP_PARENT = 'parent-intent'
 
@@ -54,21 +54,22 @@ export const findAllIntents = async (intentView: 'INTENT_VIEW_FULL' | 'INTENT_VI
     let parent = intentClient.projectPath(process.env.PERSONALITY_ACCOUNT_PROJECT_ID)
     parent = `${parent}/agent`
     // console.log(`Finding intents: Parent: ${parent}`)
-    return await intentClient.listIntents({ parent, intentView }) as dialogflow.protos.google.cloud.dialogflow.v2.IIntent[][]
+    const ret = await intentClient.listIntents({ parent, intentView })
+    return ret
 }
 export const findIntent = async (intentDisplayName: string) => {
     const intents = await findAllIntents()
     let intent
-    for (const t of intents){
-        if (t){
-            intent = t.find(r => {
-                if (r.displayName){
+    for (const t of intents) {
+        if (t && Array.isArray(t)) {
+            intent = (t).find(r => {
+                if (r.displayName) {
                     // console.log(r.displayName.toLowerCase())
                     return r.displayName.toLowerCase() === intentDisplayName.toLowerCase()
                 }
                 return false
             })
-            if (intent){
+            if (intent) {
                 break
             }
         }
@@ -80,18 +81,18 @@ export const findEntity = async (entityName: string) => {
     let parent = entityClient.projectPath(process.env.TRAINING_ACCOUNT_PROJECT_ID)
     parent = `${parent}/agent`
     // console.log(`Finding entitiy: ${entityName}`)
-    const entities = await entityClient.listEntityTypes({ parent }) as any[]
+    const entities = await entityClient.listEntityTypes({ parent })
     let entity
-    for (const t of entities){
-        if (t){
+    for (const t of entities) {
+        if (t && Array.isArray(t)) {
             entity = t.find(r => {
-                if (r.displayName){
+                if (r.displayName) {
                     // console.log(r.displayName.toLowerCase())
                     return r.displayName.toLowerCase() === entityName.toLowerCase()
                 }
                 return false
             })
-            if (entity){
+            if (entity) {
                 break
             }
         }
@@ -103,17 +104,17 @@ export const updateIntent = async (intent: dialogflow.protos.google.cloud.dialog
     // let parent = intentClient.projectPath(process.env.PERSONALITY_ACCOUNT_PROJECT_ID)
     // parent = `${parent}/agent`
     // console.log(parent)
-    if (intent.messages.length){
+    if (intent.messages.length) {
         intent.messages[0].text.text.push(answer)
     } else {
         // check for duplicates before adding
         // eslint-disable-next-line no-lonely-if
-        if (!intent.messages[0].text.text.find(t => t.toLocaleLowerCase() === answer.toLowerCase())){
+        if (!intent.messages[0].text.text.find(t => t.toLocaleLowerCase() === answer.toLowerCase())) {
             intent.messages.push({ text: { text: [answer] } })
         }
     }
     // console.log(intent.trainingPhrases)
-    if (intent.trainingPhrases.length){
+    if (intent.trainingPhrases.length) {
         // check for duplicates before adding
         // questions = questions.filter(t=>intent.trainingPhrases.map(t=>t.parts).contains(t))
         intent.trainingPhrases[0].parts.push(...questions.map(t => { return { text: t } }))
@@ -152,7 +153,7 @@ export const createIntent = async (displayName: string, questions: string[], ans
         })
         // console.log(newintent)
         return newintent
-    } catch (error){
+    } catch (error) {
         console.log(error)
     }
 }
@@ -162,14 +163,14 @@ export const handleTrainingIntent = async (intentresponse: dialogflow.protos.goo
 
     if (intentresponse.queryResult.parameters
         && intentresponse.queryResult.parameters.fields
-        && intentresponse.queryResult.parameters.fields.answer){
+        && intentresponse.queryResult.parameters.fields.answer) {
         const params = intentresponse.queryResult.parameters.fields
         console.log(params)
         const intentCategory = params.category ? params.category.stringValue : ''
         const intentName = params.name ? params.name.stringValue : ''
         const question1 = params.question ? params.question.stringValue : ''
         const answer = params.answer ? params.answer.stringValue : ''
-        if (!intentCategory && answer){
+        if (!intentCategory && answer) {
             console.log('Adding category values to response')
             const newFulfillment = [{
                 'platform': 'ACTIONS_ON_GOOGLE',
@@ -200,10 +201,10 @@ export const handleTrainingIntent = async (intentresponse: dialogflow.protos.goo
             intentresponse.queryResult.fulfillmentMessages = newFulfillment
         }
         // if this is the intent-name question, return the entity options for the category
-        if (intentCategory && !intentName){
+        if (intentCategory && !intentName) {
             console.log('Adding category values to response')
             const subCategories = await findEntity(`${intentCategory}-options`)
-            if (subCategories){
+            if (subCategories) {
                 const newFulfillment = [{
                     'platform': 'ACTIONS_ON_GOOGLE',
                     'simpleResponses': {
@@ -228,7 +229,7 @@ If a suitable option is not available below, just type a new name`
         if (question1
             && answer
             && intentName
-            && intentCategory){
+            && intentCategory) {
             const lowerIntentName = intentName.toLowerCase().replace(/ /gi, '.').trim()
             const lowerIntentCategory = intentCategory.toLowerCase().replace(/ /gi, '-').trim()
             const combinedName = `${lowerIntentCategory}.${lowerIntentName}`
@@ -236,7 +237,7 @@ If a suitable option is not available below, just type a new name`
             console.log(`Creating new intent:${combinedName}`)
             const intent = await findIntent(combinedName)
             console.log(intent)
-            if (intent){
+            if (intent) {
                 console.log('Update existing intent')
                 await updateIntent(intent, combinedName, [question1], answer)
             } else {
@@ -252,7 +253,7 @@ export const handleTrainingFollowUpIntent = async (intentresponse: dialogflow.pr
     // console.log('TRAINING FOLLOWUP!!!', intentresponse)
 
     if (intentresponse.queryResult.parameters
-        && intentresponse.queryResult.allRequiredParamsPresent){
+        && intentresponse.queryResult.allRequiredParamsPresent) {
         const params = intentresponse.queryResult.parameters.fields
         const parentContext = intentresponse.queryResult.outputContexts.find(t => t.name.toLowerCase().includes(FOLLOWUP_PARENT))
         // const newContext = intentresponse.queryResult.outputContexts.find(t => t.name.toLowerCase().includes(FOLLOWUP_CONTEXT))
@@ -268,7 +269,7 @@ export const handleTrainingFollowUpIntent = async (intentresponse: dialogflow.pr
         if (question1
             && answer
             && intentName
-            && intentCategory){
+            && intentCategory) {
             const lowerIntentName = intentName.toLowerCase().replace(/ /gi, '.').trim()
             const lowerFollowUpIntentName = followUpintentName.toLowerCase().replace(/ /gi, '.').trim()
             const previousContext = lowerIntentName
@@ -277,7 +278,7 @@ export const handleTrainingFollowUpIntent = async (intentresponse: dialogflow.pr
             console.log(`Creating followup intent:${combinedName}`, { previousContext })
             const intent = await findIntent(combinedName)
             // console.log(intent)
-            if (intent){
+            if (intent) {
                 console.log('Update existing followup intent')
                 await updateIntent(intent, combinedName, [question1], answer)
             } else {
@@ -306,7 +307,7 @@ export const getFormattedFulfillment = (intentresponse: dialogflow.protos.google
     }
 
     /* Iterate through components and add them to components list */
-    for (const component in fulfillment){
+    for (const component in fulfillment) {
         /* Recognize Dialogflow, Messenger and Webhook components */
         if (
             fulfillment[component].platform == 'PLATFORM_UNSPECIFIED' ||
@@ -317,8 +318,8 @@ export const getFormattedFulfillment = (intentresponse: dialogflow.protos.google
             fulfillment[component].platform == 'VIBER' ||
             fulfillment[component].platform == 'SKYPE' ||
             fulfillment[component].platform == 'LINE'
-        ){
-            if (fulfillment[component].text){
+        ) {
+            if (fulfillment[component].text) {
                 /* Text */
                 formatted.components.push({
                     name: 'DEFAULT',
@@ -326,7 +327,7 @@ export const getFormattedFulfillment = (intentresponse: dialogflow.protos.google
                 })
             }
 
-            if (fulfillment[component].card){
+            if (fulfillment[component].card) {
                 /* Convert Card to Actions on Google Card (to follow a common format) */
                 const google_card = {
                     title: fulfillment[component].card.title,
@@ -338,7 +339,7 @@ export const getFormattedFulfillment = (intentresponse: dialogflow.protos.google
                     buttons: []
                 }
 
-                for (const button in fulfillment[component].card.buttons){
+                for (const button in fulfillment[component].card.buttons) {
                     google_card.buttons.push({
                         title: fulfillment[component].card.buttons[button].text,
                         openUriAction: {
@@ -354,7 +355,7 @@ export const getFormattedFulfillment = (intentresponse: dialogflow.protos.google
                 })
             }
 
-            if (fulfillment[component].image){
+            if (fulfillment[component].image) {
                 /* Image */
                 formatted.components.push({
                     name: 'IMAGE',
@@ -362,7 +363,7 @@ export const getFormattedFulfillment = (intentresponse: dialogflow.protos.google
                 })
             }
 
-            if (fulfillment[component].quickReplies){
+            if (fulfillment[component].quickReplies) {
                 /* Suggestions */
                 formatted.components.push({
                     name: 'SUGGESTIONS',
@@ -370,7 +371,7 @@ export const getFormattedFulfillment = (intentresponse: dialogflow.protos.google
                 })
             }
 
-            if (fulfillment[component].payload){
+            if (fulfillment[component].payload) {
                 /* Payload */
                 formatted.components.push({
                     name: 'PAYLOAD',
@@ -380,8 +381,8 @@ export const getFormattedFulfillment = (intentresponse: dialogflow.protos.google
         }
 
         /* Recognize Actions on Google components */
-        if (fulfillment[component].platform == 'ACTIONS_ON_GOOGLE'){
-            if (fulfillment[component].simpleResponses){
+        if (fulfillment[component].platform == 'ACTIONS_ON_GOOGLE') {
+            if (fulfillment[component].simpleResponses) {
                 /* Google Simple Response */
                 formatted.components.push({
                     name: 'SIMPLE_RESPONSE',
@@ -390,7 +391,7 @@ export const getFormattedFulfillment = (intentresponse: dialogflow.protos.google
                 })
             }
 
-            if (fulfillment[component].basicCard){
+            if (fulfillment[component].basicCard) {
                 /* Google Card */
                 formatted.components.push({
                     name: 'CARD',
@@ -398,7 +399,7 @@ export const getFormattedFulfillment = (intentresponse: dialogflow.protos.google
                 })
             }
 
-            if (fulfillment[component].listSelect){
+            if (fulfillment[component].listSelect) {
                 /* Google List */
                 formatted.components.push({
                     name: 'LIST',
@@ -406,10 +407,10 @@ export const getFormattedFulfillment = (intentresponse: dialogflow.protos.google
                 })
             }
 
-            if (fulfillment[component].suggestions){
+            if (fulfillment[component].suggestions) {
                 /* Convert Google Suggestions to text-only suggestions (like the webhook quick-replies) */
                 const suggestions = fulfillment[
-                component
+                    component
                 ].suggestions.suggestions.map(suggestion => suggestion.title)
                 formatted.components.push({
                     name: 'SUGGESTIONS',
@@ -417,7 +418,7 @@ export const getFormattedFulfillment = (intentresponse: dialogflow.protos.google
                 })
             }
 
-            if (fulfillment[component].linkOutSuggestion){
+            if (fulfillment[component].linkOutSuggestion) {
                 /* Google Link out suggestion */
                 formatted.components.push({
                     name: 'LINK_OUT_SUGGESTION',
@@ -425,7 +426,7 @@ export const getFormattedFulfillment = (intentresponse: dialogflow.protos.google
                 })
             }
 
-            if (fulfillment[component].payload){
+            if (fulfillment[component].payload) {
                 /* Google Payload */
                 formatted.components.push({
                     name: 'PAYLOAD',
@@ -433,7 +434,7 @@ export const getFormattedFulfillment = (intentresponse: dialogflow.protos.google
                 })
             }
 
-            if (fulfillment[component].carouselSelect){
+            if (fulfillment[component].carouselSelect) {
                 /* Google Carousel Card */
                 formatted.components.push({
                     name: 'CAROUSEL_CARD',
@@ -450,28 +451,38 @@ export const handleFeedbackIntent = async (intentresponse: dialogflow.protos.goo
     if (intentresponse.queryResult.parameters
         && intentresponse.queryResult.parameters.fields
         && intentresponse.queryResult.parameters.fields['feedback-answer']
-        && intentresponse.queryResult.parameters.fields['feedback-name']){
+        && intentresponse.queryResult.parameters.fields['feedback-name']) {
         const params = intentresponse.queryResult.parameters.fields
         const feedbackName = params['feedback-name'].stringValue
         const feedbackAnswer = params['feedback-answer'].stringValue
-        if (feedbackName && feedbackAnswer){
+        if (feedbackName && feedbackAnswer) {
             await saveFeedback(feedbackAnswer, feedbackName)
         }
     }
     return intentresponse
 }
+export const setFallbackFailure = async (intentresponse: dialogflow.protos.google.cloud.dialogflow.v2.IDetectIntentResponse, count: number) => {
+    console.log('Setting fallback count:', { field: intentresponse.queryResult.outputContexts[0].parameters.fields })
+    if (intentresponse.queryResult.outputContexts[0].parameters.fields['no-match']) {
+        intentresponse.queryResult.outputContexts[0].parameters.fields['no-match'].numberValue = count
+        return conextClient.updateContext({ context: intentresponse.queryResult.outputContexts[0] })
+    }
+    return false
+}
 export const handleFallbackIntent = async (intentresponse: dialogflow.protos.google.cloud.dialogflow.v2.IDetectIntentResponse) => {
-    if (intentresponse.queryResult.outputContexts){
+    if (intentresponse.queryResult.outputContexts) {
         let count = intentresponse.queryResult.outputContexts[0].parameters.fields['no-match'].numberValue || 0
-        console.log('fallback', {params: intentresponse.queryResult.outputContexts[0].parameters.fields})
-        if (count > 2){
-            intentresponse = await addSearchToResponse(intentresponse.queryResult.queryText, intentresponse, 'Sorry. I still dont know how to reply so I have searched the internet..')
-            intentresponse.queryResult.outputContexts[0].parameters.fields['no-match'].numberValue = 0
-            await conextClient.updateContext({ context: intentresponse.queryResult.outputContexts[0] })
-        } else {
-            count = count + 1
-            intentresponse.queryResult.outputContexts[0].parameters.fields['no-match'].numberValue = count
-            await conextClient.updateContext({ context: intentresponse.queryResult.outputContexts[0] })
+        console.log('fallback', { params: intentresponse.queryResult.outputContexts[0].parameters.fields })
+        if (count > 4) {
+            // something wrong here, reset
+            await setFallbackFailure(intentresponse, 0)
+        } else if (count > 3) {
+            const fallbackMsg = `Sorry.\n
+            I still dont know how to reply so I have searched the internet for the term "${intentresponse.queryResult.queryText}"..\n`
+            intentresponse = await addSearchToResponse(intentresponse.queryResult.queryText, intentresponse, fallbackMsg)
+            await setFallbackFailure(intentresponse, 0)
+        } else{
+            await setFallbackFailure(intentresponse, count)
         }
     }
     return intentresponse
@@ -479,10 +490,10 @@ export const handleFallbackIntent = async (intentresponse: dialogflow.protos.goo
 export const handleTopicIntent = async (intentresponse: dialogflow.protos.google.cloud.dialogflow.v2.IDetectIntentResponse) => {
     if (intentresponse.queryResult.parameters
         && intentresponse.queryResult.parameters.fields
-        && intentresponse.queryResult.parameters.fields['feedback-answer']){
+        && intentresponse.queryResult.parameters.fields['feedback-answer']) {
         const params = intentresponse.queryResult.parameters.fields
         const feedbackAnswer = params['feedback-answer'].stringValue
-        if (feedbackAnswer){
+        if (feedbackAnswer) {
             await saveTopic(feedbackAnswer)
         }
     }
@@ -494,7 +505,7 @@ export const updateParentContext = async (contexts: dialogflow.protos.google.clo
     answer: string) => {
     try {
         const parentContext = contexts.find(t => t.name.toLowerCase().includes(FOLLOWUP_PARENT))
-        if (parentContext){
+        if (parentContext) {
             parentContext.parameters.fields = {
                 ...parentContext.parameters.fields,
                 'name': { stringValue: combinedName },
@@ -504,7 +515,7 @@ export const updateParentContext = async (contexts: dialogflow.protos.google.clo
             const ret = await conextClient.updateContext({ context: parentContext })
             return ret
         }
-    } catch (error){
+    } catch (error) {
         console.log(error)
     }
 }
@@ -514,25 +525,25 @@ export const handleSearchIntent = async (intentresponse: dialogflow.protos.googl
 
     if (intentresponse.queryResult.parameters
         && intentresponse.queryResult.parameters.fields
-        && intentresponse.queryResult.parameters.fields.q){
+        && intentresponse.queryResult.parameters.fields.q) {
         const params = intentresponse.queryResult.parameters.fields
         const service = params.service ? params.service.stringValue : ''
         const q = params.q ? params.q.stringValue : ''
         console.log('Searching...', { params, service, q, intentresponse })
         // if this is the intent-name question, return the entity options for the category
-        if (q){
+        if (q) {
             console.log('Searching web')
             // eslint-disable-next-line no-param-reassign
-            intentresponse = await addSearchToResponse(q, intentresponse)
+            intentresponse = await addSearchToResponse(q, intentresponse, 'Search Result')
         }
     }
     return intentresponse
 }
 const addSearchToResponse = async (q: string, intentresponse, title?: string) => {
     const searchResult = await search(q)
-    if (searchResult){
+    if (searchResult) {
         const buttons = []
-        if (searchResult.AbstractURL){
+        if (searchResult.AbstractURL) {
             buttons.push({
                 'title': `View on ${searchResult.AbstractSource}`,
                 'openUriAction': {
@@ -544,7 +555,7 @@ const addSearchToResponse = async (q: string, intentresponse, title?: string) =>
             'platform': 'ACTIONS_ON_GOOGLE',
             'basicCard': {
                 title,
-                'subtitle': `Powered by ${searchResult.Engine} ${searchResult.AbstractSource ? `& ${searchResult.AbstractSource}` : ''}`,
+                'subtitle': `Response powered by ${searchResult.Engine} ${searchResult.AbstractSource ? `& ${searchResult.AbstractSource}` : ''}`,
                 'formattedText': searchResult.AbstractText,
                 'image': {},
                 buttons

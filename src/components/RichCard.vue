@@ -3,6 +3,7 @@
         <img v-if="imageUri" class="rich-card-image" :src="imageUri" :alt="imageTitle || title">
         <div class="rich-card-content">
             <div v-if="title" class="rich-card-title">{{title}}</div>
+            <hr>
             <div v-if="subtitle" class="rich-card-subtitle">{{subtitle}}</div>
             <div v-if="text" class="rich-card-text">{{text}}</div>
             <div :class="{'rich-card-actions': $slots.default}"><slot /></div>
@@ -56,17 +57,25 @@ export default {
 
 .rich-card-title
     font-size: 20px
+    font-weight: bold
     color: var(--text-title)
     line-height: 24px
     overflow: hidden
     text-overflow: ellipsis
 
 .rich-card-subtitle
-    font-size: 12px
+    font-size: 10px
     line-height: 20px
     float: right
-    font-style: italic
-    color: var(--text-subtitle)
+    position: fixed
+    top: -10px
+    right: -10px
+    padding: 3px
+    background: chartreuse
+    border-radius: 5px
+    border-style: solid
+    border-width: 1px
+
 
 .rich-card-text
     line-height: 24px

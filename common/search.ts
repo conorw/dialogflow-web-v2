@@ -1,8 +1,8 @@
 import * as axios from 'axios'
 export interface searchResult{
-    Engine: string
-    AbstractSource: string
-    AbstractText: string
+    Engine: string,
+    AbstractSource: string,
+    AbstractText: string,
     AbstractURL: string
 }
 export const search = async (q: string) : Promise<searchResult> => {
