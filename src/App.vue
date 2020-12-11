@@ -70,7 +70,7 @@
                     >
                         <!-- Text (https://cloud.google.com/dialogflow/docs/reference/rest/v2beta1/projects.agent.intents#Text) -->
                         <RichBubble
-                            v-if="component.text"
+                            v-if="component.text && !message.queryResult.fulfillmentMessages.find(t=>t.message==='simpleResponses')"
                             :text="
                                 component.text.text[0] ||
                                     (translations[lang()] && translations[lang()].noContent) ||

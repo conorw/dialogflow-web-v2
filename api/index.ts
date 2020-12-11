@@ -74,6 +74,7 @@ export default async (req: NowRequest, res: NowResponse) => {
                     res.send(intentresponse)
                 }
             } catch (error){
+                console.log(error)
                 res.statusCode = 500
                 res.send(error.message)
             }
