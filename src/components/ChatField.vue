@@ -100,7 +100,7 @@
                     <img
                         src="/img/stickers.png">
                 </button>
-                <span class="training-icons">
+                <span v-if="training == true" class="training-icons">
                     <button
                         class="top-head-button start"
                         title="Start training"
@@ -166,6 +166,13 @@ export default {
     components: {
         VEmojiPicker,
         GiphySearch
+    },
+    props: {
+        training: {
+            type: Boolean,
+            required: false,
+            default: true
+        }
     },
     data(){
         return {
