@@ -1,6 +1,5 @@
 import Vue from 'vue'
 import App from './App.vue'
-
 import config from './config'
 import translations from './translations/translations.json'
 import { register_service_worker } from './utils'
@@ -8,6 +7,7 @@ import { register_service_worker } from './utils'
 register_service_worker()
 
 import vmodal from 'vue-js-modal'
+import router from './router'
 Vue.use(vmodal)
 
 Vue.config.productionTip = false
@@ -35,4 +35,11 @@ Vue.prototype.lang = () => {
 /* (global) Debug mode */
 Vue.prototype.debug = () => process.env.NODE_ENV == 'development'
 
-new Vue({render: h => h(App)}).$mount('#app')
+// new Vue({render: h => h(App)}).$mount('#app')
+
+const app = new Vue({
+    router,
+    render: h => h(App)
+})
+app.$mount('#app')
+

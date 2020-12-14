@@ -20,7 +20,49 @@
         </div>
     </div>
 </template>
+<script>
+import * as langs from 'langs'
 
+export default {
+    name: 'WelcomeView',
+    filters: {
+        /* This filter turns language code to the local language name using the langs dependency (example "en" -> "English") */
+        toLang(code){
+            return langs.where('1', code.substring(0, 2)).local
+        }
+    },
+    props: {
+        agent: {
+            type: Object,
+            required: true
+        }
+    },
+    data(){
+        return {
+            sel_lang: ''
+        }
+    },
+    watch: {
+        /* Save selected language */
+        sel_lang(lang){
+            if (this.history()) sessionStorage.setItem('lang', lang)
+            else {
+                this.config.fallback_lang = lang
+            }
+        }
+    },
+    /* Set default language on load (or fallback) */
+    created(){
+        if (this.agent && this.agent.defaultLanguageCode){
+            this.sel_lang = this.agent.defaultLanguageCode
+        }
+
+        else {
+            this.sel_lang = this.config.fallback_lang
+        }
+    }
+}
+</script>
 <style lang="sass" scoped>
 @import '@/style/mixins'
 
@@ -67,46 +109,4 @@
         pointer-events: none
 </style>
 
-<script>
-import * as langs from 'langs'
 
-export default {
-    name: 'WelcomeView',
-    filters: {
-        /* This filter turns language code to the local language name using the langs dependency (example "en" -> "English") */
-        toLang(code){
-            return langs.where('1', code.substring(0, 2)).local
-        }
-    },
-    props: {
-        agent: {
-            type: Object,
-            required: true
-        }
-    },
-    data(){
-        return {
-            sel_lang: ''
-        }
-    },
-    watch: {
-        /* Save selected language */
-        sel_lang(lang){
-            if (this.history()) sessionStorage.setItem('lang', lang)
-            else {
-                this.config.fallback_lang = lang
-            }
-        }
-    },
-    /* Set default language on load (or fallback) */
-    created(){
-        if (this.agent && this.agent.defaultLanguageCode){
-            this.sel_lang = this.agent.defaultLanguageCode
-        }
-
-        else {
-            this.sel_lang = this.config.fallback_lang
-        }
-    }
-}
-</script>
