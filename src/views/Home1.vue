@@ -43,7 +43,8 @@
             <!-- <WelcomeView v-if="agent && messages.length == 0" :agent="agent" /> -->
             <!-- Messages Table -->
             <section v-else aria-live="polite">
-                <Message v-if="lastBotMessage" :loading="loading" :message="lastBotMessage" />
+                <BotMessage v-if="lastMessage" :loading="loading" :message="lastMessage" />
+                <MyMessage v-if="lastMessage" :loading="loading" :message="lastMessage" />
             </section>
         </section>
         <!-- ChatField is made for submitting queries and displaying suggestions -->
@@ -91,7 +92,8 @@ import ChatField from '@/components/ChatField.vue'
 
 import RichSuggesion from '@/components/RichSuggestion.vue'
 
-import Message from '@/components/Message'
+import BotMessage from '@/components/BotMessage'
+import MyMessage from '@/components/MyMessage'
 
 import * as uuidv1 from 'uuid/v1'
 
@@ -102,15 +104,15 @@ export default {
     components: {
         ErrorMessage,
         ChatField,
-        Message,
+        MyMessage,
+        BotMessage,
         RichSuggesion
     },
     data(){
         return {
             agent: null,
             messages: [],
-            lastBotMessage: null,
-            lastUserMessage: null,
+            lastMessage: null,
             language: '',
             session: '',
             muted: true,
@@ -191,6 +193,7 @@ export default {
     watch: {
     /* This function is triggered, when new messages arrive */
         messages(messages){
+            this.lastMessage = messages.length ? messages[messages.length - 1] : null
             if (this.history()) sessionStorage.setItem('message_history', JSON.stringify(messages)) // <- Save history if the feature is enabled
         },
         /* This function is triggered, when request is started or finished */
@@ -294,7 +297,6 @@ export default {
             .send(request)
             .then(response => {
                 this.messages.push(response)
-                this.lastBotMessage = response
                 this.handle(response) // <- trigger the handle function (explanation below)
                 if (this.debug()) console.log(response) // <- log responses in development mode
             })
