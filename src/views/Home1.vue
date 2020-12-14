@@ -1,5 +1,20 @@
 <template>
     <main id="app">
+        <section class="bot-profile" aria-live="polite">
+            <div class="bot-title">{{agent.displayName}}</div>
+            <img
+                v-if="agent.avatarUri"
+                class="top-head-icon"
+                :alt="agent.displayName"
+                :src="agent.avatarUri"
+            >
+            <img
+                v-else
+                class="top-head-icon"
+                src="/img/icon.png"
+                :alt="agent.displayName"
+            >
+        </section>
         <!-- TopHead is the header with the information about the app -->
         <!-- <TopHead
             v-if="agent"
@@ -35,18 +50,15 @@
             >
             <div class="bot-title">{{agent.displayName}}</div>
         </section> -->
-        <section class="chat">
-            <!-- Error component is for displaying errors -->
-            <ErrorMessage v-if="error" :message="error" />
+        <BotMessage
+            v-if="lastMessage || loading"
+            :style="{'z-index': loading ? 0: 1000}"
+            class="bot-chat"
+            :loading="loading"
+            :message="lastMessage" />
 
-            <!-- Welcome component is for onboarding experience and language picker -->
-            <!-- <WelcomeView v-if="agent && messages.length == 0" :agent="agent" /> -->
-            <!-- Messages Table -->
-            <section v-else aria-live="polite">
-                <BotMessage v-if="lastMessage" :loading="loading" :message="lastMessage" />
-                <MyMessage v-if="lastMessage" :loading="loading" :message="lastMessage" />
-            </section>
-        </section>
+        <MyMessage v-if="lastMessage" class="me-chat" :message="lastMessage" />
+
         <!-- ChatField is made for submitting queries and displaying suggestions -->
         <ChatField
             ref="input"
@@ -196,19 +208,6 @@ export default {
             this.lastMessage = messages.length ? messages[messages.length - 1] : null
             if (this.history()) sessionStorage.setItem('message_history', JSON.stringify(messages)) // <- Save history if the feature is enabled
         },
-        /* This function is triggered, when request is started or finished */
-        loading(){
-            setTimeout(() => {
-                const app = document.querySelector('#app') // <- We need to scroll down #app, to prevent the whole page jumping to bottom, when using in iframe
-                if (app.querySelector('#message')){
-                    const message =
-            app.querySelectorAll('#message')[
-            app.querySelectorAll('#message').length - 1
-            ].offsetTop - 70
-                    window.scrollTo({ top: message, behavior: 'smooth' })
-                }
-            }, 2) // <- wait for render (timeout) and then smoothly scroll #app down to the last message
-        },
         /* If muted, stop playing feedback */
         muted(muted){
             this.audio.muted = muted
@@ -291,7 +290,9 @@ export default {
             this.stop_feedback()
             this.loading = true
             this.error = null
-
+            if (submission.text){
+                this.lastMessage = {queryResult: {queryText: submission.text}}
+            }
             /* Send the request to endpoint */
             this.client
             .send(request)
@@ -382,6 +383,33 @@ body
     margin: auto auto
     padding: 70px 12px 112px 12px
 
+
+.bot-chat
+    width: 70% !important
+    height: 35% !important
+    top: 25%
+    position: absolute
+    right: 0
+.bot-chat .rich-component
+    text-align: center
+    height: 100% !important
+.bot-chat .rich-bubble
+    width: 80% !important
+    text-align: center
+    height: 100% !important
+
+.me-chat
+    width: 60% !important
+    height: 140px !important
+    bottom: 120px
+    left: 10px
+    position: absolute
+.me-chat .rich-bubble
+    width: 80%
+    text-align: center
+    vertical-align: center
+    height: 100%
+
 .bot-profile
     position: -webkit-sticky
     position: sticky
@@ -394,9 +422,6 @@ body
     width: 100%
 
 @media only screen and (max-width: 600px)
-  .bot-profile
-    display: none
-
 .bot-title
     font-size: xx-large
     font-weight: bold
@@ -407,4 +432,9 @@ body
 .confidence-score
     font-size: x-small
     color: lightgray
+
+.bot-profile
+    display: inline
+    position: absolute
+    width: 55%
 </style>

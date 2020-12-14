@@ -1,7 +1,19 @@
 <template>
     <div class="rich-component" :class="{'me': me, 'fullwidth': fullwidth}"><slot /></div>
 </template>
-
+<script>
+export default {
+    name: 'RichComponent',
+    props: {
+        me: {
+            type: Boolean
+        },
+        fullwidth: {
+            type: Boolean
+        }
+    }
+}
+</script>
 <style lang="sass" scoped>
 .rich-component
     padding-bottom: 8px
@@ -36,16 +48,3 @@
         flex-grow: 1
 </style>
 
-<script>
-export default {
-    name: 'RichComponent',
-    props: {
-        me: {
-            type: Boolean
-        },
-        fullwidth: {
-            type: Boolean
-        }
-    }
-}
-</script>

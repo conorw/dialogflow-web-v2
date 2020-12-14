@@ -5,7 +5,14 @@
         :src="text"
         tabindex="0"
         :class="{'me': me, 'loading': loading}">
-    <div v-else class="rich-bubble" tabindex="0" :class="{'me': me, 'loading': loading}">{{text}}</div>
+    <div
+        v-else
+        v-resize-text="{ratio:.6, minFontSize: '12px'}"
+        class="rich-bubble bubble-text"
+        tabindex="0"
+        :class="{'me': me, 'loading': loading}">
+        {{text || '....'}}
+    </div>
 </template>
 
 <script lang="ts">
@@ -42,6 +49,7 @@ export default {
 </script>
 <style lang="sass" scoped>
 
+
 .img
     max-width: 60%
 
@@ -50,10 +58,13 @@ export default {
     border-radius: 40px
     color: var(--text-element)
     border: 1px solid var(--background-element)
-    display: inline-block
-    position: relative
     background-color: var(--background)
     min-width: 26px
+    display: flex
+    align-items: center
+    justify-content: center
+    overflow-y: auto
+    overflow-x: hidden
     border-top-left-radius: 0
     word-wrap: break-word
     flex-grow: 0

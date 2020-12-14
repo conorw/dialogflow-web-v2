@@ -8,6 +8,9 @@ register_service_worker()
 
 import vmodal from 'vue-js-modal'
 import router from './router'
+import VueResizeText from 'vue-resize-text'
+
+Vue.use(VueResizeText)
 Vue.use(vmodal)
 
 Vue.config.productionTip = false

@@ -3,25 +3,6 @@
         <div v-for="message in messages" :key="message.responseId">
             <Message :message="message" :loading="loading" :training="training" />
         </div>
-        <div v-if="loading" id="message">
-            <RichComponent
-                me
-            >
-                <RichBubble
-                    aria-hidden="true"
-                    me
-                    loading
-                />
-            </RichComponent>
-
-            <RichComponent
-            >
-                <RichBubble
-                    aria-hidden="true"
-                    loading
-                />
-            </RichComponent>
-        </div>
     </div>
 </template>
 <script>

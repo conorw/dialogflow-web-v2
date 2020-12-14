@@ -1,18 +1,14 @@
 <template>
-    <div>
-        <div id="message">
-            <!-- My message -->
-            <RichComponent
-                me
-            >
-                <RichBubble
-                    v-if="message.queryResult.queryText"
-                    :text="message.queryResult.queryText"
-                    me
-                />
-            </RichComponent>
-        </div>
-    </div>
+    <!-- My message -->
+    <RichComponent
+        me
+    >
+        <RichBubble
+            v-if="message.queryResult.queryText"
+            :text="message.queryResult.queryText"
+            me
+        />
+    </RichComponent>
 </template>
 <script>
 import RichComponent from '@/components/RichComponent.vue'
