@@ -44,7 +44,7 @@
             <WelcomeView v-if="agent && messages.length == 0" :agent="agent" />
             <!-- Messages Table -->
             <section v-else aria-live="polite">
-                <MessageList :loading="loading" :messages="messages" />
+                <MessageList :training="true" :loading="loading" :messages="messages" />
             </section>
         </section>
         <!-- ChatField is made for submitting queries and displaying suggestions -->

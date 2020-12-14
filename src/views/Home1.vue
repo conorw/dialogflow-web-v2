@@ -43,7 +43,7 @@
             <!-- <WelcomeView v-if="agent && messages.length == 0" :agent="agent" /> -->
             <!-- Messages Table -->
             <section v-else aria-live="polite">
-                <MessageList :loading="loading" :messages="messages" />
+                <Message v-if="lastBotMessage" :loading="loading" :message="lastBotMessage" />
             </section>
         </section>
         <!-- ChatField is made for submitting queries and displaying suggestions -->
@@ -91,7 +91,7 @@ import ChatField from '@/components/ChatField.vue'
 
 import RichSuggesion from '@/components/RichSuggestion.vue'
 
-import MessageList from '@/components/MessageList'
+import Message from '@/components/Message'
 
 import * as uuidv1 from 'uuid/v1'
 
@@ -102,13 +102,15 @@ export default {
     components: {
         ErrorMessage,
         ChatField,
-        MessageList,
+        Message,
         RichSuggesion
     },
     data(){
         return {
             agent: null,
             messages: [],
+            lastBotMessage: null,
+            lastUserMessage: null,
             language: '',
             session: '',
             muted: true,
@@ -292,6 +294,7 @@ export default {
             .send(request)
             .then(response => {
                 this.messages.push(response)
+                this.lastBotMessage = response
                 this.handle(response) // <- trigger the handle function (explanation below)
                 if (this.debug()) console.log(response) // <- log responses in development mode
             })
