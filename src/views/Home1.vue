@@ -497,4 +497,7 @@ body
         width: 45% !important
     .bot-chat .rich-component
         width: 100%
+    .my-profile
+        left: 60%
+        max-width: 35vh
 </style>

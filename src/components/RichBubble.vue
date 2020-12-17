@@ -11,7 +11,7 @@
         <div
             v-else
             :key="text"
-            v-resize-text="{ratio:0.8, minFontSize: '18px', delay: 200}"
+            v-resize-text="{ratio:1, minFontSize: '18px', delay: 200}"
             class="rich-bubble bubble-text"
             tabindex="0"
             :class="{'me': me, 'loading': loading}">
