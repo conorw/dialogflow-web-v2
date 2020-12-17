@@ -1,7 +1,6 @@
 <template>
     <main id="app">
         <section class="bot-profile" aria-live="polite">
-            <div class="bot-title">{{agent.displayName}}</div>
             <img
                 v-if="agent.avatarUri"
                 class="top-head-icon"
@@ -14,6 +13,7 @@
                 src="/img/icon.png"
                 :alt="agent.displayName"
             >
+            <div class="bot-title"><span>{{agent.displayName}}</span></div>
         </section>
         <!-- TopHead is the header with the information about the app -->
         <!-- <TopHead
@@ -52,13 +52,19 @@
         </section> -->
         <BotMessage
             v-if="lastMessage || loading"
-            :style="{'z-index': loading ? 0: 1000}"
             class="bot-chat"
             :loading="loading"
             :message="lastMessage" />
 
         <MyMessage v-if="lastMessage" class="me-chat" :message="lastMessage" />
-
+        <section class="my-profile" aria-live="polite">
+            <img
+                class="top-head-icon"
+                src="/img/avatars/SVG/1 de 3 Avatars FLAT/27-ninja.svg"
+                :alt="My-Avatar"
+            >
+            <div class="bot-title"><span>Me</span></div>
+        </section>
         <!-- ChatField is made for submitting queries and displaying suggestions -->
         <ChatField
             ref="input"
@@ -385,24 +391,28 @@ body
 
 
 .bot-chat
-    width: 70% !important
-    height: 35% !important
-    top: 25%
+    width: 60% !important
+    height: 20% !important
+    top: 20%
     position: absolute
-    right: 0
+    right: 10px
+    z-index: 2
 .bot-chat .rich-component
     text-align: center
-    height: 100% !important
+    height: 100%
+    width: 100%
+
 .bot-chat .rich-bubble
     width: 80% !important
     text-align: center
     height: 100% !important
 
+
 .me-chat
-    width: 60% !important
-    height: 140px !important
-    bottom: 120px
-    left: 10px
+    width: 55% !important
+    height: 20% !important
+    bottom: 170px
+    left: 5px
     position: absolute
 .me-chat .rich-bubble
     width: 80%
@@ -414,27 +424,52 @@ body
     position: -webkit-sticky
     position: sticky
     top: 5%
-
-.bot-profile
-    width: 30vw
+    display: inline
+    position: absolute
+    width: 45%
 
 .bot-profile img
     width: 100%
 
-@media only screen and (max-width: 600px)
 .bot-title
-    font-size: xx-large
-    font-weight: bold
-    color: var(--text-title)
-    line-height: 25px
     text-align: center
+    margin-top: -10px
 
-.confidence-score
-    font-size: x-small
-    color: lightgray
+.bot-title span
+    font-size: x-large
+    border: aqua
+    background: white
+    width: min-content
+    text-align: center
+    border-radius: 10px
+    left: auto
+    border-width: thick
+    border-style: dotted
 
-.bot-profile
+.rich-bubble.me::after
+    content: "" !important
+
+.my-profile
+    position: -webkit-sticky
+    position: sticky
+    bottom: 20%
     display: inline
     position: absolute
-    width: 55%
+    width: 40%
+    right: 5px
+
+.my-profile img
+    width: 100%
+
+@media screen and (min-width: 720px)
+    .bot-profile
+        width: 55%
+        right: 45%
+        max-width: 40vh
+    .bot-profile img
+        width: 100%
+    .bot-chat
+        width: 45% !important
+    .bot-chat .rich-component
+        width: 100%
 </style>

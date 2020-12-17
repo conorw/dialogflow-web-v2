@@ -7,7 +7,7 @@
         :class="{'me': me, 'loading': loading}">
     <div
         v-else
-        v-resize-text="{ratio:.6, minFontSize: '12px'}"
+        v-resize-text="{ratio:1.1, minFontSize: '12px'}"
         class="rich-bubble bubble-text"
         tabindex="0"
         :class="{'me': me, 'loading': loading}">
@@ -51,7 +51,7 @@ export default {
 
 
 .img
-    max-width: 60%
+    max-width: 70%
 
 .rich-bubble
     padding: 12px

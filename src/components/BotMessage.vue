@@ -5,6 +5,7 @@
             v-for="(component, component_id) in message.queryResult
                 .fulfillmentMessages"
             :key="component_id"
+            :style="{'display':showMsg(component)?'inherit':'none'}"
             :fullwidth="
                 component.carouselSelect !== undefined ||
                     component.rbmCarouselRichCard !== undefined ||
@@ -280,7 +281,7 @@
                 </div>
             </section>
         </RichComponent>
-        <div v-if="loading" id="message">
+        <div v-if="loading" id="loading-message">
             <RichComponent
             >
                 <RichBubble
@@ -464,6 +465,38 @@ export default {
             type: Boolean,
             required: false,
             default: false
+        }
+    },
+    methods: {
+        showMsg(component){
+            if (component.simpleResponses || component.listSelect || component.image){
+                return true
+            }
+            if (component.tableCard){
+                return true
+            }
+            if (component.payload && component.payload.richContent){
+                return true
+            }
+            if (component.mediaContent && component.mediaContent.mediaObjects){
+                return true
+            }
+            if (component.card || component.basicCard || component.rbmStandaloneRichCard){
+                return true
+            }
+            if (component.carouselSelect || component.rbmCarouselRichCard){
+                return true
+            }
+            if (component.text &&
+                        !this.message.queryResult.fulfillmentMessages.find(t => t.message === 'simpleResponses')){
+                return true
+            }
+            if (component.rbmText){
+                return true
+            }
+
+            console.log(component)
+            return false
         }
     }
 }

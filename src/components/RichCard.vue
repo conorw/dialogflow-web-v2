@@ -78,12 +78,13 @@ export default {
 
 
 .rich-card-text
-    line-height: 24px
-    font-size: 18px
+    line-height: 20px
+    font-size: medium
     color: var(--text-title)
     white-space: normal
 
 .rich-card-actions
     padding-top: 16px
+
 </style>
 
