@@ -1,18 +1,23 @@
 <template>
-    <img
-        v-if="isURL(text)"
-        class="rich-bubble img"
-        :src="text"
-        tabindex="0"
-        :class="{'me': me, 'loading': loading}">
-    <div
-        v-else
-        v-resize-text="{ratio:1.1, minFontSize: '12px'}"
-        class="rich-bubble bubble-text"
-        tabindex="0"
-        :class="{'me': me, 'loading': loading}">
-        {{text || '....'}}
-    </div>
+    <transition name="bounce" mode="out-in">
+        <img
+            v-if="isURL(text)"
+            :key="text"
+            class="rich-bubble img"
+            :src="text"
+            tabindex="0"
+            :class="{'me': me, 'loading': loading}">
+
+        <div
+            v-else
+            :key="text"
+            v-resize-text="{ratio:0.8, minFontSize: '18px', delay: 200}"
+            class="rich-bubble bubble-text"
+            tabindex="0"
+            :class="{'me': me, 'loading': loading}">
+            {{text || '....'}}
+        </div>
+    </transition>
 </template>
 
 <script lang="ts">
@@ -49,6 +54,20 @@ export default {
 </script>
 <style lang="sass" scoped>
 
+
+.bounce-enter-active
+  animation: bounce-in .5s
+
+.bounce-leave-active
+  animation: bounce-in .5s reverse
+
+@keyframes bounce-in
+  0%
+    transform: scale(0)
+  50%
+    transform: scale(1.5)
+  100%
+    transform: scale(1)
 
 .img
     max-width: 70%

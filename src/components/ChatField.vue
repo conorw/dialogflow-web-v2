@@ -15,26 +15,30 @@
             />
             <div class="chat-field-flexible">
                 <!-- Text input -->
-                <textarea
-                    v-model="query"
-                    class="chat-field-input"
-                    type="text"
-                    autofocus
-                    :placeholder="
-                        (translations[lang()] && translations[lang()].inputTitle) ||
-                            translations[config.fallback_lang].inputTitle
-                    "
-                    :aria-label="
-                        (translations[lang()] && translations[lang()].inputTitle) ||
-                            translations[config.fallback_lang].inputTitle
-                    "
-                    @keydown="inputHandler"
-                    @focus="
-                        microphone = false;
-                        should_listen = false;
-                        $emit('typing');
-                    "
-                />
+                <transition name="bounce">
+                    <textarea
+                        :key="submissionText"
+                        ref="inputField"
+                        v-model="query"
+                        class="chat-field-input"
+                        type="text"
+                        autofocus
+                        :placeholder="
+                            (translations[lang()] && translations[lang()].inputTitle) ||
+                                translations[config.fallback_lang].inputTitle
+                        "
+                        :aria-label="
+                            (translations[lang()] && translations[lang()].inputTitle) ||
+                                translations[config.fallback_lang].inputTitle
+                        "
+                        @keydown="inputHandler"
+                        @focus="
+                            microphone = false;
+                            should_listen = false;
+                            $emit('typing');
+                        "
+                    />
+                </transition>
 
                 <!-- Send message button (arrow button) -->
                 <transition name="chat-field-button-animation" mode="out-in">
@@ -177,6 +181,7 @@ export default {
     data(){
         return {
             query: '',
+            submissionText: '',
             showDialog: false,
             microphone: false,
             recognition: null,
@@ -249,6 +254,11 @@ export default {
             else if (this.recorder) this.recorder.stop()
         }
     },
+    mounted(){
+        const vueRef = this
+        setTimeout(() => {
+            vueRef.$refs.inputField.focus() }, 0)
+    },
     methods: {
         openGiphy(){
             this.api = 'gifs'
@@ -280,17 +290,37 @@ export default {
             if (this.should_listen) this.microphone = true
         },
         submit(submission){
+            const vueRef = this
             if (submission.text && submission.text.length > 0){
-                this.$emit('submit', submission)
-                this.query = ''
-                this.showDialog = false
-            } else if (submission.audio) this.$emit('submit', submission)
+                this.submissionText = submission.text
+                vueRef.$emit('submit', submission)
+                vueRef.query = ''
+                vueRef.showDialog = false
+            } else if (submission.audio) vueRef.$emit('submit', submission)
+            setTimeout(() => {
+                vueRef.$refs.inputField.focus() }, 0)
         }
     }
 }
 </script>
 <style lang="sass" scoped>
 @import '@/style/mixins'
+
+
+.bounce-enter-active
+  animation: bounce-in .5s
+
+.bounce-leave-active
+  animation: bounce-in .5s reverse
+
+@keyframes bounce-in
+  0%
+    transform: scale(0)
+  50%
+    transform: scale(1.5)
+  100%
+    transform: scale(1)
+
 
 .chat-field
     position: fixed

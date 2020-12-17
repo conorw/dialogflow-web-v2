@@ -51,7 +51,7 @@
             <div class="bot-title">{{agent.displayName}}</div>
         </section> -->
         <BotMessage
-            v-if="lastMessage || loading"
+            v-if="lastMessage"
             class="bot-chat"
             :loading="loading"
             :message="lastMessage" />
@@ -61,7 +61,7 @@
             <img
                 class="top-head-icon"
                 src="/img/avatars/SVG/1 de 3 Avatars FLAT/27-ninja.svg"
-                :alt="My-Avatar"
+                alt="My-Avatar"
             >
             <div class="bot-title"><span>Me</span></div>
         </section>
@@ -389,6 +389,15 @@ body
     margin: auto auto
     padding: 70px 12px 112px 12px
 
+.rich-card-content
+    padding: 6px
+.rich-card-title
+    font-size: medium !important
+    line-height: 1em !important
+.rich-card-text
+    font-size: small !important
+    max-height: 40vh
+    overflow: auto
 
 .bot-chat
     width: 60% !important
@@ -406,12 +415,13 @@ body
     width: 80% !important
     text-align: center
     height: 100% !important
+    background: wheat
 
 
 .me-chat
     width: 55% !important
     height: 20% !important
-    bottom: 170px
+    bottom: 22%
     left: 5px
     position: absolute
 .me-chat .rich-bubble
@@ -446,13 +456,19 @@ body
     border-width: thick
     border-style: dotted
 
-.rich-bubble.me::after
+.rich-bubble.me
+    border-top-right-radius: 40px !important
+    border-bottom-right-radius: 0 !important
+
+.rich-bubble::after
+    content: "" !important
+.rich-bubble::before
     content: "" !important
 
 .my-profile
     position: -webkit-sticky
     position: sticky
-    bottom: 20%
+    bottom: 18vh
     display: inline
     position: absolute
     width: 40%
