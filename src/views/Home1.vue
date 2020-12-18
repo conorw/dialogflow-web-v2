@@ -1,5 +1,24 @@
 <template>
     <main id="app">
+        <TopHead
+            v-if="agent"
+            :agent="agent"
+            :voices="voices"
+            :selectedvoice.sync="config.voice"
+            @submit="send"
+        >
+            <TopHeadAction
+                :title="
+                    muted
+                        ? (translations[lang()] && translations[lang()].unMuteTitle) ||
+                            translations[config.fallback_lang].unMuteTitle
+                        : (translations[lang()] && translations[lang()].muteTitle) ||
+                            translations[config.fallback_lang].muteTitle
+                "
+                :icon="muted ? 'volume_off' : 'volume_up'"
+                @click.native="muted = !muted"
+            />
+        </TopHead>
         <transition name="shake">
             <section :key="botText" class="bot-profile" aria-live="polite">
                 <img
@@ -113,7 +132,8 @@ import ErrorMessage from '@/components/ErrorMessage.vue'
 import ChatField from '@/components/ChatField.vue'
 
 import RichSuggesion from '@/components/RichSuggestion.vue'
-
+import TopHead from '@/components/TopHead.vue'
+import TopHeadAction from '@/components/TopHeadAction.vue'
 import BotMessage from '@/components/BotMessage'
 import MyMessage from '@/components/MyMessage'
 
@@ -125,6 +145,8 @@ export default {
     name: 'Home1',
     components: {
         ErrorMessage,
+        TopHead,
+        TopHeadAction,
         ChatField,
         MyMessage,
         BotMessage,
@@ -310,7 +332,6 @@ export default {
             this.client
             .send(request)
             .then(response => {
-                this.botText = response
                 this.messages.push(response)
                 this.handle(response) // <- trigger the handle function (explanation below)
                 if (this.debug()) console.log(response) // <- log responses in development mode
@@ -371,6 +392,8 @@ export default {
                 speech.onend = () => this.$refs.input.listen()
 
                 if (!this.muted) window.speechSynthesis.speak(speech) // <- if app is not muted, speak out the speech
+
+                this.botText = text
             }
         },
         /* Stop audio speech/playback */
@@ -432,11 +455,11 @@ body
     overflow: auto
 
 .bot-chat
-    width: 60% !important
+    width: 50% !important
     height: 20% !important
-    top: 20%
+    top: 15%
     position: absolute
-    right: 10px
+    right: 30px
     z-index: 2
 .bot-chat .rich-component
     text-align: center
@@ -444,7 +467,7 @@ body
     width: 100%
 
 .bot-chat .rich-bubble
-    width: 80% !important
+    width: 100% !important
     text-align: center
     height: 100% !important
     background: white
@@ -457,7 +480,7 @@ body
     left: 5px
     position: absolute
 .me-chat .rich-bubble
-    width: 80%
+    width: 100%
     text-align: center
     vertical-align: center
     height: 100%
@@ -468,7 +491,7 @@ body
     top: 5%
     display: inline
     position: absolute
-    width: 45%
+    width: 50%
 
 .bot-profile img
     width: 100%
@@ -513,8 +536,8 @@ body
 
 @media screen and (min-width: 720px)
     .bot-profile
-        width: 55%
-        right: 45%
+        width: 50%
+        right: 50%
         max-width: 30vh
     .bot-profile img
         width: 100%
@@ -525,4 +548,22 @@ body
     .my-profile
         left: 60%
         max-width: 25vh
+
+@media screen and (max-height: 500px)
+    .bot-profile
+        width: 20vw
+        right: 50%
+        max-height: 30vh
+    .bot-profile img
+        width: 100%
+    .bot-chat
+        width: 45% !important
+    .my-profile
+        left: 60%
+        width: 20vw
+        top: 35%
+    .me-chat
+        bottom: 35%
+    .rich-bubble
+        max-height: 50%
 </style>
