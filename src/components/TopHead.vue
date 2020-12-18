@@ -2,14 +2,23 @@
     <header class="top-head">
         <div class="top-head-container">
             <a
-                href="https://budibot.com"
-                target="_blank"> <button
-                    class="top-head-button home"
-                    aria-label="Home"
-                    title="Home"
-                >
-                    <i class="material-icons" aria-hidden="true">home</i>
-                </button></a>
+                href="/"
+            > <button
+                class="top-head-button home"
+                aria-label="Home"
+                title="Home"
+            >
+                <i class="material-icons" aria-hidden="true">home</i>
+            </button></a>
+            <a
+                href="/#/training"
+            > <button
+                class="top-head-button training"
+                aria-label="Training"
+                title="Training"
+            >
+                <i class="material-icons" aria-hidden="true">model_training</i>
+            </button></a>
             <a
                 href="https://newaccount1607080294888.freshdesk.com/support/solutions"
                 target="_blank"> <button

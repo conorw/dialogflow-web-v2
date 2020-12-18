@@ -155,7 +155,7 @@ import * as uuidv1 from 'uuid/v1'
 import { Client } from 'dialogflow-gateway'
 
 export default {
-    name: 'Home1',
+    name: 'Home',
     components: {
         ErrorMessage,
         ChooseAvatar,
@@ -437,14 +437,16 @@ export default {
 
 <style lang="sass">
 @import '@/style/theme.sass'
-
+body
+    margin: 0
+    padding: 0
 #main
     margin: 0
     padding: 0
-    width: 100vw
-    height: 100vh
     font-family: var(--font)
     font-display: swap
+    height: 100vh
+    width: 100vw
     background-color: var(--background)
     background-color: #ffffff
     background-attachment: fixed

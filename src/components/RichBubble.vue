@@ -88,13 +88,6 @@ export default {
     word-wrap: break-word
     flex-grow: 0
     white-space: pre-wrap
-    &::before
-        content: var(--bubble-left)
-        position: absolute
-        left: 0
-        top: 0
-        margin-top: -9px
-        margin-left: -1px
 
     &.me
         background-color: var(--background-element)

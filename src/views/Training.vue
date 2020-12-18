@@ -1,5 +1,5 @@
 <template>
-    <main id="app">
+    <main id="training-main" :style="{ backgroundImage: `url('${image}')` }">
         <!-- TopHead is the header with the information about the app -->
         <TopHead
             v-if="agent"
@@ -7,6 +7,7 @@
             :voices="voices"
             :selectedvoice.sync="config.voice"
             @submit="send"
+            @background="background"
         >
             <!-- Audio toggle (on the top right corner), used to toggle the audio output, default mode is defined in the settings -->
             <TopHeadAction
@@ -111,6 +112,7 @@ export default {
             agent: null,
             messages: [],
             language: '',
+            image: '',
             session: '',
             muted: true,
             loading: false,
@@ -211,6 +213,9 @@ export default {
             if (muted) this.stop_feedback()
         }
     },
+    beforeMount(){
+        this.image = localStorage.getItem('background') || '/img/backgrounds/Wintery-Sunburst.svg'
+    },
     created(){
     /* Mute audio to comply with auto-play policies */
         this.audio.muted = true
@@ -253,6 +258,9 @@ export default {
         }
     },
     methods: {
+        background(bck){
+            this.image = bck
+        },
         voiceChanged(data){
             this.config.voice = data
         },
@@ -364,13 +372,24 @@ export default {
 
 <style lang="sass">
 @import '@/style/theme.sass'
-
 body
     margin: 0
     padding: 0
+#training-main
+    margin: 0
+    padding: 0
+    width: 100%
+    height: 100%
     font-family: var(--font)
     font-display: swap
     background-color: var(--background)
+    background-color: #ffffff
+    background-attachment: fixed
+    background-size: cover
+
+.top-head-button
+    background: transparent
+    border: none
 
 .chat
     max-width: var(--container-width)
@@ -402,4 +421,5 @@ body
 .confidence-score
     font-size: x-small
     color: lightgray
+
 </style>
