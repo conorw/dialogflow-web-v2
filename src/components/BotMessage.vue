@@ -494,8 +494,6 @@ export default {
             if (component.rbmText){
                 return true
             }
-
-            console.log(component)
             return false
         }
     }

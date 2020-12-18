@@ -358,13 +358,14 @@ export default {
     padding: 10px 0 10px 12px
     color: var(--text-primary)
     border-radius: 40px 0 0 40px
-    background-color: transparent
+    background-color: whitesmoke
 
 .chat-field-action
     @include reset
     padding: 10px 12px
     cursor: pointer
     color: var(--accent)
+    background-color: whitesmoke
     font-size: 24px
     display: flex
 

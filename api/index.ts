@@ -33,13 +33,11 @@ export default async (req: NowRequest, res: NowResponse) => {
             }
 
             try {
-                console.log(request)
                 /* Send our request to Dialogflow */
                 const responses = await sessionClient.detectIntent(request)
                 /* If the response should be formatted (?format=true), then return the format the response */
                 let intentresponse = responses[0] as dialogflow.protos.google.cloud.dialogflow.v2.IDetectIntentResponse
                 if (intentresponse.queryResult){
-                    console.log(intentresponse.queryResult.intent.displayName)
 
                     if (intentresponse.queryResult.intent.isFallback){
                         intentresponse = await handleFallbackIntent(intentresponse)
@@ -74,7 +72,6 @@ export default async (req: NowRequest, res: NowResponse) => {
                     res.send(intentresponse)
                 }
             } catch (error){
-                console.log(error)
                 res.statusCode = 500
                 res.send(error.message)
             }

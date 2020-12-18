@@ -2,6 +2,15 @@
     <header class="top-head">
         <div class="top-head-container">
             <a
+                href="https://budibot.com"
+                target="_blank"> <button
+                    class="top-head-button home"
+                    aria-label="Home"
+                    title="Home"
+                >
+                    <i class="material-icons" aria-hidden="true">home</i>
+                </button></a>
+            <a
                 href="https://newaccount1607080294888.freshdesk.com/support/solutions"
                 target="_blank"> <button
                     class="top-head-button help"
@@ -10,6 +19,14 @@
                 >
                     <i class="material-icons" aria-hidden="true">help</i>
                 </button></a>
+            <button
+                class="top-head-button settings"
+                aria-label="Settings"
+                title="Settings"
+                @click="openBackground"
+            >
+                <i class="material-icons" aria-hidden="true">app_settings_alt</i>
+            </button>
             <div class="top-head-info">
                 <!-- <div class="top-head-subtitle">
                     {{(translations[lang()] && translations[lang()].poweredBy) ||
@@ -32,12 +49,19 @@
             </div>
         </div>
         <slot />
+        <modal name="background" height="auto" width="80%">
+            <ChooseBackground @background="background" />
+        </modal>
     </header>
 </template>
 
 <script>
+import ChooseBackground from '@/components/ChooseBackground'
 export default {
     name: 'TopHead',
+    components: {
+        ChooseBackground
+    },
     props: {
         agent: {
             type: Object,
@@ -53,8 +77,15 @@ export default {
         }
     },
     methods: {
+        openBackground(){
+            this.$modal.show('background')
+        },
+        background(bck){
+            console.log(bck)
+            this.$modal.hide('background')
+            this.$emit('background', bck)
+        },
         onchange(event){
-            console.log(event)
             this.$emit('update:selectedvoice', event.target.value)
         },
         submit(submission){
@@ -72,7 +103,7 @@ export default {
     position: fixed
     width: 100%
     display: flex
-    z-index: 2
+    z-index: 3
     top: 0
     height: 60px
 

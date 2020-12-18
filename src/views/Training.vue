@@ -223,7 +223,6 @@ export default {
             this.config.voice = this.voices.length
                 ? this.voices[0].voiceURI
                 : this.config.voice
-            console.log(`Voices #: ${this.voices.length}`, this.voices)
         }
         /* If history is enabled, the messages are retrieved from sessionStorage */
         if (this.history() && sessionStorage.getItem('message_history') !== null){

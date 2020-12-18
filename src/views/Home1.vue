@@ -1,11 +1,12 @@
 <template>
-    <main id="app">
+    <main id="main" :style="{ backgroundImage: `url('${image}')` }">
         <TopHead
             v-if="agent"
             :agent="agent"
             :voices="voices"
             :selectedvoice.sync="config.voice"
             @submit="send"
+            @background="background"
         >
             <TopHeadAction
                 :title="
@@ -19,7 +20,7 @@
                 @click.native="muted = !muted"
             />
         </TopHead>
-        <transition name="shake">
+        <transition name="shake" mode="out-in">
             <section :key="botText" class="bot-profile" aria-live="polite">
                 <img
                     v-if="agent.avatarUri"
@@ -82,12 +83,24 @@
             <section :key="meText" class="my-profile" aria-live="polite">
                 <img
                     class="top-head-icon"
-                    src="/img/avatars/SVG/1 de 3 Avatars FLAT/27-ninja.svg"
+                    :src="myAvatar"
                     alt="My-Avatar"
                 >
-                <div class="bot-title"><span>Me</span></div>
+                <div class="bot-title">
+                    <span><button
+                        class="top-head-button"
+                        aria-label="Change Avatar"
+                        title="Change Avatar"
+                        @click="openAvatar"
+                    >
+                        <i class="material-icons" aria-hidden="true">face</i>
+                    </button>Me</span>
+                </div>
             </section>
         </transition>
+        <modal name="avatar" height="auto" width="80%">
+            <ChooseAvatar @avatar="avatar" />
+        </modal>
         <!-- ChatField is made for submitting queries and displaying suggestions -->
         <ChatField
             ref="input"
@@ -130,7 +143,7 @@ import ErrorMessage from '@/components/ErrorMessage.vue'
 // import TopHead from '@/components/TopHead.vue'
 // import TopHeadAction from '@/components/TopHeadAction.vue'
 import ChatField from '@/components/ChatField.vue'
-
+import ChooseAvatar from '@/components/ChooseAvatar.vue'
 import RichSuggesion from '@/components/RichSuggestion.vue'
 import TopHead from '@/components/TopHead.vue'
 import TopHeadAction from '@/components/TopHeadAction.vue'
@@ -145,6 +158,7 @@ export default {
     name: 'Home1',
     components: {
         ErrorMessage,
+        ChooseAvatar,
         TopHead,
         TopHeadAction,
         ChatField,
@@ -156,6 +170,8 @@ export default {
         return {
             agent: null,
             messages: [],
+            image: '',
+            myAvatar: '',
             lastMessage: null,
             language: '',
             meText: '',
@@ -248,6 +264,10 @@ export default {
             if (muted) this.stop_feedback()
         }
     },
+    beforeMount(){
+        this.image = localStorage.getItem('background') || '/img/backgrounds/Wintery-Sunburst.svg'
+        this.myAvatar = localStorage.getItem('avatar') || '/img/avatars/SVG/flat/27-ninja.svg'
+    },
     created(){
     /* Mute audio to comply with auto-play policies */
         this.audio.muted = true
@@ -260,7 +280,6 @@ export default {
             this.config.voice = this.voices.length
                 ? this.voices[0].voiceURI
                 : this.config.voice
-            console.log(`Voices #: ${this.voices.length}`, this.voices)
         }
         /* If history is enabled, the messages are retrieved from sessionStorage */
         if (this.history() && sessionStorage.getItem('message_history') !== null){
@@ -291,6 +310,17 @@ export default {
         }
     },
     methods: {
+        openAvatar(){
+            this.$modal.show('avatar')
+        },
+        avatar(avatar){
+            console.log(avatar)
+            this.$modal.hide('avatar')
+            this.myAvatar = avatar
+        },
+        background(bck){
+            this.image = bck
+        },
         voiceChanged(data){
             this.config.voice = data
         },
@@ -408,19 +438,24 @@ export default {
 <style lang="sass">
 @import '@/style/theme.sass'
 
-body
+#main
     margin: 0
     padding: 0
+    width: 100vw
+    height: 100vh
     font-family: var(--font)
     font-display: swap
     background-color: var(--background)
     background-color: #ffffff
-    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100%25' height='100%25' viewBox='0 0 800 800'%3E%3Cdefs%3E%3CradialGradient id='a' cx='400' cy='400' r='50%25' gradientUnits='userSpaceOnUse'%3E%3Cstop offset='0' stop-color='%23ffffff'/%3E%3Cstop offset='1' stop-color='%230EF'/%3E%3C/radialGradient%3E%3CradialGradient id='b' cx='400' cy='400' r='70%25' gradientUnits='userSpaceOnUse'%3E%3Cstop offset='0' stop-color='%23ffffff'/%3E%3Cstop offset='1' stop-color='%230FF'/%3E%3C/radialGradient%3E%3C/defs%3E%3Crect fill='url(%23a)' width='800' height='800'/%3E%3Cg fill-opacity='.8'%3E%3Cpath fill='url(%23b)' d='M998.7 439.2c1.7-26.5 1.7-52.7 0.1-78.5L401 399.9c0 0 0-0.1 0-0.1l587.6-116.9c-5.1-25.9-11.9-51.2-20.3-75.8L400.9 399.7c0 0 0-0.1 0-0.1l537.3-265c-11.6-23.5-24.8-46.2-39.3-67.9L400.8 399.5c0 0 0-0.1-0.1-0.1l450.4-395c-17.3-19.7-35.8-38.2-55.5-55.5l-395 450.4c0 0-0.1 0-0.1-0.1L733.4-99c-21.7-14.5-44.4-27.6-68-39.3l-265 537.4c0 0-0.1 0-0.1 0l192.6-567.4c-24.6-8.3-49.9-15.1-75.8-20.2L400.2 399c0 0-0.1 0-0.1 0l39.2-597.7c-26.5-1.7-52.7-1.7-78.5-0.1L399.9 399c0 0-0.1 0-0.1 0L282.9-188.6c-25.9 5.1-51.2 11.9-75.8 20.3l192.6 567.4c0 0-0.1 0-0.1 0l-265-537.3c-23.5 11.6-46.2 24.8-67.9 39.3l332.8 498.1c0 0-0.1 0-0.1 0.1L4.4-51.1C-15.3-33.9-33.8-15.3-51.1 4.4l450.4 395c0 0 0 0.1-0.1 0.1L-99 66.6c-14.5 21.7-27.6 44.4-39.3 68l537.4 265c0 0 0 0.1 0 0.1l-567.4-192.6c-8.3 24.6-15.1 49.9-20.2 75.8L399 399.8c0 0 0 0.1 0 0.1l-597.7-39.2c-1.7 26.5-1.7 52.7-0.1 78.5L399 400.1c0 0 0 0.1 0 0.1l-587.6 116.9c5.1 25.9 11.9 51.2 20.3 75.8l567.4-192.6c0 0 0 0.1 0 0.1l-537.3 265c11.6 23.5 24.8 46.2 39.3 67.9l498.1-332.8c0 0 0 0.1 0.1 0.1l-450.4 395c17.3 19.7 35.8 38.2 55.5 55.5l395-450.4c0 0 0.1 0 0.1 0.1L66.6 899c21.7 14.5 44.4 27.6 68 39.3l265-537.4c0 0 0.1 0 0.1 0L207.1 968.3c24.6 8.3 49.9 15.1 75.8 20.2L399.8 401c0 0 0.1 0 0.1 0l-39.2 597.7c26.5 1.7 52.7 1.7 78.5 0.1L400.1 401c0 0 0.1 0 0.1 0l116.9 587.6c25.9-5.1 51.2-11.9 75.8-20.3L400.3 400.9c0 0 0.1 0 0.1 0l265 537.3c23.5-11.6 46.2-24.8 67.9-39.3L400.5 400.8c0 0 0.1 0 0.1-0.1l395 450.4c19.7-17.3 38.2-35.8 55.5-55.5l-450.4-395c0 0 0-0.1 0.1-0.1L899 733.4c14.5-21.7 27.6-44.4 39.3-68l-537.4-265c0 0 0-0.1 0-0.1l567.4 192.6c8.3-24.6 15.1-49.9 20.2-75.8L401 400.2c0 0 0-0.1 0-0.1L998.7 439.2z'/%3E%3C/g%3E%3C/svg%3E")
     background-attachment: fixed
     background-size: cover
 
+.top-head-button
+    background: transparent
+    border: none
+
 .shake-enter-active
-  animation: shake .3s cubic-bezier(0.31, 0.07, 0.39, 0.97) both
+  animation: shake .4s cubic-bezier(0.31, 0.07, 0.39, 0.97) both
   transform: translate3d(0, 0, 0)
   backface-visibility: hidden
   perspective: 1000px
@@ -457,7 +492,7 @@ body
 .bot-chat
     width: 50% !important
     height: 20% !important
-    top: 15%
+    top: 20%
     position: absolute
     right: 30px
     z-index: 2
@@ -474,10 +509,10 @@ body
 
 
 .me-chat
-    width: 55% !important
+    width: 45% !important
     height: 20% !important
-    bottom: 22%
-    left: 5px
+    bottom: 30%
+    margin-left: 5%
     position: absolute
 .me-chat .rich-bubble
     width: 100%
@@ -528,8 +563,8 @@ body
     bottom: 18vh
     display: inline
     position: absolute
-    width: 40%
-    right: 5px
+    width: 45%
+    right: 5%
 
 .my-profile img
     width: 100%
@@ -546,7 +581,7 @@ body
     .bot-chat .rich-component
         width: 100%
     .my-profile
-        left: 60%
+        left: 55%
         max-width: 25vh
 
 @media screen and (max-height: 500px)
@@ -559,11 +594,11 @@ body
     .bot-chat
         width: 45% !important
     .my-profile
-        left: 60%
+        left: 55%
         width: 20vw
         top: 35%
     .me-chat
-        bottom: 35%
+        bottom: 25%
     .rich-bubble
         max-height: 50%
 </style>
