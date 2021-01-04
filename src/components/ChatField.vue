@@ -256,8 +256,7 @@ export default {
     },
     mounted(){
         const vueRef = this
-        setTimeout(() => {
-            vueRef.$refs.inputField.focus() }, 0)
+        this.$nextTick(() => { vueRef.$refs.inputField.focus() })
     },
     methods: {
         openGiphy(){
@@ -297,8 +296,7 @@ export default {
                 vueRef.query = ''
                 vueRef.showDialog = false
             } else if (submission.audio) vueRef.$emit('submit', submission)
-            setTimeout(() => {
-                vueRef.$refs.inputField.focus() }, 0)
+            this.$nextTick(() => { vueRef.$refs.inputField.focus() })
         }
     }
 }
