@@ -98,7 +98,7 @@
                 </div>
             </section>
         </transition>
-        <modal name="avatar" height="auto" width="80%">
+        <modal name="avatar" height="90%" width="80%">
             <ChooseAvatar @avatar="avatar" />
         </modal>
         <!-- ChatField is made for submitting queries and displaying suggestions -->
@@ -598,7 +598,7 @@ body
     .my-profile
         left: 55%
         width: 20vw
-        top: 35%
+        top: 40%
     .me-chat
         bottom: 25%
     .rich-bubble

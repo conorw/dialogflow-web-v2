@@ -406,14 +406,11 @@ export default {
 .top-head-button.feedback
   color: blue
 
-.top-head-button.emoji
-  color: goldenrod
-
 .top-head-button.stickers img
   width: 100%
 
 .top-head-button.emoji
-  color: coral
+  color: darkgrey
 
 .top-head-button:hover
   background: #2196F3

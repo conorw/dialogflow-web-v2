@@ -1,9 +1,7 @@
 <template>
-    <div>
-        <div class="background-container">
-            <h3>Images designed by <a href="https://speckyboy.com/" target="_blank">Speckyboy.com</a></h3>
-            <img v-for="background in backgrounds" :key="background" :src="background" @click="select(background)">
-        </div>
+    <div class="background-container">
+        <h3 style="text-align: center">Images designed by <a href="https://speckyboy.com/" target="_blank">Speckyboy.com</a></h3>
+        <img v-for="background in backgrounds" :key="background" :src="background" @click="select(background)">
     </div>
 </template>
 <script>
@@ -59,6 +57,8 @@ export default {
 <style scoped>
 
 .background-container {
+    height: 100%;
+    overflow: auto;
     padding: 0;
     display: flex;
     flex-wrap: wrap;

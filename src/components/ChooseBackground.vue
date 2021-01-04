@@ -20,7 +20,6 @@ export default {
             backgrounds: ['/img/backgrounds/Wintery-Sunburst.svg',
                 '/img/backgrounds/Alternating-Arrowhead.svg',
                 '/img/backgrounds/Bermuda-Traingle.svg',
-                '/img/backgrounds/Bullseye-Gradient.svg',
                 '/img/backgrounds/Colorful-Stingrays.svg',
                 '/img/backgrounds/Dalmatian-Spots.svg',
                 '/img/backgrounds/Geometric-Intersection.svg',
