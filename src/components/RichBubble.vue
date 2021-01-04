@@ -56,16 +56,16 @@ export default {
 
 
 .bounce-enter-active
-  animation: bounce-in .8s
+  animation: bounce-in .3s
 
 .bounce-leave-active
-  animation: bounce-in .8s reverse
+  animation: bounce-in .3s reverse
 
 @keyframes bounce-in
   0%
     transform: scale(0)
   50%
-    transform: scale(1.5)
+    transform: scale(1.2)
   100%
     transform: scale(1)
 

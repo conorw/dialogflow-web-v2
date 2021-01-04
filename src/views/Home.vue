@@ -457,7 +457,7 @@ body
     border: none
 
 .shake-enter-active
-  animation: shake .4s cubic-bezier(0.31, 0.07, 0.39, 0.97) both
+  animation: shake .3s cubic-bezier(0.31, 0.07, 0.39, 0.97) both
   transform: translate3d(0, 0, 0)
   backface-visibility: hidden
   perspective: 1000px

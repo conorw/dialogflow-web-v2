@@ -15,69 +15,69 @@
             />
             <div class="chat-field-flexible">
                 <!-- Text input -->
-                <transition name="bounce">
-                    <textarea
-                        :key="submissionText"
-                        ref="inputField"
-                        v-model="query"
-                        class="chat-field-input"
-                        type="text"
-                        autofocus
-                        :placeholder="
-                            (translations[lang()] && translations[lang()].inputTitle) ||
-                                translations[config.fallback_lang].inputTitle
-                        "
-                        :aria-label="
-                            (translations[lang()] && translations[lang()].inputTitle) ||
-                                translations[config.fallback_lang].inputTitle
-                        "
-                        @keydown="inputHandler"
-                        @focus="
-                            microphone = false;
-                            should_listen = false;
-                            $emit('typing');
-                        "
-                    />
-                </transition>
+                <!-- <transition name="bounce"> -->
+                <textarea
+                    :key="submissionText"
+                    ref="inputField"
+                    v-model="query"
+                    class="chat-field-input"
+                    type="text"
+                    autofocus
+                    :placeholder="
+                        (translations[lang()] && translations[lang()].inputTitle) ||
+                            translations[config.fallback_lang].inputTitle
+                    "
+                    :aria-label="
+                        (translations[lang()] && translations[lang()].inputTitle) ||
+                            translations[config.fallback_lang].inputTitle
+                    "
+                    @keydown="inputHandler"
+                    @focus="
+                        microphone = false;
+                        should_listen = false;
+                        $emit('typing');
+                    "
+                />
+                <!-- </transition> -->
 
                 <!-- Send message button (arrow button) -->
-                <transition name="chat-field-button-animation" mode="out-in">
-                    <button
-                        v-if="(!microphone && query.length > 0) || !microphone_supported"
-                        key="send"
-                        class="chat-field-action"
-                        :title="
-                            (translations[lang()] && translations[lang()].sendTitle) ||
-                                translations[config.fallback_lang].sendTitle
-                        "
-                        :aria-label="
-                            (translations[lang()] && translations[lang()].sendTitle) ||
-                                translations[config.fallback_lang].sendTitle
-                        "
-                        @click="submit({ text: query })"
-                    >
-                        <i class="material-icons" aria-hidden="true">arrow_upward</i>
-                    </button>
+                <!-- <transition name="chat-field-button-animation" mode="out-in"> -->
+                <button
+                    v-if="(!microphone && query.length > 0) || !microphone_supported"
+                    key="send"
+                    class="chat-field-action"
+                    :title="
+                        (translations[lang()] && translations[lang()].sendTitle) ||
+                            translations[config.fallback_lang].sendTitle
+                    "
+                    :aria-label="
+                        (translations[lang()] && translations[lang()].sendTitle) ||
+                            translations[config.fallback_lang].sendTitle
+                    "
+                    @click="submit({ text: query })"
+                >
+                    <i class="material-icons" aria-hidden="true">arrow_upward</i>
+                </button>
 
-                    <!-- Microphone Button -->
-                    <button
-                        v-else
-                        key="microphone"
-                        class="chat-field-action"
-                        :aria-label="
-                            (translations[lang()] && translations[lang()].microphoneTitle) ||
-                                translations[config.fallback_lang].microphoneTitle
-                        "
-                        :title="
-                            (translations[lang()] && translations[lang()].microphoneTitle) ||
-                                translations[config.fallback_lang].microphoneTitle
-                        "
-                        :class="{ mic_active: microphone }"
-                        @click="microphone = !microphone"
-                    >
-                        <i class="material-icons" aria-hidden="true">mic</i>
-                    </button>
-                </transition>
+                <!-- Microphone Button -->
+                <button
+                    v-else
+                    key="microphone"
+                    class="chat-field-action"
+                    :aria-label="
+                        (translations[lang()] && translations[lang()].microphoneTitle) ||
+                            translations[config.fallback_lang].microphoneTitle
+                    "
+                    :title="
+                        (translations[lang()] && translations[lang()].microphoneTitle) ||
+                            translations[config.fallback_lang].microphoneTitle
+                    "
+                    :class="{ mic_active: microphone }"
+                    @click="microphone = !microphone"
+                >
+                    <i class="material-icons" aria-hidden="true">mic</i>
+                </button>
+                <!-- </transition> -->
             </div>
             <div class="training-options">
                 <button
@@ -308,16 +308,16 @@ export default {
 
 
 .bounce-enter-active
-  animation: bounce-in .5s
+  animation: bounce-in .2s
 
 .bounce-leave-active
-  animation: bounce-in .5s reverse
+  animation: bounce-in .2s reverse
 
 @keyframes bounce-in
   0%
     transform: scale(0)
   50%
-    transform: scale(1.5)
+    transform: scale(1.2)
   100%
     transform: scale(1)
 
