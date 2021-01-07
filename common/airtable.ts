@@ -48,6 +48,15 @@ export const getProgress = async (group: string) => {
         console.log(error)
     }
 }
+export const getTopicResource = async (topic: string, resource: string) => {
+    try {
+        const filter = `AND({topic}="${topic}", {resource_type}="${resource}")`
+        const exists = await base('topics').select({filterByFormula: filter}).all()
+        return exists.length ? exists.map(t => t.fields)[0] : null
+    } catch (error){
+        console.log(error)
+    }
+}
 export const getBots = async () => {
     try {
         const exists = await base('bots').select().all()

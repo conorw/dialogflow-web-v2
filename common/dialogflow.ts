@@ -1,6 +1,6 @@
 /* eslint-disable no-param-reassign */
 import * as dialogflow from '@google-cloud/dialogflow'
-import { saveFeedback, saveTopic } from './airtable'
+import { getTopicResource, saveFeedback, saveTopic } from './airtable'
 import { search } from './search'
 /* AgentsClient retrieves information about the agent */
 export const agentsClient = new dialogflow.AgentsClient({
@@ -540,6 +540,25 @@ export const handleSearchIntent = async (intentresponse: dialogflow.protos.googl
     }
     return intentresponse
 }
+export const handleHelpIntent = async (intentresponse: dialogflow.protos.google.cloud.dialogflow.v2.IDetectIntentResponse) => {
+    console.log('HELP!!!')
+    console.log(intentresponse.queryResult.parameters.fields)
+
+    if (intentresponse.queryResult.parameters
+        && intentresponse.queryResult.parameters.fields
+        && intentresponse.queryResult.parameters.fields.topic){
+        const params = intentresponse.queryResult.parameters.fields
+        const topic = params.topic ? params.topic.stringValue : ''
+        const resource = params.resource ? params.resource.stringValue : ''
+        // if this is the intent-name question, return the entity options for the category
+        if (topic && resource){
+            console.log('Lookup help', {topic, resource})
+            // eslint-disable-next-line no-param-reassign
+            intentresponse = await addHelpToResponse(intentresponse, topic, resource)
+        }
+    }
+    return intentresponse
+}
 const addSearchToResponse = async (q: string, intentresponse, title?: string) => {
     const searchResult = await search(q)
     if (searchResult){
@@ -579,6 +598,44 @@ const addSearchToResponse = async (q: string, intentresponse, title?: string) =>
                         }
                     }
                 ]
+            }
+        }]
+        intentresponse.queryResult.fulfillmentMessages = newFulfillment
+    }
+    return intentresponse
+}
+const addHelpToResponse = async (intentresponse, topic: string, resource: string) => {
+    const searchResult = await getTopicResource(topic, resource)
+    if (searchResult){
+        console.log(searchResult)
+        const buttons = []
+        if (searchResult.resource_link[0]){
+            let action = 'Open Now'
+            switch (searchResult.resource_type[0]){
+            case 'text':
+                action = 'SMS Now'
+                break
+            case 'phone':
+                action = 'Phone Now'
+                break
+            default:
+                break
+            }
+            searchResult.resource_type === 'text'
+            buttons.push({
+                'title': action,
+                'openUriAction': {
+                    'uri': searchResult.resource_link[0]
+                }
+            })
+        }
+        const newFulfillment: any = [{
+            'platform': 'ACTIONS_ON_GOOGLE',
+            'basicCard': {
+                'title': searchResult.resource_name[0],
+                'formattedText': searchResult.resource_desc[0],
+                'image': {},
+                buttons
             }
         }]
         intentresponse.queryResult.fulfillmentMessages = newFulfillment

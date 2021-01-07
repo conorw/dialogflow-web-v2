@@ -504,7 +504,6 @@ body
     width: 100%
 
 .bot-chat .rich-bubble
-    width: 100% !important
     text-align: center
     height: 100% !important
     background: white
@@ -549,10 +548,13 @@ body
     border-style: dotted
 
 .rich-bubble.me
+    border: 10px solid black !important
     border-top-right-radius: 40px !important
     border-bottom-right-radius: 0 !important
     background-color: white !important
 
+.rich-bubble
+    border: 10px solid black !important
 
 .rich-bubble::after
     content: "" !important

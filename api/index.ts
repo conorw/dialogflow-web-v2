@@ -1,6 +1,6 @@
 /* eslint-disable no-param-reassign */
 import { NowRequest, NowResponse } from '@vercel/node'
-import { agentsClient, sessionClient, getFormattedFulfillment, handleTrainingIntent, handleFeedbackIntent, handleSearchIntent, handleTrainingFollowUpIntent, handleTrainingIntentList, handleTopicIntent, handleFallbackIntent } from '../common/dialogflow'
+import { agentsClient, sessionClient, getFormattedFulfillment, handleTrainingIntent, handleFeedbackIntent, handleSearchIntent, handleTrainingFollowUpIntent, handleTrainingIntentList, handleTopicIntent, handleFallbackIntent, handleHelpIntent } from '../common/dialogflow'
 import * as dialogflow from '@google-cloud/dialogflow'
 import { setCORSHeaders } from '../common/utils'
 
@@ -38,13 +38,16 @@ export default async (req: NowRequest, res: NowResponse) => {
                 /* If the response should be formatted (?format=true), then return the format the response */
                 let intentresponse = responses[0] as dialogflow.protos.google.cloud.dialogflow.v2.IDetectIntentResponse
                 if (intentresponse.queryResult){
-
                     if (intentresponse.queryResult.intent.isFallback){
                         intentresponse = await handleFallbackIntent(intentresponse)
                     }
+                    console.log(intentresponse.queryResult.intent.displayName)
                     switch (intentresponse.queryResult.intent.displayName){
                     case 'feedback':
                         intentresponse = await handleFeedbackIntent(intentresponse)
+                        break
+                    case 'help':
+                        intentresponse = await handleHelpIntent(intentresponse)
                         break
                     case 'troubling.topics':
                         intentresponse = await handleTopicIntent(intentresponse)
@@ -72,6 +75,7 @@ export default async (req: NowRequest, res: NowResponse) => {
                     res.send(intentresponse)
                 }
             } catch (error){
+                console.log(error)
                 res.statusCode = 500
                 res.send(error.message)
             }
