@@ -663,6 +663,8 @@ const addHelpToResponse = async (intentresponse, topic: string, resource: string
 export type JSONIntent = {
     id: string;
     bot: string;
+    parent?: string;
+    output?: string;
     intent_name: string;
     user_says: string[];
     bot_says: string[];
@@ -674,10 +676,13 @@ export const getAgentJSON = async (): Promise<JSONIntent[]> => {
     intents.forEach(intent => {
         if (intent){
             intent.forEach(t => {
+                console.log(t)
                 const user_says = t.trainingPhrases.map(t => t.parts.map(r => r.text)).reduce((a, b) => a.concat(b), [])
                 const bot_says = t.messages.map(r => r.text.text).reduce((a, b) => a.concat(b), [])
                 intentList.push({
                     id: t.name,
+                    parent: t.inputContextNames.length?t.inputContextNames[0]:null,
+                    output: t.outputContexts.length?t.outputContexts[0].name:null,
                     bot: process.env.PERSONALITY_ACCOUNT_PROJECT_ID,
                     intent_name: t.displayName,
                     user_says,
