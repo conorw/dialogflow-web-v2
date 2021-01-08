@@ -1,7 +1,7 @@
 /* eslint-disable no-param-reassign */
 import { NowRequest, NowResponse } from '@vercel/node'
 import { getCheatSheet, getProgress, saveProgress } from '../../common/airtable'
-import { findAllIntents } from '../../common/dialogflow'
+import { getAgentJSON } from '../../common/dialogflow'
 import { setCORSHeaders } from '../../common/utils'
 
 const json2table = (json: any, classes: string) => {
@@ -43,33 +43,19 @@ export default async (req: NowRequest, res: NowResponse) => {
     /* On GET request return the information about the agent */
     if (req.method == 'GET'){
         try {
-            const [intents, cheatsheet, progress] = await Promise.all([findAllIntents('INTENT_VIEW_FULL'),
+            const [cheatsheet, progress] = await Promise.all([
                 getCheatSheet(),
-                getProgress(process.env.VUE_APP_NAME)])
+                getProgress(process.env.VUE_APP_NAME)
+            ])
             const progressStr = progress.map(t => {
                 return `['${t.UpdateDate}',${t.Phrases},${t.Responses},${t.Score} ]`
             })
             const intentList = []
-            let phraseCount = 0
-            let responseCount = 0
             // res.send(intents)
-            intents.forEach(intent => {
-                if (intent){
-                    intent.forEach(t => {
-                        const user_says = t.trainingPhrases.map(t => t.parts.map(r => r.text)).reduce((a, b) => a.concat(b), [])
-                        phraseCount = phraseCount + user_says.length
-                        const bot_says = t.messages.map(r => r.text.text).reduce((a, b) => a.concat(b), [])
-                        responseCount = responseCount + bot_says.length
-                        intentList.push({intent_name: t.displayName,
-                            user_says,
-                            bot_says
-                        })
-                    })
-                }
-            })
-            const sorted = intentList.sort((a, b) => {
-                return a.intent_name.localeCompare(b.intent_name)
-            })
+
+            const sorted = await getAgentJSON()
+            const phraseCount = sorted.map(t => t.user_says.length).reduce((a, b) => a + b)
+            const responseCount = sorted.map(t => t.bot_says.length).reduce((a, b) => a + b)
             const style = `<style>
             body{
                 font-family: Arial, Helvetica, sans-serif;
@@ -111,6 +97,7 @@ export default async (req: NowRequest, res: NowResponse) => {
                       var chart = new google.visualization.LineChart(document.getElementById('chart_div'));
                       chart.draw(data, google.charts.Line.convertOptions(options));
                   }
+
             </script>`
             const html = `<!DOCTYPE html><head>${style}${script}<meta charset="UTF-8"></head>
             <body>
@@ -122,6 +109,7 @@ export default async (req: NowRequest, res: NowResponse) => {
             <div style="margin:15px" id="chart_div"></div>
             <br>
             <h2>Training List</h2>
+            <div id="editList"></div>
             ${json2table(sorted, 'tbl')}<br>
             <hr>
             <h2>Cheat Sheet - Some Example Questions You May Have Missed</h2>

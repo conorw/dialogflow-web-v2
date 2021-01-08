@@ -27,7 +27,8 @@
     "vue-js-modal": "^2.0.0-rc.6",
     "vue-property-decorator": "^9.0.2",
     "vue-resize-text": "^0.1.1",
-    "vue-router": "^3.2.0"
+    "vue-router": "^3.2.0",
+    "vue-toast-notification": "^0.6.0"
   },
   "devDependencies": {
     "@mishushakov/eslint-config": "^1.0.7",

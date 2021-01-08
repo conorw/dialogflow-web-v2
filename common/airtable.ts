@@ -1,7 +1,9 @@
+/* eslint-disable no-undef */
 
 import Airtable from 'airtable'
+import { JSONIntent } from './dialogflow'
 
-const base = new Airtable({apiKey: process.env.AIRTABLE_API_KEY}).base(process.env.AIRTABLE_BASE)
+const base = new Airtable({ apiKey: process.env.AIRTABLE_API_KEY }).base(process.env.AIRTABLE_BASE)
 
 export const saveFeedback = async (answer: string, name: string) => {
     const url = process.env.SERVICE_ACCOUNT_PROJECT_ID
@@ -20,7 +22,7 @@ export const saveFeedback = async (answer: string, name: string) => {
 export const saveProgress = async (progress: any) => {
     try {
         const filter = `AND({Group}="${progress.Group}", {UpdateDate}=DATETIME_PARSE("${progress.UpdateDate}",""))`
-        const exists = await base('progress').select({filterByFormula: filter}).all()
+        const exists = await base('progress').select({ filterByFormula: filter }).all()
         if (exists.length > 0){
             await base('progress').update([
                 {
@@ -42,7 +44,7 @@ export const saveProgress = async (progress: any) => {
 export const getProgress = async (group: string) => {
     try {
         const filter = `{Group}="${group}"`
-        const exists = await base('progress').select({filterByFormula: filter, sort: [{field: 'UpdateDate'}]}).all()
+        const exists = await base('progress').select({ filterByFormula: filter, sort: [{ field: 'UpdateDate' }] }).all()
         return exists.map(t => t.fields)
     } catch (error){
         console.log(error)
@@ -51,12 +53,60 @@ export const getProgress = async (group: string) => {
 export const getTopicResource = async (topic: string, resource: string) => {
     try {
         const filter = `AND({topic}="${topic}", {resource_type}="${resource}")`
-        const exists = await base('topics').select({filterByFormula: filter}).all()
+        const exists = await base('topics').select({ filterByFormula: filter }).all()
         return exists.length ? exists.map(t => t.fields)[0] : null
     } catch (error){
         console.log(error)
     }
 }
+const chunk = (arr, size) => Array.from({ length: Math.ceil(arr.length / size) }, (v, i) => arr.slice(i * size, i * size + size))
+export const removeBotResponses = async (bot: string) => {
+    try {
+        const filter = `{bot}="${bot}"`
+        const exists = await base('responses').select({ filterByFormula: filter }).all()
+        return Promise.all(chunk(exists.map(t => t.id), 10).map(t => base('responses').destroy(t)))
+    } catch (error){
+        console.log(error)
+    }
+}
+export const getBotResponses = async (bot: string) => {
+    try {
+        const filter = `{bot}="${bot}"`
+        const exists = await base('responses').select({ filterByFormula: filter }).all()
+        return exists.map(t => t.fields)
+    } catch (error){
+        console.log(error)
+    }
+}
+export const getBotIntentId = async (bot: string, intentName: string): Promise<string> => {
+    try {
+        const filter = `AND({bot}="${bot}",{intent_name}="${intentName}")`
+        const exists = await base('responses').select({ filterByFormula: filter }).firstPage()
+        return exists.length ? exists[0].getId() : ''
+    } catch (error){
+        console.log(error)
+    }
+}
+export const updateBotResponses = async (intents: JSONIntent[]) => {
+    if (intents.length){
+        const bot = intents[0].bot
+        // remove all current responses for the bot
+        await removeBotResponses(bot)
+        console.log('Removed bot responses')
+        await Promise.all(chunk(intents, 10).map(t => base('responses').create(t.map(r => {
+            return {fields: {...r, user_says: r.user_says.join('|'), bot_says: r.bot_says.join('|')}}
+        }))))
+        return intents
+    }
+    return null
+}
+export const updateDBIntentId = async (bot: string, intentName: string, id: string) => {
+    const existingId = await getBotIntentId(bot, intentName)
+    if (existingId){
+        await base('responses').update(existingId, {id})
+    }
+}
+
 export const getBots = async () => {
     try {
         const exists = await base('bots').select().all()
@@ -81,7 +131,7 @@ export const saveTopic = async (answer: string) => {
 
 export const getCheatSheet = async () => {
     try {
-        const ret = await base('cheatsheet').select({sort: [{field: 'Category'}]}).all()
+        const ret = await base('cheatsheet').select({ sort: [{ field: 'Category' }] }).all()
         return ret.map(t => t.fields)
     } catch (error){
         console.log(error)

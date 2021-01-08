@@ -1,6 +1,10 @@
 import Vue from 'vue'
 import App from './App.vue'
 import config from './config'
+import VueToast from 'vue-toast-notification'
+// Import one of the available themes
+//import 'vue-toast-notification/dist/theme-default.css';
+import 'vue-toast-notification/dist/theme-sugar.css'
 import translations from './translations/translations.json'
 import { register_service_worker } from './utils'
 
@@ -12,7 +16,7 @@ import VueResizeText from 'vue-resize-text'
 
 Vue.use(VueResizeText)
 Vue.use(vmodal)
-
+Vue.use(VueToast)
 Vue.config.productionTip = false
 Vue.prototype.config = config // <- set config to global scope
 Vue.prototype.translations = translations // <- set translations to global scope
