@@ -158,8 +158,8 @@ export const createIntent = async (displayName: string, questions: string[], ans
     let parent = intentClient.projectPath(process.env.PERSONALITY_ACCOUNT_PROJECT_ID)
     parent = `${parent}/agent`
     if (inputContext){
-            inputContext?.startsWith(`${parent}/sessions/-/contexts)`)
-                ? inputContext : `${parent}/sessions/-/contexts/${inputContext.replace(/\./gi, '-')}`
+        inputContext.startsWith(`${parent}/sessions/-/contexts)`)
+            ? inputContext : `${parent}/sessions/-/contexts/${inputContext.replace(/\./gi, '-')}`
     }
     console.log(inputContext)
     const newintent = await intentClient.createIntent({
