@@ -1,12 +1,11 @@
 <template>
-    <div class="intent-item" :class="dirty ? 'dirty' : ''">
+    <div class="intent-item" :class="intent.dirty ? 'dirty' : ''">
         <div>
             <div style="display:flex; justify-content: space-between;">
                 <h2 @click="()=>intent.edit = !intent.edit"><i class="material-icons" aria-hidden="true">{{intent.edit?'expand_less':'expand_more'}}</i> {{intent.intent_name}}</h2>
                 <div>
-                    <button @click="saveIntent(intent)"><i class="material-icons" aria-hidden="true">save</i> Save</button>
-                    <button @click="addFollowUp(intent)">Add Follow Up</button>
-                    <button @click="expandCollapseAll()">Expand/Collapse All</button>
+                    <button :class="intent.dirty ? 'dirty' : ''" @click="intent.save(intent)"><i class="material-icons" aria-hidden="true">save</i> Save</button>
+                    <button @click="expandCollapseAll()"><i class="material-icons" aria-hidden="true">menu_open</i></button>
                 </div>
             </div>
             <input v-if="intent.edit" v-model="intent.intent_name" type="text">
@@ -28,14 +27,14 @@
                     </div>
                 </div>
             </div>
+            <hr>
+            <button @click="intent.addFollowUp(intent)">Add Follow Up Question & Response</button>
             <IntentItem v-for="(subintent, idx1) in intent.childNodes" :key="idx1" :intent-obj="subintent" />
         </div>
     </div>
 </template>
 
 <script>
-import * as axios from 'axios'
-import Vue from 'vue'
 export default {
     name: 'IntentItem',
     props: {
@@ -46,33 +45,37 @@ export default {
     },
     data(){
         return {
-            intent: this.intentObj,
-            expanded: false,
-            dirty: false
+            intent: this.intentObj
         }
     },
     watch:
-{
-    intent:
-  {
-      handler()
-      {
-          this.dirty = true
-          console.log(this.dirty)
-      },
-      deep: true
-  }
-},
-    methods: {
-        async saveIntent(intent){
-            if (!intent.intent_name){
-                alert('Your intent must have a name')
-                return
-            }
-            await axios.default.post('/api/intents/save', intent)
-            this.dirty = false
-            Vue.$toast.open({message: 'Saved', type: 'success', duration: 2000})
+    {
+        'intent.intent_name':
+        {
+            handler()
+            {
+                this.intent.dirty = true
+            },
+            deep: false
         },
+        'intent.user_says':
+        {
+            handler()
+            {
+                this.intent.dirty = true
+            },
+            deep: true
+        },
+        'intent.bot_says':
+        {
+            handler()
+            {
+                this.intent.dirty = true
+            },
+            deep: true
+        }
+    },
+    methods: {
         expandCollapseAll(){
             this.intent.edit = !this.intent.edit
             if (this.intent.childNodes){
@@ -84,29 +87,25 @@ export default {
         },
         addToList(list, text){
             list.push(text)
-        },
-        addFollowUp(intent){
-            intent.childNodes.push({
-                intent_name: `${intent.intent_name}.${intent.childNodes.length ? intent.childNodes.length + 1 : '1'}`,
-                childNodes: [],
-                user_says: [''],
-                bot_says: [''],
-                edit: true,
-                parent: intent.output
-            })
         }
     }
 }
 </script>
-<style lang="sass" scoped>
+<style  scoped>
 
-.intent-item
-    margin: 20px
-    padding: 10px
-    border: 5px solid black
+.intent-item{
+    margin: 20px;
+    padding: 10px;
+    border: 5px solid black;
+    border-radius: 10px;
+}
+div.dirty{
+    border: 5px solid red;
+}
 
-.intent-item .dirty
-    border: 5px solid red
+button.dirty{
+    background: red;
+}
 
 </style>
 

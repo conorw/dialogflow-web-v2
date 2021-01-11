@@ -11,10 +11,9 @@ export default async (req: NowRequest, res: NowResponse) => {
         try {
             const sorted: JSONIntent = req.body
             await updateSingleIntent(sorted)
-            res.send('OK')
+            res.send(sorted)
         } catch (error){
-            res.statusCode = 500
-            res.send(error.message)
+            res.status(500).send(error)
         }
     } else if (req.method == 'OPTIONS'){
         /* Pass pre-flight HTTP check */

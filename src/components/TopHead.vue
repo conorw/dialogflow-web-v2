@@ -11,7 +11,7 @@
                 <i class="material-icons" aria-hidden="true">home</i>
             </button></a>
             <a
-                href="/#/training"
+                href="/#/edit"
             > <button
                 class="top-head-button training"
                 aria-label="Training"

@@ -106,10 +106,21 @@ export const findEntity = async (entityName: string) => {
     return entity
 }
 export const updateIntent = async (intent: dialogflow.protos.google.cloud.dialogflow.v2.IIntent,
-    displayName: string, questions: string[], answer: string[], override: boolean = false) => {
+    displayName: string, questions: string[], answer: string[], parent: string = '', override: boolean = false) => {
     // let parent = intentClient.projectPath(process.env.PERSONALITY_ACCOUNT_PROJECT_ID)
     // parent = `${parent}/agent`
     // console.log(parent)
+    if (displayName){
+        intent.displayName = displayName.trim()
+    }
+    if (parent){
+        console.log('adding input context', {parent})
+        if (!intent.inputContextNames){
+            intent.inputContextNames = [parent]
+        } else if (!intent.inputContextNames.find(t => t === parent)){
+            intent.inputContextNames.push(parent)
+        }
+    }
     if (intent.messages.length || override){
         intent.messages[0].text.text = answer
     } else {
@@ -144,36 +155,37 @@ export const updateIntent = async (intent: dialogflow.protos.google.cloud.dialog
     return newintent
 }
 export const createIntent = async (displayName: string, questions: string[], answer: string[], inputContext?: string) => {
-    try {
-        let parent = intentClient.projectPath(process.env.PERSONALITY_ACCOUNT_PROJECT_ID)
-        parent = `${parent}/agent`
-        // console.log(parent)
-        const newintent = await intentClient.createIntent({
-            parent, intent: {
-                // parentFollowupIntentName: inputContext,
-                inputContextNames: inputContext ? [`${parent}/sessions/-/contexts/${inputContext.replace(/\./gi, '-')}`] : undefined,
-                displayName,
-                outputContexts: [{
-                    lifespanCount: 2,
-                    parameters: {
-                        fields: {
-                            'question': { stringValue: questions[0] },
-                            'response': { stringValue: answer[0] }
-                        }
-                    },
-                    name: `${parent}/sessions/-/contexts/${displayName.replace(/\./gi, '-')}`
-                }],
-                trainingPhrases: questions.map(t => { return { parts: [{ text: t }] } }),
-                messages: answer.map(t => {
-                    return { text: { text: [t] } }
-                })
-            }
-        })
-        // console.log(newintent)
-        return newintent
-    } catch (error){
-        console.log(error)
+    let parent = intentClient.projectPath(process.env.PERSONALITY_ACCOUNT_PROJECT_ID)
+    parent = `${parent}/agent`
+    if (inputContext){
+            inputContext?.startsWith(`${parent}/sessions/-/contexts)`)
+                ? inputContext : `${parent}/sessions/-/contexts/${inputContext.replace(/\./gi, '-')}`
     }
+    console.log(inputContext)
+    const newintent = await intentClient.createIntent({
+        parent, intent: {
+            // parentFollowupIntentName: inputContext,
+            inputContextNames: inputContext ? [inputContext.startsWith(`${parent}/sessions/-/contexts)`)
+                ? inputContext : inputContext] : undefined,
+            displayName: displayName.trim(),
+            outputContexts: [{
+                lifespanCount: 2,
+                parameters: {
+                    fields: {
+                        'question': { stringValue: questions[0] },
+                        'response': { stringValue: answer[0] }
+                    }
+                },
+                name: `${parent}/sessions/-/contexts/${displayName.replace(/\./gi, '-')}`
+            }],
+            trainingPhrases: questions.map(t => { return { parts: [{ text: t }] } }),
+            messages: answer.map(t => {
+                return { text: { text: [t] } }
+            })
+        }
+    })
+    // console.log(newintent)
+    return newintent
 }
 export const handleTrainingIntent = async (intentresponse: dialogflow.protos.google.cloud.dialogflow.v2.IDetectIntentResponse) => {
     console.log('TRAINING!!!')
@@ -681,8 +693,8 @@ export const getAgentJSON = async (): Promise<JSONIntent[]> => {
                 const bot_says = t.messages.map(r => r.text.text).reduce((a, b) => a.concat(b), [])
                 intentList.push({
                     id: t.name,
-                    parent: t.inputContextNames.length?t.inputContextNames[0]:null,
-                    output: t.outputContexts.length?t.outputContexts[0].name:null,
+                    parent: t.inputContextNames.length ? t.inputContextNames[0] : null,
+                    output: t.outputContexts.length ? t.outputContexts[0].name : null,
                     bot: process.env.PERSONALITY_ACCOUNT_PROJECT_ID,
                     intent_name: t.displayName,
                     user_says,
@@ -703,15 +715,14 @@ export const updateSingleIntent = async (intent: JSONIntent) => {
 
     if (!existing){
         console.log('CREATING INTENT')
-        const newIntent = await createIntent(intent.intent_name, intent.user_says, intent.bot_says)
+        const newIntent = await createIntent(intent.intent_name, intent.user_says, intent.bot_says, intent.parent)
+        console.log(newIntent)
         // add the id to the table
-        if (newIntent){
-            await updateDBIntentId(intent.bot, intent.intent_name, newIntent[0].name)
-        }
+        intent = {...intent, id: newIntent[0].name}
     } else {
         console.log('UPDATING INTENT')
         // otherwise update existing with details
-        await updateIntent(existing, intent.intent_name, intent.user_says, intent.bot_says, true)
+        await updateIntent(existing, intent.intent_name, intent.user_says, intent.bot_says, intent.parent, true)
     }
     return intent
 }

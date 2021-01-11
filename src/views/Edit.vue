@@ -1,8 +1,13 @@
 <template>
     <div>
         <div id="intent-list">
-            <h1>Edit all your bot responses</h1><a href="/">Home</a>
-            <button @click="expandCollapseAll()">Expand/Collapse All</button>
+            <div class="intent-head">
+                <h1>Bot Personality</h1>
+                <button><a href="/">Home</a></button>
+                <button @click="reload">Undo Changes</button>
+            </div>
+            <hr>
+            <button @click="expandCollapseAll()"><i class="material-icons" aria-hidden="true">menu_open</i></button>
             <IntentItem v-for="(intent, idx) in intents" :key="idx" :intent-obj="intent" />
             <!-- <div v-for="(intent, idx) in intents" :key="idx" class="intent-item">
                 <div>
@@ -36,6 +41,7 @@
 </template>
 <script>
 import * as axios from 'axios'
+import Vue from 'vue'
 import IntentItem from '@/components/IntentItem'
 export default {
     name: 'Edit',
@@ -51,19 +57,57 @@ export default {
     async beforeMount(){
         const data = await axios.default.get('/api/intents/list')
         this.intents = this.createDataTree(data.data.map(t => {
-            return {...t, edit: false}
+            return Object.assign(t, this.emptyItem())
         }))
     },
     methods: {
-        toggleEdit(intent){
-            console.log(intent.edit)
-            if (!intent.edit){
-                intent.edit = true
-            } else {
-                intent.edit = !intent.edit
+        reload(){
+            window.location.reload()
+        },
+        emptyItem(){
+            return {
+                edit: false,
+                dirty: false,
+                addFollowUp: intent => {
+                    if (!intent.output){
+                        Vue.$toast.open({message: 'Place save this intent before adding a follow up', type: 'error', duration: 2000})
+                        return
+                    }
+                    intent.childNodes.push(Object.assign(this.emptyItem(), {
+                        intent_name: `${intent.intent_name}.${intent.childNodes.length ? intent.childNodes.length + 1 : '1'}`,
+                        childNodes: [],
+                        user_says: [''],
+                        bot_says: [''],
+                        edit: true,
+                        dirty: true,
+                        parent: intent.output
+                    }))
+                    intent.edit = true
+                },
+                save: async intent => {
+                    if (!intent.intent_name){
+                        Vue.$toast.open({message: 'Your intent must have a name', type: 'error', duration: 2000})
+                        return
+                    }
+                    if (intent.dirty){
+                        try {
+                            const updated = await axios.default.post('/api/intents/save', intent)
+                            if (updated && updated.data){
+                                console.log(intent)
+                                intent.id = updated.data.id
+                                intent.dirty = false
+                                Vue.$toast.open({message: `Saved: ${intent.intent_name}`, type: 'success', duration: 2000})
+                            }
+                        } catch (error){
+                            console.log('Err', {error: error.response.data})
+                            Vue.$toast.open({message: `Error: ${error.response.data.details}`, type: 'error', duration: 2000})
+                            return
+                        }
+                    }
+
+                    Promise.all(intent.childNodes.map(t => t.save(t)))
+                }
             }
-            console.log(intent.edit)
-            return intent
         },
         createDataTree(dataset){
             const hashTable = Object.create(null)
@@ -98,6 +142,33 @@ export default {
     }
 }
 </script>
+<style>
+button {
+	background-color:#44c767;
+	border-radius:8px;
+	border:1px solid #18ab29;
+	display:inline-block;
+	cursor:pointer;
+	color:#ffffff;
+	font-family:Arial;
+	font-size:14px;
+    height: 50px;
+    margin: 5px;
+	padding:4px 8px;
+	text-decoration:none;
+	text-shadow:0px 1px 0px #2f6627;
+}
+button:hover {
+	background-color:#5cbf2a;
+}
+button:active {
+	position:relative;
+	top:1px;
+}
+.intent-head{
+    display:flex;
+}
+</style>
 <style lang="sass">
 @import '@/style/theme.sass'
 
@@ -106,8 +177,6 @@ body
     padding: 0
     font-family: var(--font)
     font-display: swap
-    height: 100vh
-    width: 100vw
     background-color: var(--background)
     background-color: #ffffff
     background-attachment: fixed
