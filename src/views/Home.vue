@@ -493,8 +493,8 @@ body
 
 .bot-chat
     width: 50% !important
-    height: 20% !important
-    top: 20%
+    height: 25% !important
+    top: 15%
     position: absolute
     right: 30px
     z-index: 2
