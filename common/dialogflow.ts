@@ -709,7 +709,7 @@ export const getAgentJSON = async (): Promise<JSONIntent[]> => {
 }
 export const updateSingleIntent = async (intent: JSONIntent) => {
     let existing = null
-    if (intent.id && !intent.id.toLowerCase().startsWith('NEW:')){
+    if (intent.id && !intent.id.toLowerCase().startsWith('new:')){
         existing = await findIntentById(intent.id)
     }
 

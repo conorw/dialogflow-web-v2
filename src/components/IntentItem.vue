@@ -32,7 +32,7 @@
             </div>
             <hr>
             <button @click="intent.addFollowUp(intent)">Add Follow Up Question & Response</button>
-            <IntentItem v-for="(subintent) in intent.childNodes" :key="subintent.intent_name" :intent-obj="subintent" />
+            <IntentItem v-for="(subintent) in intent.childNodes" :key="subintent.id" :intent-obj="subintent" />
         </div>
     </div>
 </template>

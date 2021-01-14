@@ -144,6 +144,7 @@ export default {
                     intent.childNodes.unshift(Object.assign(this.emptyItem(), {
                         intent_name: `${intent.intent_name}.${intent.childNodes.length ? intent.childNodes.length + 1 : '1'}`,
                         childNodes: [],
+                        id: `NEW:${intent.childNodes.length ? intent.childNodes.length + 1 : '1'}`,
                         user_says: [''],
                         bot_says: [''],
                         edit: true,
