@@ -3,19 +3,19 @@
         <div>
             <div style="display:flex; justify-content: space-between;">
                 <h2 @click="()=>category.edit = !category.edit">
-                    <i class="material-icons" aria-hidden="true">{{category.edit?'expand_less':'expand_more'}}</i> {{category.name}}                    <span class="tooltip"><i class="material-icons" aria-hidden="true">info</i>
+                    <i class="material-icons" aria-hidden="true">{{category.edit?'expand_less':'expand_more'}}</i> {{category.name}} <span class="tooltip"><i class="material-icons" aria-hidden="true">info</i>
                         <span class="tooltiptext">{{category.tooltip}}</span>
                     </span>
                 </h2>
                 <div>
-                    <button @click="()=>$emit('add-new', category)"><i class="material-icons" aria-hidden="true">library_add</i>Add New {{category.name}} item</button>
+                    <button @click="()=>$emit('add-new', category)"><i class="material-icons" aria-hidden="true">library_add</i>Add New "{{category.name}}" item</button>
                     <button @click="expandCollapseAll()"><i class="material-icons" aria-hidden="true">menu_open</i></button>
                 </div>
             </div>
         </div>
         <div v-if="category.edit" class="item-details">
             <input v-model="search" style="height: 30px; width: 30%;" type="text" placeholder="Filter...">
-            <IntentItem v-for="(subintent) in filteredList" :key="subintent.intent_name" :intent-obj="subintent" />
+            <IntentItem v-for="(subintent) in filteredList" :key="subintent.id" :intent-obj="subintent" />
         </div>
     </div>
 </template>
@@ -76,11 +76,12 @@ export default {
 /* Tooltip text */
 .tooltip .tooltiptext {
   visibility: hidden;
-  width: 120px;
-  background-color: black;
-  color: #fff;
+  width: 150px;
+  font-size: medium;
+  background-color: yellow;
+  color: black;
   text-align: center;
-  padding: 5px 0;
+  padding: 5px;
   border-radius: 6px;
   /* Position the tooltip text - see examples below! */
   position: absolute;

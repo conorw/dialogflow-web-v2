@@ -14,29 +14,36 @@
             <div v-if="intent.intent_name!=='Default Fallback Intent'">
                 <h3>What a user might say <i class="material-icons" aria-hidden="true" @click="addToList(intent.user_says, '')">add</i></h3>
                 <div v-for="(useritem, i) in intent.user_says" :key="i" class="response-item">
-                    <textarea v-model="intent.user_says[i]" />
                     <i class="material-icons" aria-hidden="true" @click="deleteFromList(intent.user_says, i)">delete</i>
+                    <InputField
+                        :querystr.sync="intent.user_says[i]"
+                    />
+                    <!-- <textarea v-model="intent.user_says[i]" /> -->
                 </div>
             </div>
             <div>
                 <h3>How your bot should respond <i class="material-icons" aria-hidden="true" @click="addToList(intent.bot_says, '')">add</i></h3>
                 <div v-for="(botitem, i) in intent.bot_says" :key="i" class="response-item">
-                    <div>
-                        <textarea v-model="intent.bot_says[i]" />
-                        <i class="material-icons" aria-hidden="true" @click="deleteFromList(intent.bot_says, i)">delete</i>
-                    </div>
+                    <i class="material-icons" aria-hidden="true" @click="deleteFromList(intent.bot_says, i)">delete</i>
+                    <InputField
+                        :querystr="intent.bot_says[i]"
+                    />
                 </div>
             </div>
             <hr>
             <button @click="intent.addFollowUp(intent)">Add Follow Up Question & Response</button>
-            <IntentItem v-for="(subintent, idx1) in intent.childNodes" :key="idx1" :intent-obj="subintent" />
+            <IntentItem v-for="(subintent) in intent.childNodes" :key="subintent.intent_name" :intent-obj="subintent" />
         </div>
     </div>
 </template>
 
 <script>
+import InputField from '@/components/InputField'
 export default {
     name: 'IntentItem',
+    components: {
+        InputField
+    },
     props: {
         intentObj: {
             type: Object,
@@ -92,7 +99,9 @@ export default {
 }
 </script>
 <style  scoped>
-
+.response-item{
+    display:flex;
+}
 .intent-item{
     margin: 20px;
     padding: 10px;

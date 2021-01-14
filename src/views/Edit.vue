@@ -123,6 +123,7 @@ export default {
             category.edit = true
             category.childNodes.unshift({
                 ...this.emptyItem(),
+                id: `NEW:${category.childNodes.length ? category.childNodes.length + 1 : '1'}`,
                 user_says: [''],
                 bot_says: [''],
                 parent: '',
