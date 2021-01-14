@@ -26,7 +26,7 @@
                 <div v-for="(botitem, i) in intent.bot_says" :key="i" class="response-item">
                     <i class="material-icons" aria-hidden="true" @click="deleteFromList(intent.bot_says, i)">delete</i>
                     <InputField
-                        :querystr="intent.bot_says[i]"
+                        :querystr.sync="intent.bot_says[i]"
                     />
                 </div>
             </div>

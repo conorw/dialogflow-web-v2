@@ -162,7 +162,6 @@ export default {
                         try {
                             const updated = await axios.default.post('/api/intents/save', intent)
                             if (updated && updated.data){
-                                console.log(intent)
                                 intent.id = updated.data.id
                                 intent.dirty = false
                                 Vue.$toast.open({message: `Saved: ${intent.intent_name}`, type: 'success', duration: 2000})
@@ -191,7 +190,6 @@ export default {
                 }
                 else dataTree.push(hashTable[aData.output || aData.id])
             })
-            console.log(dataTree)
             return dataTree
         },
         deleteFromList(list, index){

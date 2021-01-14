@@ -53,12 +53,10 @@ const FOLLOWUP_PARENT = 'parent-intent'
 export const findAllIntents = async (intentView: 'INTENT_VIEW_FULL' | 'INTENT_VIEW_UNSPECIFIED' = 'INTENT_VIEW_FULL') => {
     let parent = intentClient.projectPath(process.env.PERSONALITY_ACCOUNT_PROJECT_ID)
     parent = `${parent}/agent`
-    // console.log(`Finding intents: Parent: ${parent}`)
     const ret = await intentClient.listIntents({ parent, intentView })
     return ret
 }
 export const findIntentById = async (id: string) => {
-    // console.log(`Finding intents: Parent: ${parent}`)
     const ret = await intentClient.getIntent({ name: id, intentView: 'INTENT_VIEW_FULL' })
     return ret.length ? ret[0] : null
 }
@@ -69,7 +67,6 @@ export const findIntent = async (intentDisplayName: string) => {
         if (t && Array.isArray(t)){
             intent = t.find(r => {
                 if (r.displayName){
-                    // console.log(r.displayName.toLowerCase())
                     return r.displayName.toLowerCase() === intentDisplayName.toLowerCase()
                 }
                 return false
@@ -79,20 +76,17 @@ export const findIntent = async (intentDisplayName: string) => {
             }
         }
     }
-    // console.log(intent)
     return intent
 }
 export const findEntity = async (entityName: string) => {
     let parent = entityClient.projectPath(process.env.TRAINING_ACCOUNT_PROJECT_ID)
     parent = `${parent}/agent`
-    // console.log(`Finding entitiy: ${entityName}`)
     const entities = await entityClient.listEntityTypes({ parent })
     let entity
     for (const t of entities){
         if (t && Array.isArray(t)){
             entity = t.find(r => {
                 if (r.displayName){
-                    // console.log(r.displayName.toLowerCase())
                     return r.displayName.toLowerCase() === entityName.toLowerCase()
                 }
                 return false
@@ -102,7 +96,6 @@ export const findEntity = async (entityName: string) => {
             }
         }
     }
-    // console.log(entity)
     return entity
 }
 export const updateIntent = async (intent: dialogflow.protos.google.cloud.dialogflow.v2.IIntent,
@@ -121,8 +114,14 @@ export const updateIntent = async (intent: dialogflow.protos.google.cloud.dialog
             intent.inputContextNames.push(parent)
         }
     }
-    if (intent.messages.length || override){
-        intent.messages[0].text.text = answer
+    if (!intent.messages.length || override){
+        if (!intent.messages.length){
+            intent.messages.push({text: {text: answer}})
+        } else {
+            intent.messages = answer.map(t => {
+                return { text: { text: [t] } }
+            })
+        }
     } else {
         // check for duplicates before adding
         // eslint-disable-next-line no-lonely-if
@@ -149,8 +148,6 @@ export const updateIntent = async (intent: dialogflow.protos.google.cloud.dialog
         // console.log('no phrases', {intent})
         intent.trainingPhrases.push(...questions.map(t => { return { parts: [{ text: t }] } }))
     }
-
-
     const newintent = await intentClient.updateIntent({ intent })
     return newintent
 }
@@ -716,7 +713,6 @@ export const updateSingleIntent = async (intent: JSONIntent) => {
     if (!existing){
         console.log('CREATING INTENT')
         const newIntent = await createIntent(intent.intent_name, intent.user_says, intent.bot_says, intent.parent)
-        console.log(newIntent)
         // add the id to the table
         intent = {...intent, id: newIntent[0].name}
     } else {
@@ -728,13 +724,11 @@ export const updateSingleIntent = async (intent: JSONIntent) => {
 }
 export const updateAllIntents = (sorted: JSONIntent[]) => {
     return Promise.all(sorted.map(intent => {
-        // console.log(intent)
         // see if intent exists, if not add it
         return updateSingleIntent(intent)
     }))
 }
 export const handleTrainingIntentList = (intentresponse: dialogflow.protos.google.cloud.dialogflow.v2.IDetectIntentResponse) => {
-    console.log('INTENT LIST!!!')
     const newFulfillment: any = [{
         'platform': 'ACTIONS_ON_GOOGLE',
         'basicCard': {

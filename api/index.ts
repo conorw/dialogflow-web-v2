@@ -41,7 +41,6 @@ export default async (req: NowRequest, res: NowResponse) => {
                     if (intentresponse.queryResult.intent.isFallback){
                         intentresponse = await handleFallbackIntent(intentresponse)
                     }
-                    console.log(intentresponse.queryResult.intent.displayName)
                     switch (intentresponse.queryResult.intent.displayName){
                     case 'feedback':
                         intentresponse = await handleFeedbackIntent(intentresponse)
