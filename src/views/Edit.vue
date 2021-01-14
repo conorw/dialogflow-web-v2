@@ -8,7 +8,10 @@
             </div>
             <hr>
             <button @click="expandCollapseAll()"><i class="material-icons" aria-hidden="true">menu_open</i></button>
-            <IntentItem v-for="(intent, idx) in intents" :key="idx" :intent-obj="intent" />
+            <div>
+                <IntentCategory v-for="(category, idx) in categories" :key="idx" :category-obj="category" @add-new="addNew" />
+            </div>
+            <!-- <IntentItem v-for="(intent, idx) in intents" :key="idx" :intent-obj="intent" /> -->
             <!-- <div v-for="(intent, idx) in intents" :key="idx" class="intent-item">
                 <div>
                     <h2>{{intent.intent_name}} <i class="material-icons" aria-hidden="true" @click="()=>intent.edit = !intent.edit">edit</i></h2>
@@ -42,27 +45,91 @@
 <script>
 import * as axios from 'axios'
 import Vue from 'vue'
-import IntentItem from '@/components/IntentItem'
+import IntentCategory from '@/components/IntentCategory'
 export default {
     name: 'Edit',
     components: {
-        IntentItem
+        IntentCategory
     },
     data(){
         return {
             intents: [],
+            categories: [],
             expanded: false
         }
     },
     async beforeMount(){
+        const aboutBot = {
+            name: 'About Bot',
+            tooltip: 'Statements or questions that the user might ask about the bot. e.g. what is your name?',
+            childNodes: [],
+            edit: false,
+            tag: 'about-bot.'
+        }
+        const aboutUser = {
+            name: 'About User',
+            tooltip: 'Statements or questions that the user might say about themselves. e.g. I am bored',
+            childNodes: [],
+            edit: false,
+            tag: 'about-user.'
+        }
+        const greetings = {
+            name: 'Greetings/Goodbyes',
+            tooltip: 'How your bot should respond to greetings or goodbyes',
+            childNodes: [],
+            edit: false,
+            tag: 'greeting.'
+        }
+        const emoji = {
+            name: 'Emoji',
+            tooltip: 'How your bot should respond to different emojis',
+            childNodes: [],
+            edit: false,
+            tag: 'emoji.'
+        }
+        const courtesy = {
+            name: 'Courtesy',
+            tooltip: 'How your bot should respond when the user responds with kindness e.g. thank you',
+            childNodes: [],
+            edit: false,
+            tag: 'courtesy.'
+        }
+        const general = {
+            name: 'General',
+            tooltip: 'For everything else a user might say to your bot',
+            childNodes: [],
+            edit: false,
+            tag: 'general.'
+        }
+        this.categories = [
+            aboutBot, aboutUser, greetings, emoji, courtesy, general
+        ]
         const data = await axios.default.get('/api/intents/list')
         this.intents = this.createDataTree(data.data.map(t => {
             return Object.assign(t, this.emptyItem())
         }))
+        general.childNodes = this.intents.filter(t => t.intent_name.startsWith(general.tag))
+        aboutBot.childNodes = this.intents.filter(t => t.intent_name.startsWith(aboutBot.tag))
+        aboutUser.childNodes = this.intents.filter(t => t.intent_name.startsWith(aboutUser.tag))
+        greetings.childNodes = this.intents.filter(t => t.intent_name.startsWith(greetings.tag))
+        emoji.childNodes = this.intents.filter(t => t.intent_name.startsWith(emoji.tag))
+        courtesy.childNodes = this.intents.filter(t => t.intent_name.startsWith(courtesy.tag))
     },
     methods: {
         reload(){
             window.location.reload()
+        },
+        addNew(category){
+            category.edit = true
+            category.childNodes.unshift({
+                ...this.emptyItem(),
+                user_says: [''],
+                bot_says: [''],
+                parent: '',
+                edit: true,
+                dirty: true,
+                intent_name: `${category.tag}${category.childNodes.length ? category.childNodes.length + 1 : '1'}`
+            })
         },
         emptyItem(){
             return {
@@ -73,7 +140,7 @@ export default {
                         Vue.$toast.open({message: 'Place save this intent before adding a follow up', type: 'error', duration: 2000})
                         return
                     }
-                    intent.childNodes.push(Object.assign(this.emptyItem(), {
+                    intent.childNodes.unshift(Object.assign(this.emptyItem(), {
                         intent_name: `${intent.intent_name}.${intent.childNodes.length ? intent.childNodes.length + 1 : '1'}`,
                         childNodes: [],
                         user_says: [''],
@@ -137,7 +204,7 @@ export default {
             } else {
                 this.expanded = true
             }
-            this.intents.forEach(t => t.edit = this.expanded)
+            this.categories.forEach(t => t.edit = this.expanded)
         }
     }
 }
@@ -187,5 +254,7 @@ textarea, input
 
 i
     cursor: pointer
+
+
 </style>
 
