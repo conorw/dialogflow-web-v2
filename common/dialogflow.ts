@@ -118,9 +118,7 @@ export const updateIntent = async (intent: dialogflow.protos.google.cloud.dialog
         if (!intent.messages.length){
             intent.messages.push({text: {text: answer}})
         } else {
-            intent.messages = answer.map(t => {
-                return { text: { text: [t] } }
-            })
+            intent.messages[0].text.text = answer
         }
     } else {
         // check for duplicates before adding
@@ -128,7 +126,7 @@ export const updateIntent = async (intent: dialogflow.protos.google.cloud.dialog
         answer.forEach(ans => {
             if (!intent.messages[0].text.text.find(t => t.toLocaleLowerCase() === ans.toLowerCase())){
                 console.log('pusing new response', { ans })
-                intent.messages.push({ text: { text: [ans] } })
+                intent.messages[0].text.text.push(...ans)
             }
         })
     }
@@ -176,9 +174,7 @@ export const createIntent = async (displayName: string, questions: string[], ans
                 name: `${parent}/sessions/-/contexts/${displayName.replace(/\./gi, '-')}`
             }],
             trainingPhrases: questions.map(t => { return { parts: [{ text: t }] } }),
-            messages: answer.map(t => {
-                return { text: { text: [t] } }
-            })
+            messages: [{ text: { text: answer } }]
         }
     })
     // console.log(newintent)
