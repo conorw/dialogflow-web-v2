@@ -494,7 +494,7 @@ export const setFallbackFailure = (intentresponse: dialogflow.protos.google.clou
 }
 export const handleFallbackIntent = async (intentresponse: dialogflow.protos.google.cloud.dialogflow.v2.IDetectIntentResponse) => {
     console.log(intentresponse.queryResult.outputContexts)
-    if (intentresponse.queryResult.outputContexts && intentresponse.queryResult.outputContexts[0].parameters.fields['no-match']){
+    if (intentresponse.queryResult.outputContexts && intentresponse.queryResult.outputContexts[0].parameters && intentresponse.queryResult.outputContexts[0].parameters.fields['no-match']){
         const count = intentresponse.queryResult.outputContexts[0].parameters.fields['no-match'].numberValue || 0
         console.log('fallback', { params: intentresponse.queryResult.outputContexts[0].parameters.fields })
         if (count > 4){
