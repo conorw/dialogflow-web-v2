@@ -23,10 +23,10 @@
         <transition name="shake" mode="out-in">
             <section :key="botText" class="bot-profile" aria-live="polite">
                 <img
-                    v-if="agent.avatarUri"
+                    v-if="botImage"
                     class="top-head-icon"
                     :alt="agent.displayName"
-                    :src="agent.avatarUri"
+                    :src="botImage"
                 >
                 <img
                     v-else
@@ -154,6 +154,7 @@ import MyMessage from '@/components/MyMessage'
 import * as uuidv1 from 'uuid/v1'
 
 import { Client } from 'dialogflow-gateway'
+import Axios from 'axios'
 
 export default {
     name: 'Home',
@@ -174,7 +175,9 @@ export default {
             training: false,
             image: '',
             myAvatar: '',
+            botImage: '',
             lastMessage: null,
+            botDetails: {},
             language: '',
             meText: '',
             botText: '',
@@ -311,6 +314,13 @@ export default {
                 this.error = error.message
             })
         }
+        // get the bot details
+        Axios.get('/api/bot').then(t => {
+            if (t.data){
+                this.botDetails = t.data
+                this.botImage = this.botDetails.avatar
+            }
+        })
     },
     methods: {
         openAvatar(){
@@ -427,6 +437,42 @@ export default {
                 if (!this.muted) window.speechSynthesis.speak(speech) // <- if app is not muted, speak out the speech
 
                 this.botText = text
+            }
+            console.log('Result', {resp: response.queryResult})
+            if (response.queryResult.sentimentAnalysisResult){
+                console.log(response.queryResult.sentimentAnalysisResult)
+                console.log(this.botDetails)
+                if (this.botDetails){
+                    const score = parseFloat(response.queryResult.sentimentAnalysisResult.queryTextSentiment.score * response.queryResult.sentimentAnalysisResult.queryTextSentiment.magnitude).toFixed(2)
+                    console.log(score)
+                    // 0.6-1 = v positive
+                    if (score >= .6){
+                        console.log(this.botDetails.sentiment_v_positive)
+                        this.botImage = this.botDetails.sentiment_v_positive || this.botImage
+                        return
+                    }
+                    // 0.1-0.6 = positive
+                    if (score > 0.2){
+                        console.log(this.botDetails.sentiment_positive)
+                        this.botImage = this.botDetails.sentiment_positive || this.botImage
+                        return
+                    }
+                    // -0.2-0.2 = neutral
+                    if (score >= -0.2){
+                        console.log(this.botDetails.sentiment_neutral)
+                        this.botImage = this.botDetails.sentiment_neutral || this.botImage
+                        return
+                    }
+                    // -0.6-0.2 = negative
+                    if (score >= -0.6){
+                        console.log(this.botDetails.sentiment_negative)
+                        this.botImage = this.botDetails.sentiment_negative || this.botImage
+                        return
+                    }
+                    // -1 = v. negative
+                    console.log(this.botDetails.sentiment_v_negative)
+                    this.botImage = this.botDetails.sentiment_v_negative || this.botImage
+                }
             }
         },
         /* Stop audio speech/playback */

@@ -115,6 +115,15 @@ export const getBots = async () => {
         console.log(error)
     }
 }
+export const getBot = async (id: string) => {
+    try {
+        const filter = `{bot}="${id}"`
+        const exists = await base('bots').select({ filterByFormula: filter }).firstPage()
+        return exists.length ? exists[0].fields : {}
+    } catch (error){
+        console.log(error)
+    }
+}
 export const saveTopic = async (answer: string) => {
     const url = process.env.SERVICE_ACCOUNT_PROJECT_ID
 
