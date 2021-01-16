@@ -291,10 +291,14 @@
             </RichComponent>
         </div>
         <div v-if="training" class="confidence-score">
-            Intent Confidence:
-            {{message.queryResult.intent.isFallback
+            Confidence:
+            {{message.queryResult.intent && message.queryResult.intent.isFallback
                 ? 0
                 : Math.round(message.queryResult.intentDetectionConfidence * 100)}}%
+            Sentiment:
+            {{message.queryResult.sentimentAnalysisResult
+                ? parseFloat(message.queryResult.sentimentAnalysisResult.queryTextSentiment.score
+                    * message.queryResult.sentimentAnalysisResult.queryTextSentiment.magnitude).toFixed(2): 0}}
         </div>
         <!-- Actions on Google Components -->
         <section

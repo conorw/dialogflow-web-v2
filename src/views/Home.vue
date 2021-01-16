@@ -76,6 +76,7 @@
             v-if="lastMessage"
             class="bot-chat"
             :loading="loading"
+            :training="training"
             :message="lastMessage" />
 
         <MyMessage v-if="lastMessage" class="me-chat" :message="lastMessage" />
@@ -170,6 +171,7 @@ export default {
         return {
             agent: null,
             messages: [],
+            training: false,
             image: '',
             myAvatar: '',
             lastMessage: null,
@@ -267,6 +269,7 @@ export default {
     beforeMount(){
         this.image = localStorage.getItem('background') || '/img/backgrounds/Wintery-Sunburst.svg'
         this.myAvatar = localStorage.getItem('avatar') || '/img/avatars/SVG/flat/27-ninja.svg'
+        this.training = !!this.$route.query.training || false
     },
     created(){
     /* Mute audio to comply with auto-play policies */
@@ -560,6 +563,12 @@ body
     content: "" !important
 .rich-bubble::before
     content: "" !important
+
+.confidence-score
+    position: absolute
+    background: red
+    color: white
+    padding: 5px
 
 .my-profile
     position: -webkit-sticky
