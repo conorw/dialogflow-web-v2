@@ -105,7 +105,7 @@ export default {
 .intent-item{
     margin: 20px;
     padding: 10px;
-    border: 5px solid black;
+    border: 2px solid black;
     border-radius: 10px;
 }
 div.dirty{

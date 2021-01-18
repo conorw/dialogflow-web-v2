@@ -64,6 +64,7 @@ export default {
     padding: 10px;
     border: 5px solid black;
     border-radius: 10px;
+    background: lightyellow;
 }
 
 /* Tooltip container */

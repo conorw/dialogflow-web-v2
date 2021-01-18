@@ -25,16 +25,16 @@
                 <img
                     v-if="botImage"
                     class="top-head-icon"
-                    :alt="agent.displayName"
+                    :alt="botName"
                     :src="botImage"
                 >
                 <img
                     v-else
                     class="top-head-icon"
                     src="/img/icon.png"
-                    :alt="agent.displayName"
+                    :alt="botName"
                 >
-                <div class="bot-title"><span>{{agent.displayName}}</span></div>
+                <div class="bot-title"><span>{{botName}}</span></div>
             </section>
         </transition>
         <!-- TopHead is the header with the information about the app -->
@@ -176,6 +176,7 @@ export default {
             image: '',
             myAvatar: '',
             botImage: '',
+            botName: '',
             lastMessage: null,
             botDetails: {},
             language: '',
@@ -270,6 +271,11 @@ export default {
         }
     },
     beforeMount(){
+        if (sessionStorage.getItem('bot') !== null){
+            this.botDetails = JSON.parse(sessionStorage.getItem('bot'))
+            this.botImage = this.botDetails.avatar
+            this.botName = this.botDetails.name
+        }
         this.image = localStorage.getItem('background') || '/img/backgrounds/Wintery-Sunburst.svg'
         this.myAvatar = localStorage.getItem('avatar') || '/img/avatars/SVG/flat/27-ninja.svg'
         this.training = !!this.$route.query.training || false
@@ -299,7 +305,6 @@ export default {
             this.session = uuidv1()
             if (this.history()) sessionStorage.setItem('session', this.session)
         }
-
         /* Cache Agent (this will save bandwith) */
         if (this.history() && sessionStorage.getItem('agent') !== null){
             this.agent = JSON.parse(sessionStorage.getItem('agent'))
@@ -319,6 +324,8 @@ export default {
             if (t.data){
                 this.botDetails = t.data
                 this.botImage = this.botDetails.avatar
+                this.botName = this.botDetails.name
+                if (this.history()) sessionStorage.setItem('bot', JSON.stringify(this.botDetails))
             }
         })
     },

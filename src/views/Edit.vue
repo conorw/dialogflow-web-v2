@@ -210,6 +210,9 @@ export default {
 }
 </script>
 <style>
+.input-field{
+    background: transparent !important;
+}
 button {
 	background-color:#44c767;
 	border-radius:8px;
