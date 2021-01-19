@@ -17,7 +17,6 @@ export default {
     data(){
         return {
             backgrounds: [
-                '/img/avatars/png/1 (1).png',
                 '/img/avatars/png/1 (2).png',
                 '/img/avatars/png/1 (3).png',
                 '/img/avatars/png/1 (4).png',
@@ -27,30 +26,17 @@ export default {
                 '/img/avatars/png/1 (8).png',
                 '/img/avatars/png/1 (9).png',
                 '/img/avatars/png/1 (10).png',
-                '/img/avatars/png/1 (11).png',
                 '/img/avatars/png/1 (12).png',
-                '/img/avatars/png/1 (13).png',
                 '/img/avatars/png/1 (14).png',
                 '/img/avatars/png/1 (15).png',
-                '/img/avatars/png/1 (16).png',
-                '/img/avatars/png/1 (17).png',
-                '/img/avatars/png/1 (18).png',
                 '/img/avatars/png/1 (19).png',
-                '/img/avatars/png/1 (20).png',
                 '/img/avatars/png/1 (21).png',
-                '/img/avatars/png/1 (22).png',
-                '/img/avatars/png/1 (23).png',
-                '/img/avatars/png/1 (24).png',
                 '/img/avatars/png/1 (25).png',
-                '/img/avatars/png/1 (26).png',
-                '/img/avatars/png/1 (27).png',
-                '/img/avatars/png/1 (28).png',
                 '/img/avatars/png/1 (29).png',
                 '/img/avatars/png/1 (30).png',
                 '/img/avatars/png/1 (31).png',
                 '/img/avatars/png/1 (32).png',
                 '/img/avatars/png/1 (33).png',
-                '/img/avatars/png/1 (34).png',
                 '/img/avatars/png/1 (35).png',
                 '/img/avatars/png/1 (36).png',
                 '/img/avatars/png/1 (37).png',
@@ -58,8 +44,6 @@ export default {
                 '/img/avatars/png/1 (39).png',
                 '/img/avatars/png/1 (40).png',
                 '/img/avatars/png/1 (41).png',
-                '/img/avatars/png/1 (42).png',
-                '/img/avatars/png/1 (43).png',
                 '/img/avatars/png/1 (44).png',
                 '/img/avatars/png/1 (45).png',
                 '/img/avatars/png/1 (46).png',
@@ -94,7 +78,6 @@ export default {
                 '/img/avatars/png/1 (75).png',
                 '/img/avatars/png/1 (76).png',
                 '/img/avatars/png/1 (77).png',
-                '/img/avatars/png/1 (78).png',
                 '/img/avatars/SVG/flat/03-pirates.svg',
                 '/img/avatars/SVG/flat/04-girl.svg',
                 '/img/avatars/SVG/flat/05-boy.svg',
@@ -145,7 +128,7 @@ export default {
 }
 .background-container img {
     margin: 2px;
-    max-width: 30%;
+    width: 60px;
     max-height: 60px;
 }
 
