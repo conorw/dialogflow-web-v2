@@ -172,7 +172,7 @@ export default {
         return {
             agent: null,
             messages: [],
-            training: false,
+            training: true,
             image: '',
             myAvatar: '',
             botImage: '',
@@ -278,7 +278,7 @@ export default {
         }
         this.image = localStorage.getItem('background') || '/img/backgrounds/Wintery-Sunburst.svg'
         this.myAvatar = localStorage.getItem('avatar') || '/img/avatars/SVG/flat/27-ninja.svg'
-        this.training = !!this.$route.query.training || false
+        this.training = !!this.$route.query.training || true
     },
     created(){
     /* Mute audio to comply with auto-play policies */

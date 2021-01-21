@@ -29,6 +29,14 @@
                     <i class="material-icons" aria-hidden="true">help</i>
                 </button></a>
             <button
+                class="top-head-button feedback"
+                aria-label="Feedback"
+                title="Feedback"
+                @click="submit({ text: 'feedback' })"
+            >
+                <i class="material-icons" aria-hidden="true">feedback</i>
+            </button>
+            <button
                 class="top-head-button settings"
                 aria-label="Settings"
                 title="Settings"
