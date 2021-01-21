@@ -572,7 +572,7 @@ export const handleHelpIntent = async (intentresponse: dialogflow.protos.google.
         && intentresponse.queryResult.parameters.fields.topic){
         const params = intentresponse.queryResult.parameters.fields
         const topic = params.topic ? params.topic.stringValue : ''
-        const resource = params.resource ? params.resource.stringValue : ''
+        const resource = params['resource-type'] ? params['resource-type'].stringValue : ''
         // if this is the intent-name question, return the entity options for the category
         if (topic && resource){
             console.log('Lookup help', { topic, resource })
