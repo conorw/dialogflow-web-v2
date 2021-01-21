@@ -355,7 +355,7 @@ export default {
     border: none
     padding: 10px 0 10px 12px
     color: var(--text-primary)
-    border-radius: 40px 0 0 40px
+    border-radius: 5px 0 0 5px
     background-color: whitesmoke
 
 .chat-field-action

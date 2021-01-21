@@ -5,6 +5,17 @@
                 <h1>Bot Personality</h1>
                 <button><a href="/">Home</a></button>
                 <button @click="reload">Undo Changes</button>
+                <button
+                    class="top-head-button traininglist"
+                    title="View Stats"
+                    aria-label="View Stats"
+                >
+                    <a
+                        href="/api/intents"
+                        target="_blank">
+                        <i class="material-icons" aria-hidden="true">view_list</i>
+                    </a>
+                </button>
             </div>
             <hr>
             <button @click="expandCollapseAll()"><i class="material-icons" aria-hidden="true">menu_open</i></button>
