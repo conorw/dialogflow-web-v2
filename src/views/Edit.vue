@@ -22,6 +22,13 @@
             <div>
                 <IntentCategory v-for="(category, idx) in categories" :key="idx" :category-obj="category" @add-new="addNew" />
             </div>
+            <div style="margin: 20px">
+                <h2>Questions that your bot has no answer for</h2>
+                <h3>Please train your bot to respond to these statements</h3>
+                <div v-for="(unknown, idx) in unknowns" :key="idx">
+                    {{unknown.statement}}
+                </div>
+            </div>
             <!-- <IntentItem v-for="(intent, idx) in intents" :key="idx" :intent-obj="intent" /> -->
             <!-- <div v-for="(intent, idx) in intents" :key="idx" class="intent-item">
                 <div>
@@ -66,6 +73,7 @@ export default {
         return {
             intents: [],
             categories: [],
+            unknowns: [],
             expanded: false
         }
     },
@@ -115,10 +123,12 @@ export default {
         this.categories = [
             aboutBot, aboutUser, greetings, emoji, courtesy, general
         ]
-        const data = await axios.default.get('/api/intents/list')
+        const [data, unknowns] = await Promise.all([axios.default.get('/api/intents/list'),
+            axios.default.get('/api/intents/list/unknowns')])
         this.intents = this.createDataTree(data.data.map(t => {
             return Object.assign(t, this.emptyItem())
         }))
+        this.unknowns = unknowns.data
         general.childNodes = this.intents.filter(t => t.intent_name.startsWith(general.tag))
         aboutBot.childNodes = this.intents.filter(t => t.intent_name.startsWith(aboutBot.tag))
         aboutUser.childNodes = this.intents.filter(t => t.intent_name.startsWith(aboutUser.tag))

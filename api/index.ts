@@ -3,6 +3,7 @@ import { NowRequest, NowResponse } from '@vercel/node'
 import { agentsClient, sessionClient, getFormattedFulfillment, handleTrainingIntent, handleFeedbackIntent, handleSearchIntent, handleTrainingFollowUpIntent, handleTrainingIntentList, handleTopicIntent, handleFallbackIntent, handleHelpIntent } from '../common/dialogflow'
 import * as dialogflow from '@google-cloud/dialogflow'
 import { setCORSHeaders } from '../common/utils'
+import { saveUnknown } from '../common/airtable'
 
 export default async (req: NowRequest, res: NowResponse) => {
     res = setCORSHeaders(res)
@@ -40,6 +41,7 @@ export default async (req: NowRequest, res: NowResponse) => {
                 if (intentresponse.queryResult){
                     if (intentresponse.queryResult.intent.isFallback){
                         intentresponse = await handleFallbackIntent(intentresponse)
+                        await saveUnknown(request.queryInput.text.text, JSON.stringify(responses))
                     }
                     console.log(intentresponse.queryResult.intent.displayName)
                     switch (intentresponse.queryResult.intent.displayName){
