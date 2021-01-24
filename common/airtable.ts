@@ -78,11 +78,25 @@ export const getBotResponses = async (bot: string) => {
         console.log(error)
     }
 }
+export const saveUnknown = async (statement: string, context: string, percentage: number) => {
+    const bot = process.env.SERVICE_ACCOUNT_PROJECT_ID
+    try {
+        await base('unknowns').create([
+            {
+                'fields': { bot, statement, context, percentage }
+            }
+        ])
+    } catch (error){
+        console.log(error)
+    }
+}
 export const getBotUnknowns = async () => {
     try {
         const filter = `AND({bot}="${process.env.SERVICE_ACCOUNT_PROJECT_ID}",{completed}=0)`
         const exists = await base('unknowns').select({ filterByFormula: filter }).all()
-        return exists.map(t => t.fields)
+        return exists.map(t => {
+            return {...t.fields, id: t.id}
+        })
     } catch (error){
         console.log(error)
     }
@@ -140,19 +154,6 @@ export const saveTopic = async (answer: string) => {
         await base('troubling-topics').create([
             {
                 'fields': { answer, url }
-            }
-        ])
-    } catch (error){
-        console.log(error)
-    }
-}
-
-export const saveUnknown = async (statement: string, context: string) => {
-    const bot = process.env.SERVICE_ACCOUNT_PROJECT_ID
-    try {
-        await base('unknowns').create([
-            {
-                'fields': { bot, statement, context }
             }
         ])
     } catch (error){

@@ -41,9 +41,11 @@ export default async (req: NowRequest, res: NowResponse) => {
                 if (intentresponse.queryResult){
                     if (intentresponse.queryResult.intent.isFallback){
                         intentresponse = await handleFallbackIntent(intentresponse)
-                        await saveUnknown(request.queryInput.text.text, JSON.stringify(responses))
+                        await saveUnknown(request.queryInput.text.text, JSON.stringify(responses), 0)
+                    } else if (intentresponse.queryResult.intentDetectionConfidence < 40){
+                        await saveUnknown(request.queryInput.text.text, JSON.stringify(responses), intentresponse.queryResult.intentDetectionConfidence)
                     }
-                    console.log(intentresponse.queryResult.intent.displayName)
+                    console.log(intentresponse.queryResult.intentDetectionConfidence)
                     switch (intentresponse.queryResult.intent.displayName){
                     case 'feedback':
                         intentresponse = await handleFeedbackIntent(intentresponse)

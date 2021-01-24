@@ -26,7 +26,11 @@
                 <h2>Questions that your bot has no answer for</h2>
                 <h3>Please train your bot to respond to these statements</h3>
                 <div v-for="(unknown, idx) in unknowns" :key="idx">
-                    {{unknown.statement}}
+                    Statement: {{unknown.statement}}
+                </div>
+                <h3>Your bot is not confident of these phrases, please add training</h3>
+                <div v-for="(unknown, idx) in unsure" :key="idx">
+                    Statement: {{unknown.statement}} Confidence:{{unknown.percentage}}
                 </div>
             </div>
             <!-- <IntentItem v-for="(intent, idx) in intents" :key="idx" :intent-obj="intent" /> -->
@@ -74,6 +78,7 @@ export default {
             intents: [],
             categories: [],
             unknowns: [],
+            unsure: [],
             expanded: false
         }
     },
@@ -128,7 +133,8 @@ export default {
         this.intents = this.createDataTree(data.data.map(t => {
             return Object.assign(t, this.emptyItem())
         }))
-        this.unknowns = unknowns.data
+        this.unknowns = unknowns.data.filter(t => t.percentage < 1)
+        this.unsure = unknowns.data.filter(t => t.percentage >= 1)
         general.childNodes = this.intents.filter(t => t.intent_name.startsWith(general.tag))
         aboutBot.childNodes = this.intents.filter(t => t.intent_name.startsWith(aboutBot.tag))
         aboutUser.childNodes = this.intents.filter(t => t.intent_name.startsWith(aboutUser.tag))

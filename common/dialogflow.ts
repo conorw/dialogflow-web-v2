@@ -188,7 +188,6 @@ export const handleTrainingIntent = async (intentresponse: dialogflow.protos.goo
         && intentresponse.queryResult.parameters.fields
         && intentresponse.queryResult.parameters.fields.answer){
         const params = intentresponse.queryResult.parameters.fields
-        console.log(params)
         const intentCategory = params.category ? params.category.stringValue : ''
         const intentName = params.name ? params.name.stringValue : ''
         const question1 = params.question ? params.question.stringValue : ''
@@ -256,8 +255,6 @@ If a suitable option is not available below, just type a new name`
             const lowerIntentName = intentName.toLowerCase().replace(/ /gi, '.').trim()
             const lowerIntentCategory = intentCategory.toLowerCase().replace(/ /gi, '-').trim()
             const combinedName = `${lowerIntentCategory}.${lowerIntentName}`
-            console.log({ combinedName, intentCategory, intentName, question1, answer })
-            console.log(`Creating new intent:${combinedName}`)
             const intent = await findIntent(combinedName)
             console.log(intent)
             if (intent){
@@ -493,7 +490,6 @@ export const setFallbackFailure = (intentresponse: dialogflow.protos.google.clou
     return false
 }
 export const handleFallbackIntent = async (intentresponse: dialogflow.protos.google.cloud.dialogflow.v2.IDetectIntentResponse) => {
-    console.log(intentresponse.queryResult.outputContexts)
     if (intentresponse.queryResult.outputContexts && intentresponse.queryResult.outputContexts[0].parameters && intentresponse.queryResult.outputContexts[0].parameters.fields['no-match']){
         const count = intentresponse.queryResult.outputContexts[0].parameters.fields['no-match'].numberValue || 0
         console.log('fallback', { params: intentresponse.queryResult.outputContexts[0].parameters.fields })
