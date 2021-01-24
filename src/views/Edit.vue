@@ -25,12 +25,12 @@
             <div style="margin: 20px">
                 <h2>Questions that your bot has no answer for</h2>
                 <h3>Please train your bot to respond to these statements</h3>
-                <div v-for="(unknown, idx) in unknowns" :key="idx">
-                    Statement: {{unknown.statement}}
+                <div v-for="(unknown) in unknowns" :key="unknown.id">
+                    Statement: {{unknown.statement}} <button @click="deleteUnknown(unknown.id)">Mark as trained</button>
                 </div>
                 <h3>Your bot is not confident of these phrases, please add training</h3>
-                <div v-for="(unknown, idx) in unsure" :key="idx">
-                    Statement: {{unknown.statement}} Confidence:{{unknown.percentage}}
+                <div v-for="(unknown) in unsure" :key="unknown.id">
+                    Statement: {{unknown.statement}} Confidence:{{unknown.percentage}} <button @click="deleteUnknown(unknown.id)">Mark as trained</button>
                 </div>
             </div>
             <!-- <IntentItem v-for="(intent, idx) in intents" :key="idx" :intent-obj="intent" /> -->
@@ -221,6 +221,14 @@ export default {
         },
         deleteFromList(list, index){
             list.splice(index, 1)
+        },
+        async deleteUnknown(id){
+            const ret = await axios.default.delete(`/api/intents/list/unknowns/id/${id}`)
+            console.log(ret)
+            if (ret.status === 204){
+                Vue.$toast.open({message: 'Marked as trained', type: 'success', duration: 2000})
+                this.unknowns = this.unknowns.filter(t => t.id !== id)
+            }
         },
         addToList(list, text){
             list.push(text)

@@ -90,6 +90,13 @@ export const saveUnknown = async (statement: string, context: string, percentage
         console.log(error)
     }
 }
+export const deleteUnknown = async (id: any) => {
+    try {
+        await base('unknowns').update([{id, fields: {completed: true}}])
+    } catch (error){
+        console.log(error)
+    }
+}
 export const getBotUnknowns = async () => {
     try {
         const filter = `AND({bot}="${process.env.SERVICE_ACCOUNT_PROJECT_ID}",{completed}=0)`
