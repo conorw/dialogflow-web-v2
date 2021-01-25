@@ -133,8 +133,8 @@ export default {
         this.intents = this.createDataTree(data.data.map(t => {
             return Object.assign(t, this.emptyItem())
         }))
-        this.unknowns = unknowns.data.filter(t => t.percentage < 1)
-        this.unsure = unknowns.data.filter(t => t.percentage >= 1)
+        this.unknowns = unknowns.data.filter(t => t.percentage < 0.1)
+        this.unsure = unknowns.data.filter(t => t.percentage >= 0.1)
         general.childNodes = this.intents.filter(t => t.intent_name.startsWith(general.tag))
         aboutBot.childNodes = this.intents.filter(t => t.intent_name.startsWith(aboutBot.tag))
         aboutUser.childNodes = this.intents.filter(t => t.intent_name.startsWith(aboutUser.tag))
@@ -165,7 +165,7 @@ export default {
                 dirty: false,
                 addFollowUp: intent => {
                     if (!intent.output){
-                        Vue.$toast.open({message: 'Place save this intent before adding a follow up', type: 'error', duration: 2000})
+                        Vue.$toast.open({message: 'You cant save this until the parent item is saved. Place save this intent before adding a follow up', type: 'error', duration: 2000})
                         return
                     }
                     intent.childNodes.unshift(Object.assign(this.emptyItem(), {

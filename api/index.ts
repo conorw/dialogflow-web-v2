@@ -42,7 +42,7 @@ export default async (req: NowRequest, res: NowResponse) => {
                     if (intentresponse.queryResult.intent.isFallback){
                         intentresponse = await handleFallbackIntent(intentresponse)
                         await saveUnknown(request.queryInput.text.text, JSON.stringify(responses), 0)
-                    } else if (intentresponse.queryResult.intentDetectionConfidence < 40){
+                    } else if (intentresponse.queryResult.intentDetectionConfidence < 0.4){
                         await saveUnknown(request.queryInput.text.text, JSON.stringify(responses), intentresponse.queryResult.intentDetectionConfidence)
                     }
                     console.log(intentresponse.queryResult.intentDetectionConfidence)
