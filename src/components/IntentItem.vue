@@ -13,20 +13,20 @@
         <div v-if="intent.edit" class="item-details">
             <div v-if="intent.intent_name!=='Default Fallback Intent'">
                 <h3>What a user might say <i class="material-icons" aria-hidden="true" @click="addToList(intent.user_says, '')">add</i></h3>
-                <div v-for="(useritem, idx) in intent.user_says" :key="idx" class="response-item">
-                    <i class="material-icons" aria-hidden="true" @click="deleteFromList(intent.user_says, intent.user_says[idx])">delete</i>
+                <div v-for="(useritem, idx) in intent.user_says" :key="useritem" :index="idx" class="response-item">
+                    <i class="material-icons" aria-hidden="true" @click="$delete(intent.user_says, idx)">delete</i>
                     <InputField
-                        :querystr.sync="intent.user_says[idx]"
+                        :querystr="intent.user_says[idx]"
                     />
                     <!-- <textarea v-model="intent.user_says[i]" /> -->
                 </div>
             </div>
             <div>
                 <h3>How your bot should respond <i class="material-icons" aria-hidden="true" @click="addToList(intent.bot_says, '')">add</i></h3>
-                <div v-for="(botitem, i) in intent.bot_says" :key="i" class="response-item">
-                    <i class="material-icons" aria-hidden="true" @click="deleteFromList(intent.bot_says, intent.bot_says[i])">delete</i>
+                <div v-for="(botitem, i) in intent.bot_says" :key="botitem" :index="i" class="response-item">
+                    <i class="material-icons" aria-hidden="true" @click="$delete(intent.bot_says, i)">delete</i>
                     <InputField
-                        :querystr.sync="intent.bot_says[i]"
+                        :querystr.sync="intent.bot_says[`${i}`]"
                     />
                 </div>
             </div>

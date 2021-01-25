@@ -156,7 +156,6 @@ export const createIntent = async (displayName: string, questions: string[], ans
         inputContext.startsWith(`${parent}/sessions/-/contexts)`)
             ? inputContext : `${parent}/sessions/-/contexts/${inputContext.replace(/\./gi, '-')}`
     }
-    console.log(inputContext)
     const newintent = await intentClient.createIntent({
         parent, intent: {
             // parentFollowupIntentName: inputContext,
@@ -182,7 +181,6 @@ export const createIntent = async (displayName: string, questions: string[], ans
 }
 export const handleTrainingIntent = async (intentresponse: dialogflow.protos.google.cloud.dialogflow.v2.IDetectIntentResponse) => {
     console.log('TRAINING!!!')
-    console.log(intentresponse.queryResult.parameters.fields)
 
     if (intentresponse.queryResult.parameters
         && intentresponse.queryResult.parameters.fields
@@ -256,7 +254,6 @@ If a suitable option is not available below, just type a new name`
             const lowerIntentCategory = intentCategory.toLowerCase().replace(/ /gi, '-').trim()
             const combinedName = `${lowerIntentCategory}.${lowerIntentName}`
             const intent = await findIntent(combinedName)
-            console.log(intent)
             if (intent){
                 console.log('Update existing intent')
                 await updateIntent(intent, combinedName, [question1], [answer])
@@ -541,7 +538,6 @@ export const updateParentContext = async (contexts: dialogflow.protos.google.clo
 }
 export const handleSearchIntent = async (intentresponse: dialogflow.protos.google.cloud.dialogflow.v2.IDetectIntentResponse) => {
     console.log('SEARCH!!!')
-    console.log(intentresponse.queryResult.parameters.fields)
 
     if (intentresponse.queryResult.parameters
         && intentresponse.queryResult.parameters.fields
@@ -561,7 +557,6 @@ export const handleSearchIntent = async (intentresponse: dialogflow.protos.googl
 }
 export const handleHelpIntent = async (intentresponse: dialogflow.protos.google.cloud.dialogflow.v2.IDetectIntentResponse) => {
     console.log('HELP!!!')
-    console.log(intentresponse.queryResult.parameters.fields)
 
     if (intentresponse.queryResult.parameters
         && intentresponse.queryResult.parameters.fields
@@ -626,7 +621,6 @@ const addSearchToResponse = async (q: string, intentresponse, title?: string) =>
 const addHelpToResponse = async (intentresponse, topic: string, resource: string) => {
     const searchResult = await getTopicResource(topic, resource)
     if (searchResult){
-        console.log(searchResult)
         const buttons = []
         if (searchResult.resource_link[0]){
             let action = 'Open Now'
@@ -677,7 +671,6 @@ export const getAgentJSON = async (): Promise<JSONIntent[]> => {
     intents.forEach(intent => {
         if (intent){
             intent.forEach(t => {
-                console.log(t)
                 const user_says = t.trainingPhrases.map(t => t.parts.map(r => r.text)).reduce((a, b) => a.concat(b), [])
                 const bot_says = t.messages.map(r => r.text.text).reduce((a, b) => a.concat(b), [])
                 intentList.push({

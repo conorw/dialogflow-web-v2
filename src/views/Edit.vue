@@ -20,7 +20,7 @@
             <hr>
             <button @click="expandCollapseAll()"><i class="material-icons" aria-hidden="true">menu_open</i></button>
             <div>
-                <IntentCategory v-for="(category, idx) in categories" :key="idx" :category-obj="category" @add-new="addNew" />
+                <IntentCategory v-for="(category, idx) in categories" :key="category.name" :index="idx" :category-obj="category" @add-new="addNew" />
             </div>
             <div style="margin: 20px">
                 <h2>Questions that your bot has no answer for</h2>
@@ -224,7 +224,6 @@ export default {
         },
         async deleteUnknown(id){
             const ret = await axios.default.delete(`/api/intents/list/unknowns/id/${id}`)
-            console.log(ret)
             if (ret.status === 204){
                 Vue.$toast.open({message: 'Marked as trained', type: 'success', duration: 2000})
                 this.unknowns = this.unknowns.filter(t => t.id !== id)

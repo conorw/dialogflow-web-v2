@@ -45,7 +45,6 @@ export default async (req: NowRequest, res: NowResponse) => {
                     } else if (intentresponse.queryResult.intentDetectionConfidence < 0.4){
                         await saveUnknown(request.queryInput.text.text, JSON.stringify(responses), intentresponse.queryResult.intentDetectionConfidence)
                     }
-                    console.log(intentresponse.queryResult.intentDetectionConfidence)
                     switch (intentresponse.queryResult.intent.displayName){
                     case 'feedback':
                         intentresponse = await handleFeedbackIntent(intentresponse)
