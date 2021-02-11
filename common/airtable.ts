@@ -81,11 +81,25 @@ export const getBotResponses = async (bot: string) => {
 export const saveUnknown = async (statement: string, context: string, percentage: number) => {
     const bot = process.env.SERVICE_ACCOUNT_PROJECT_ID
     try {
-        await base('unknowns').create([
-            {
-                'fields': { bot, statement, context, percentage }
-            }
-        ])
+        // see if it exists
+        const filter = `AND({bot}="${bot}", LOWER({statement})="${statement.toLowerCase()}")`
+        const exists = await base('responses').select({ filterByFormula: filter }).firstPage()
+        const existing = exists.length ? exists[0].getId() : ''
+
+        if (existing){
+            await base('unknowns').update([
+                {
+                    'id': existing,
+                    'fields': { count: exists[0].fields.count + 1 }
+                }
+            ])
+        } else {
+            await base('unknowns').create([
+                {
+                    'fields': { bot, statement, context, percentage }
+                }
+            ])
+        }
     } catch (error){
         console.log(error)
     }
