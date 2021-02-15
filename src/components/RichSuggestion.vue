@@ -9,27 +9,6 @@
     </a>
     <button v-else class="rich-suggestion">{{title}}</button>
 </template>
-
-<style lang="sass" scoped>
-@import '@/style/mixins'
-
-.rich-suggestion
-    @include reset
-    display: inline-block
-    padding: 8px 12px
-    border-radius: 40px
-    border: var(--suggestion-border)
-    color: var(--text-primary)
-    cursor: pointer
-    margin-right: 6px
-    margin-bottom: 6px
-
-    &[href]
-        color: var(--accent)
-        text-decoration: none
-        border: var(--border)
-</style>
-
 <script>
 export default {
     name: 'RichSuggestion',
@@ -45,3 +24,25 @@ export default {
     }
 }
 </script>
+
+<style lang="sass" scoped>
+@import '@/style/mixins'
+
+.rich-suggestion
+    @include reset
+    display: inline-block
+    padding: 8px 12px
+    border-radius: 40px
+    border: var(--suggestion-border)
+    background-color: var(--background)
+    color: var(--text-primary)
+    cursor: pointer
+    margin-right: 6px
+    margin-bottom: 6px
+
+    &[href]
+        color: var(--accent)
+        text-decoration: none
+        border: var(--border)
+</style>
+

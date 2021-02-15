@@ -194,7 +194,7 @@ export default {
     computed: {
     /* The code below is used to extract suggestions from last message, to display it on ChatInput */
         suggestions(){
-            if (this.messages.length > 0){
+            if (this.messages?.length > 0){
                 const last_message = this.messages[this.messages.length - 1]
                 const text_suggestions = []
                 const link_suggestions = []
@@ -504,7 +504,6 @@ body
     height: 100vh
     width: 100vw
     background-color: var(--background)
-    background-color: #ffffff
     background-attachment: fixed
     background-size: cover
 
@@ -562,7 +561,6 @@ body
 .bot-chat .rich-bubble
     text-align: center
     height: 100% !important
-    background: white
 
 
 .me-chat
@@ -607,7 +605,6 @@ body
     border: 10px solid black !important
     border-top-right-radius: 40px !important
     border-bottom-right-radius: 0 !important
-    background-color: white !important
 
 .rich-bubble
     border: 10px solid black !important

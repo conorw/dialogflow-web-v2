@@ -50,11 +50,12 @@ export const getProgress = async (group: string) => {
         console.log(error)
     }
 }
-export const getTopicResource = async (topic: string, resource: string) => {
+export const getTopicResources = async (topics: string[]) => {
     try {
-        const filter = `AND({topic}="${topic}", {resource_type}="${resource}")`
+        const filter = `OR(${topics.map(t => `LOWER({topic})="${t.toLowerCase()}"`)})`
+        console.log(filter, {topics})
         const exists = await base('topics').select({ filterByFormula: filter }).all()
-        return exists.length ? exists.map(t => t.fields)[0] : null
+        return exists.length ? exists.map(t => t.fields) : []
     } catch (error){
         console.log(error)
     }

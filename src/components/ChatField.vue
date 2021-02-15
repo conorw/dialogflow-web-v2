@@ -336,7 +336,6 @@ export default {
 .chat-field-flexible
     display: flex
     border-radius: 40px
-    border: var(--border)
 
 .chat-field-suggestions
     overflow-x: scroll
@@ -354,9 +353,8 @@ export default {
     box-sizing: border-box
     border: none
     padding: 10px 0 10px 12px
-    color: var(--text-primary)
     border-radius: 5px 0 0 5px
-    background-color: whitesmoke
+
 
 .chat-field-action
     @include reset

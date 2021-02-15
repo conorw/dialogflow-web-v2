@@ -84,7 +84,7 @@
 
 <script>
 import WelcomeView from '@/views/WelcomeView.vue'
-
+import '@/style/index.css'
 import ErrorMessage from '@/components/ErrorMessage.vue'
 import TopHead from '@/components/TopHead.vue'
 import TopHeadAction from '@/components/TopHeadAction.vue'
@@ -369,7 +369,6 @@ export default {
     }
 }
 </script>
-
 <style lang="sass">
 @import '@/style/theme.sass'
 body

@@ -1,6 +1,6 @@
 /* eslint-disable no-param-reassign */
 import * as dialogflow from '@google-cloud/dialogflow'
-import { getTopicResource, saveFeedback, saveTopic, updateDBIntentId } from './airtable'
+import { getTopicResources, saveFeedback, saveTopic } from './airtable'
 import { search } from './search'
 /* AgentsClient retrieves information about the agent */
 export const agentsClient = new dialogflow.AgentsClient({
@@ -107,7 +107,7 @@ export const updateIntent = async (intent: dialogflow.protos.google.cloud.dialog
         intent.displayName = displayName.trim()
     }
     if (parent){
-        console.log('adding input context', {parent})
+        console.log('adding input context', { parent })
         if (!intent.inputContextNames){
             intent.inputContextNames = [parent]
         } else if (!intent.inputContextNames.find(t => t === parent)){
@@ -116,7 +116,7 @@ export const updateIntent = async (intent: dialogflow.protos.google.cloud.dialog
     }
     if (!intent.messages.length || override){
         if (!intent.messages.length){
-            intent.messages.push({text: {text: answer}})
+            intent.messages.push({ text: { text: answer } })
         } else {
             intent.messages[0].text.text = answer
         }
@@ -556,19 +556,19 @@ export const handleSearchIntent = async (intentresponse: dialogflow.protos.googl
     return intentresponse
 }
 export const handleHelpIntent = async (intentresponse: dialogflow.protos.google.cloud.dialogflow.v2.IDetectIntentResponse) => {
-    console.log('HELP!!!')
+    console.log('HELP!!!', { params1: intentresponse.queryResult.parameters.fields.topic })
 
     if (intentresponse.queryResult.parameters
         && intentresponse.queryResult.parameters.fields
         && intentresponse.queryResult.parameters.fields.topic){
         const params = intentresponse.queryResult.parameters.fields
-        const topic = params.topic ? params.topic.stringValue : ''
+        const topics = params.topic.listValue ? params.topic.listValue.values.map(t => t.stringValue) : []
         const resource = params['resource-type'] ? params['resource-type'].stringValue : ''
         // if this is the intent-name question, return the entity options for the category
-        if (topic && resource){
-            console.log('Lookup help', { topic, resource })
+        if (topics){
+            console.log('Lookup help', { topics, resource })
             // eslint-disable-next-line no-param-reassign
-            intentresponse = await addHelpToResponse(intentresponse, topic, resource)
+            intentresponse = await addHelpToResponse(intentresponse, topics, resource)
         }
     }
     return intentresponse
@@ -618,40 +618,42 @@ const addSearchToResponse = async (q: string, intentresponse, title?: string) =>
     }
     return intentresponse
 }
-const addHelpToResponse = async (intentresponse, topic: string, resource: string) => {
-    const searchResult = await getTopicResource(topic, resource)
-    if (searchResult){
-        const buttons = []
-        if (searchResult.resource_link[0]){
-            let action = 'Open Now'
-            switch (searchResult.resource_type[0]){
-            case 'text':
-                action = 'SMS Now'
-                break
-            case 'phone':
-                action = 'Phone Now'
-                break
-            default:
-                break
-            }
-            searchResult.resource_type === 'text'
-            buttons.push({
-                'title': action,
-                'openUriAction': {
-                    'uri': searchResult.resource_link[0]
+const addHelpToResponse = async (intentresponse, topics: string[], resource?: string) => {
+    console.log('Getting resources', { topics, resource })
+    const resources = await getTopicResources(topics)
+    if (resources.length){
+        intentresponse.queryResult.fulfillmentMessages = resources.map(searchResult => {
+            const buttons = []
+            if (searchResult.resource_link[0]){
+                let action = 'Open Now'
+                switch (searchResult.resource_type[0]){
+                case 'text':
+                    action = 'SMS Now'
+                    break
+                case 'phone':
+                    action = 'Phone Now'
+                    break
+                default:
+                    break
                 }
-            })
-        }
-        const newFulfillment: any = [{
-            'platform': 'ACTIONS_ON_GOOGLE',
-            'basicCard': {
-                'title': searchResult.resource_name[0],
-                'formattedText': searchResult.resource_desc[0],
-                'image': {},
-                buttons
+                searchResult.resource_type === 'text'
+                buttons.push({
+                    'title': action,
+                    'openUriAction': {
+                        'uri': searchResult.resource_link[0]
+                    }
+                })
             }
-        }]
-        intentresponse.queryResult.fulfillmentMessages = newFulfillment
+            return {
+                'platform': 'ACTIONS_ON_GOOGLE',
+                'basicCard': {
+                    'title': searchResult.resource_name[0],
+                    'formattedText': searchResult.resource_desc[0],
+                    'image': {},
+                    buttons
+                }
+            }
+        })
     }
     return intentresponse
 }
@@ -699,7 +701,7 @@ export const updateSingleIntent = async (intent: JSONIntent) => {
         console.log('CREATING INTENT')
         const newIntent = await createIntent(intent.intent_name, intent.user_says, intent.bot_says, intent.parent)
         // add the id to the table
-        intent = {...intent, id: newIntent[0].name}
+        intent = { ...intent, id: newIntent[0].name }
     } else {
         console.log('UPDATING INTENT')
         // otherwise update existing with details
