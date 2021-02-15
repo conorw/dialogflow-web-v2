@@ -53,9 +53,12 @@ export const getProgress = async (group: string) => {
 export const getTopicResources = async (topics: string[]) => {
     try {
         const filter = `OR(${topics.map(t => `LOWER({topic})="${t.toLowerCase()}"`)})`
-        console.log(filter, {topics})
         const exists = await base('topics').select({ filterByFormula: filter }).all()
-        return exists.length ? exists.map(t => t.fields) : []
+        console.log(filter, {fields: exists.map(t => t.fields.resources)})
+        // remove duplicate resources
+        let resources = exists.length ? exists.map(t => t.fields) : []
+        resources = resources.filter((v, i, a) => a.findIndex(t => t.resources[0] === v.resources[0]) === i)
+        return resources
     } catch (error){
         console.log(error)
     }
