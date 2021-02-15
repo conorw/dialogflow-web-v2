@@ -624,23 +624,27 @@ const addHelpToResponse = async (intentresponse, topics: string[], resource?: st
     if (resources.length){
         intentresponse.queryResult.fulfillmentMessages = resources.map(searchResult => {
             const buttons = []
-            if (searchResult.resource_link[0]){
-                let action = 'Open Now'
-                switch (searchResult.resource_type[0]){
-                case 'text':
-                    action = 'SMS Now'
-                    break
-                case 'phone':
-                    action = 'Phone Now'
-                    break
-                default:
-                    break
-                }
-                searchResult.resource_type === 'text'
+            if (searchResult.resource_link){
                 buttons.push({
-                    'title': action,
+                    'title': 'Open Website',
                     'openUriAction': {
                         'uri': searchResult.resource_link[0]
+                    }
+                })
+            }
+            if (searchResult.resource_tel){
+                buttons.push({
+                    'title': 'Phone Now',
+                    'openUriAction': {
+                        'uri': searchResult.resource_tel[0]
+                    }
+                })
+            }
+            if (searchResult.resource_sms){
+                buttons.push({
+                    'title': 'SMS Now',
+                    'openUriAction': {
+                        'uri': searchResult.resource_sms[0]
                     }
                 })
             }
