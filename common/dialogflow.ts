@@ -652,7 +652,7 @@ const addHelpToResponse = async (intentresponse, topics: string[], resource?: st
                 'platform': 'ACTIONS_ON_GOOGLE',
                 'basicCard': {
                     'title': searchResult.resource_name[0],
-                    'formattedText': searchResult.resource_desc[0],
+                    'formattedText': searchResult.resource_desc ? searchResult.resource_desc[0] : '',
                     'image': {},
                     buttons
                 }
