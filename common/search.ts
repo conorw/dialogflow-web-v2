@@ -5,7 +5,7 @@ export interface searchResult{
     AbstractText: string,
     AbstractURL: string
 }
-export const search = async (q: string) : Promise<searchResult> => {
+export const search = async (q: string) : Promise<searchResult | undefined> => {
     let res = await axios.default.get(`https://api.duckduckgo.com/?q=${encodeURIComponent(q)}&format=json`)
     console.log(res.data.Answer)
     if (res.data && res.status === 200 && res.data.AbstractText){

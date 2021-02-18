@@ -26,7 +26,7 @@ export default async (req: NowRequest, res: NowResponse) => {
             /* Prepare dialogflow request */
             const session_id = req.body.session
 
-            const sessionPath = sessionClient.projectAgentSessionPath(process.env.SERVICE_ACCOUNT_PROJECT_ID,
+            const sessionPath = sessionClient.projectAgentSessionPath(process.env.SERVICE_ACCOUNT_PROJECT_ID!,
                 session_id)
             const request = {
                 session: sessionPath,
@@ -38,14 +38,14 @@ export default async (req: NowRequest, res: NowResponse) => {
                 const responses = await sessionClient.detectIntent(request)
                 /* If the response should be formatted (?format=true), then return the format the response */
                 let intentresponse = responses[0] as dialogflow.protos.google.cloud.dialogflow.v2.IDetectIntentResponse
-                if (intentresponse.queryResult){
+                if (intentresponse && intentresponse.queryResult && intentresponse.queryResult.intent){
                     if (intentresponse.queryResult.intent.isFallback){
                         intentresponse = await handleFallbackIntent(intentresponse)
                         await saveUnknown(request.queryInput.text.text, JSON.stringify(responses), 0)
-                    } else if (intentresponse.queryResult.intentDetectionConfidence < 0.4){
-                        await saveUnknown(request.queryInput.text.text, JSON.stringify(responses), intentresponse.queryResult.intentDetectionConfidence)
+                    } else if (intentresponse.queryResult!.intentDetectionConfidence! < 0.4){
+                        await saveUnknown(request.queryInput.text.text, JSON.stringify(responses), intentresponse.queryResult.intentDetectionConfidence!)
                     }
-                    switch (intentresponse.queryResult.intent.displayName){
+                    switch (intentresponse.queryResult!.intent!.displayName){
                     case 'feedback':
                         intentresponse = await handleFeedbackIntent(intentresponse)
                         break

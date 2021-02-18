@@ -20,7 +20,7 @@ const json2table = (json: any, classes: string) => {
         headerRow += `<th>${capitalizeFirstLetter(col)}</th>`
     })
 
-    json.forEach(row => {
+    json.forEach((row: { [x: string]: any }) => {
         bodyRows += '<tr>'
 
         cols.forEach(colName => {
@@ -45,11 +45,11 @@ export default async (req: NowRequest, res: NowResponse) => {
         try {
             const [cheatsheet, progress] = await Promise.all([
                 getCheatSheet(),
-                getProgress(process.env.VUE_APP_NAME)
+                getProgress(process.env.VUE_APP_NAME!)
             ])
-            const progressStr = progress.map(t => {
+            const progressStr = progress? progress.map(t => {
                 return `['${t.UpdateDate}',${t.Phrases},${t.Responses},${t.Score} ]`
-            })
+            }): ''
             const intentList = []
             // res.send(intents)
 
