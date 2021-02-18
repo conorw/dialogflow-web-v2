@@ -104,6 +104,16 @@
                     <img
                         src="/img/stickers.png">
                 </button>
+                <span class="training-icons">
+                    <button
+                        aria-label="Cancel Conversation"
+                        title="Cancel Canversation"
+                        class="top-head-button stop"
+                        @click="submit({ text: 'cancel' })"
+                    >
+                        <i class="material-icons" aria-hidden="true">cancel</i>
+                    </button>
+                </span>
                 <span v-if="training == true" class="training-icons">
                     <button
                         class="top-head-button start"
