@@ -12,7 +12,6 @@
     "giphy-api": "^2.0.1"
   },
   "devDependencies": {
-    "babel-eslint": "^10.1.0",
     "@typescript-eslint/eslint-plugin": "^4.7.0",
     "@typescript-eslint/parser": "^4.7.0",
     "@vercel/node": "^1.9.0",
@@ -24,15 +23,5 @@
     "sass-loader": "^10.0.5",
     "typescript": "^4.0.5",
     "typescriptnpm": "^1.0.1"
-  },
-  "eslintConfig": {
-    "extends": [
-      "@zeit/eslint-config-node",
-      "@vue/typescript/recommended",
-      "@vue/prettier/@typescript-eslint"
-    ],
-    "parserOptions": {
-      "parser": "@typescript-eslint/parser"
-    }
   }
 }
