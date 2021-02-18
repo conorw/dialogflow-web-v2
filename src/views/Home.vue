@@ -1,44 +1,55 @@
 <template>
-    <main id="main" :style="{ backgroundImage: `url('${image}')` }">
-        <TopHead
-            v-if="agent"
-            :agent="agent"
-            :voices="voices"
-            :selectedvoice.sync="config.voice"
-            @submit="send"
-            @background="background"
+  <main
+    :style="{ backgroundImage: `url('${image}')` }"
+  >
+    <TopHead
+      v-if="agent"
+      :agent="agent"
+      :voices="voices"
+      :selectedvoice.sync="config.voice"
+      @submit="send"
+      @background="background"
+    >
+      <TopHeadAction
+        :title="
+          muted
+            ? (translations[lang()] && translations[lang()].unMuteTitle) ||
+              translations[config.fallback_lang].unMuteTitle
+            : (translations[lang()] && translations[lang()].muteTitle) ||
+              translations[config.fallback_lang].muteTitle
+        "
+        :icon="muted ? 'volume_off' : 'volume_up'"
+        @click.native="muted = !muted"
+      />
+    </TopHead>
+    <transition
+      name="shake"
+      mode="out-in"
+    >
+      <section
+        :key="botText"
+        class="bot-profile"
+        aria-live="polite"
+      >
+        <img
+          v-if="botImage"
+          class="top-head-icon"
+          :alt="botName"
+          :src="botImage"
         >
-            <TopHeadAction
-                :title="
-                    muted
-                        ? (translations[lang()] && translations[lang()].unMuteTitle) ||
-                            translations[config.fallback_lang].unMuteTitle
-                        : (translations[lang()] && translations[lang()].muteTitle) ||
-                            translations[config.fallback_lang].muteTitle
-                "
-                :icon="muted ? 'volume_off' : 'volume_up'"
-                @click.native="muted = !muted"
-            />
-        </TopHead>
-        <transition name="shake" mode="out-in">
-            <section :key="botText" class="bot-profile" aria-live="polite">
-                <img
-                    v-if="botImage"
-                    class="top-head-icon"
-                    :alt="botName"
-                    :src="botImage"
-                >
-                <img
-                    v-else
-                    class="top-head-icon"
-                    src="/img/icon.png"
-                    :alt="botName"
-                >
-                <div class="bot-title"><span>{{botName}}</span></div>
-            </section>
-        </transition>
-        <!-- TopHead is the header with the information about the app -->
-        <!-- <TopHead
+        <img
+          v-else
+          class="top-head-icon"
+          src="/img/icon.png"
+          :alt="botName"
+        >
+        <div class="bot-title">
+          <span>{{ botName }}</span>
+        </div>
+      </section>
+    </transition>
+    <!-- TopHead is the header with the information about the app -->
+    <!-- <TopHead
             v-if="agent"
             :agent="agent"
             :voices="voices"
@@ -57,7 +68,7 @@
                 @click.native="muted = !muted"
             />
         </TopHead> -->
-        <!-- <section class="bot-profile" aria-live="polite">
+    <!-- <section class="bot-profile" aria-live="polite">
             <img
                 v-if="agent.avatarUri"
                 class="top-head-icon"
@@ -72,75 +83,92 @@
             >
             <div class="bot-title">{{agent.displayName}}</div>
         </section> -->
-        <BotMessage
-            v-if="lastMessage"
-            class="bot-chat"
-            :loading="loading"
-            :training="training"
-            :message="lastMessage" />
+    <BotMessage
+      v-if="lastMessage"
+      class="bot-chat"
+      :loading="loading"
+      :training="training"
+      :message="lastMessage"
+    />
 
-        <MyMessage v-if="lastMessage" class="me-chat" :message="lastMessage" />
-        <transition name="shake" mode="out-in">
-            <section :key="meText" class="my-profile" aria-live="polite">
-                <img
-                    class="top-head-icon"
-                    :src="myAvatar"
-                    alt="My-Avatar"
-                >
-                <div class="bot-title">
-                    <span><button
-                        class="top-head-button"
-                        aria-label="Change Avatar"
-                        title="Change Avatar"
-                        @click="openAvatar"
-                    >
-                        <i class="material-icons" aria-hidden="true">face</i>
-                    </button>Me</span>
-                </div>
-            </section>
-        </transition>
-        <modal name="avatar" height="90%" width="80%">
-            <ChooseAvatar @avatar="avatar" />
-        </modal>
-        <!-- ChatField is made for submitting queries and displaying suggestions -->
-        <ChatField
-            ref="input"
-            :training="false"
-            @submit="send"
-            @listening="stop_feedback"
-            @typing="stop_feedback"
+    <MyMessage
+      v-if="lastMessage"
+      class="me-chat"
+      :message="lastMessage"
+    />
+    <transition
+      name="shake"
+      mode="out-in"
+    >
+      <section
+        :key="meText"
+        class="my-profile"
+        aria-live="polite"
+      >
+        <img
+          class="top-head-icon"
+          :src="myAvatar"
+          alt="My-Avatar"
         >
-            <!-- RichSuggesion chips
+        <div class="bot-title">
+          <span><button
+            class="top-head-button"
+            aria-label="Change Avatar"
+            title="Change Avatar"
+            @click="openAvatar"
+          >
+            <i
+              class="material-icons"
+              aria-hidden="true"
+            >face</i>
+          </button>Me</span>
+        </div>
+      </section>
+    </transition>
+    <modal
+      name="avatar"
+      height="90%"
+      width="80%"
+    >
+      <ChooseAvatar @avatar="avatar" />
+    </modal>
+    <!-- ChatField is made for submitting queries and displaying suggestions -->
+    <ChatField
+      ref="input"
+      :training="false"
+      @submit="send"
+      @listening="stop_feedback"
+      @typing="stop_feedback"
+    >
+      <!-- RichSuggesion chips
                 https://developers.google.com/actions/assistant/responses#suggestion_chips
                 https://cloud.google.com/dialogflow/docs/reference/rest/v2beta1/projects.agent.intents#QuickReplies
                 https://cloud.google.com/dialogflow/docs/reference/rest/v2beta1/projects.agent.intents#Suggestions
             -->
-            <RichSuggesion
-                v-for="(suggestion, suggestion_id) in suggestions.text_suggestions"
-                :key="'text-' + suggestion_id"
-                :title="suggestion"
-                @click.native="send({ text: suggestion })"
-            />
+      <RichSuggesion
+        v-for="(suggestion, suggestion_id) in suggestions.text_suggestions"
+        :key="'text-' + suggestion_id"
+        :title="suggestion"
+        @click.native="send({ text: suggestion })"
+      />
 
-            <!-- Link suggestion chips
+      <!-- Link suggestion chips
                 https://developers.google.com/actions/assistant/responses#suggestion_chips
                 https://cloud.google.com/dialogflow/docs/reference/rest/v2beta1/projects.agent.intents#LinkOutSuggestion
                 https://cloud.google.com/dialogflow/docs/integrations/dialogflow-messenger#suggestion_chip_response_type
             -->
-            <RichSuggesion
-                v-for="(suggestion, suggestion_id) in suggestions.link_suggestions"
-                :key="'link-' + suggestion_id"
-                :title="suggestion.destinationName || suggestion.text"
-                :uri="suggestion.uri || suggestion.url || suggestion.link"
-            />
-        </ChatField>
-    </main>
+      <RichSuggesion
+        v-for="(suggestion, suggestion_id) in suggestions.link_suggestions"
+        :key="'link-' + suggestion_id"
+        :title="suggestion.destinationName || suggestion.text"
+        :uri="suggestion.uri || suggestion.url || suggestion.link"
+      />
+    </ChatField>
+  </main>
 </template>
 
 <script>
 // import WelcomeView from '@/views/WelcomeView.vue'
-
-import ErrorMessage from '@/components/ErrorMessage.vue'
 // import TopHead from '@/components/TopHead.vue'
 // import TopHeadAction from '@/components/TopHeadAction.vue'
 import ChatField from '@/components/ChatField.vue'
@@ -159,7 +187,6 @@ import Axios from 'axios'
 export default {
     name: 'Home',
     components: {
-        ErrorMessage,
         ChooseAvatar,
         TopHead,
         TopHeadAction,
