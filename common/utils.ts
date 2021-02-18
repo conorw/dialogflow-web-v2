@@ -26,7 +26,7 @@ export const json2table = (json: any, classes: string) => {
     headerRow += `<th>${capitalizeFirstLetter(col)}</th>`
   })
 
-  json.forEach(row => {
+  json.forEach((row: { [x: string]: any }) => {
     bodyRows += '<tr>'
 
     cols.forEach(colName => {

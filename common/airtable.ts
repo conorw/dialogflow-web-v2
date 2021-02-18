@@ -1,9 +1,8 @@
-/* eslint-disable no-undef */
 
 import Airtable from 'airtable'
 import { JSONIntent } from './dialogflow'
 
-const base = new Airtable({ apiKey: process.env.AIRTABLE_API_KEY }).base(process.env.AIRTABLE_BASE)
+const base = new Airtable({ apiKey: process.env.AIRTABLE_API_KEY! }).base(process.env.AIRTABLE_BASE!)
 
 export const saveFeedback = async (answer: string, name: string) => {
   const url = process.env.SERVICE_ACCOUNT_PROJECT_ID
@@ -35,7 +34,7 @@ export const saveProgress = async (progress: any) => {
         {
           'fields': progress
         }
-      ])
+      ]) 
     }
   } catch (error){
     console.log(error)
@@ -63,7 +62,7 @@ export const getTopicResources = async (topics: string[]) => {
     console.log(error)
   }
 }
-const chunk = (arr, size) => Array.from({ length: Math.ceil(arr.length / size) }, (v, i) => arr.slice(i * size, i * size + size))
+const chunk = (arr: any, size: any) => Array.from({ length: Math.ceil(arr.length / size) }, (v, i) => arr.slice(i * size, i * size + size))
 export const removeBotResponses = async (bot: string) => {
   try {
     const filter = `{bot}="${bot}"`
@@ -126,7 +125,7 @@ export const getBotUnknowns = async () => {
     console.log(error)
   }
 }
-export const getBotIntentId = async (bot: string, intentName: string): Promise<string> => {
+export const getBotIntentId = async (bot: string, intentName: string): Promise<string | null> => {
   try {
     const filter = `AND({bot}="${bot}",{intent_name}="${intentName}")`
     const exists = await base('responses').select({ filterByFormula: filter }).firstPage()
@@ -134,6 +133,7 @@ export const getBotIntentId = async (bot: string, intentName: string): Promise<s
   } catch (error){
     console.log(error)
   }
+  return null
 }
 export const updateBotResponses = async (intents: JSONIntent[]) => {
   if (intents.length){
@@ -141,7 +141,7 @@ export const updateBotResponses = async (intents: JSONIntent[]) => {
     // remove all current responses for the bot
     await removeBotResponses(bot)
     console.log('Removed bot responses')
-    await Promise.all(chunk(intents, 10).map(t => base('responses').create(t.map(r => {
+    await Promise.all(chunk(intents, 10).map(t => base('responses').create(t.map((r: { user_says: any[]; bot_says: any[] }) => {
       return {fields: {...r, user_says: r.user_says.join('|'), bot_says: r.bot_says.join('|')}}
     }))))
     return intents

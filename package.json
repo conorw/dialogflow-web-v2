@@ -35,7 +35,6 @@
   },
   "devDependencies": {
     "@babel/eslint-parser": "^7.12.16",
-    "@zeit/eslint-config-node": "^0.3.0",
     "@tailwindcss/postcss7-compat": "^2.0.3",
     "@typescript-eslint/eslint-plugin": "^4.7.0",
     "@typescript-eslint/parser": "^4.7.0",
@@ -47,8 +46,9 @@
     "@vue/cli-plugin-typescript": "^4.5.9",
     "@vue/cli-service": "^4.5.9",
     "@vue/eslint-config-typescript": "^7.0.0",
+    "@zeit/eslint-config-node": "^0.3.0",
     "eslint": "^7.20.0",
-    "eslint-plugin-vue": "^7.1.0",
+    "eslint-plugin-vue": "^7.6.0",
     "i": "^0.3.6",
     "node-sass": "^5.0.0",
     "sass": "^1.29.0",
@@ -59,6 +59,7 @@
   },
   "eslintConfig": {
     "extends": [
+      "@zeit/eslint-config-node",
       "@vue/typescript/recommended",
       "@vue/prettier/@typescript-eslint"
     ],

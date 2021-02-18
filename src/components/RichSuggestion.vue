@@ -1,13 +1,19 @@
 <template>
-    <a
-        v-if="uri"
-        class="rich-suggestion"
-        target="_blank"
-        rel="noopener noreferrer"
-        :href="uri">
-        {{title}}
-    </a>
-    <button v-else class="rich-suggestion">{{title}}</button>
+  <a
+    v-if="uri"
+    class="rich-suggestion"
+    target="_blank"
+    rel="noopener noreferrer"
+    :href="uri"
+  >
+    {{ title }}
+  </a>
+  <button
+    v-else
+    class="rich-suggestion"
+  >
+    {{ title }}
+  </button>
 </template>
 <script>
 export default {
