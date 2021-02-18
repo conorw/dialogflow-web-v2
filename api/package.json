@@ -12,12 +12,12 @@
     "giphy-api": "^2.0.1"
   },
   "devDependencies": {
-    "@mishushakov/eslint-config": "^1.0.7",
     "@typescript-eslint/eslint-plugin": "^4.7.0",
     "@typescript-eslint/parser": "^4.7.0",
-    "@vercel/node": "^1.8.5",
-    "babel-eslint": "^10.1.0",
-    "eslint": "^7.13.0",
+    "@vercel/node": "^1.9.0",
+    "@babel/eslint-parser": "^7.12.16",
+    "@zeit/eslint-config-node": "^0.3.0",
+    "eslint": "^7.20.0",
     "i": "^0.3.6",
     "sass": "^1.29.0",
     "sass-loader": "^10.0.5",

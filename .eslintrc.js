@@ -5,9 +5,7 @@ module.exports = {
     },
     extends: [
         'eslint:recommended',
-        'plugin:vue/recommended',
-        '@mishushakov',
-        '@mishushakov/eslint-config/vue'
+        'plugin:vue/recommended'
     ],
     rules: {
         'no-console': process.env.NODE_ENV === 'production' ? 'error' : 'off',
