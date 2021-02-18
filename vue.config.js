@@ -10,7 +10,11 @@ module.exports = {
     productionSourceMap: false,
     pwa: {
         name: process.env.VUE_APP_NAME,
-        desscription: process.env.VUE_APP_DESC
+        desscription: process.env.VUE_APP_DESC,
+        iconPaths: {
+            favicon32: `img/bots/${process.env.VUE_APP_NAME.toLowerCase()}_positive.svg`,
+            favicon16: `img/bots/${process.env.VUE_APP_NAME.toLowerCase()}_positive.svg`
+        }
     },
     css: {
         loaderOptions: {
