@@ -1,5 +1,4 @@
 {
-  "short_name": "Bot Training",
   "start_url": "./index.html",
   "background_color": "#FFFFFF",
   "display": "standalone"
