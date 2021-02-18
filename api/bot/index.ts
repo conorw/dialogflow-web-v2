@@ -9,7 +9,7 @@ export default async (req: NowRequest, res: NowResponse) => {
     /* On GET request return the information about the agent */
     if (req.method == 'GET'){
         try {
-            const bots = await getBot(process.env.SERVICE_ACCOUNT_PROJECT_ID)
+            const bots = await getBot(process.env.SERVICE_ACCOUNT_PROJECT_ID!)
             res.send(bots)
         } catch (error){
             res.statusCode = 500
