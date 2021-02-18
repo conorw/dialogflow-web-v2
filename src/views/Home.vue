@@ -1,5 +1,6 @@
 <template>
   <main
+    id="main"
     :style="{ backgroundImage: `url('${image}')` }"
   >
     <TopHead
@@ -219,9 +220,8 @@ export default {
         }
     },
     computed: {
-    /* The code below is used to extract suggestions from last message, to display it on ChatInput */
         suggestions(){
-            if (this.messages?.length > 0){
+            if (this.messages.length > 0){
                 const last_message = this.messages[this.messages.length - 1]
                 const text_suggestions = []
                 const link_suggestions = []
