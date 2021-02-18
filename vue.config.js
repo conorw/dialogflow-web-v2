@@ -14,15 +14,9 @@ module.exports = {
     manifestOptions: {
       icons: [
         {
-          src: `img/bots/${process.env.VUE_APP_NAME.toLowerCase()}_positive.svg`,
-          sizes: '192x192',
-          type: 'image/svg',
-          purpose: 'maskable any'
-        },
-        {
-          src: `img/bots/${process.env.VUE_APP_NAME.toLowerCase()}_positive.svg`,
+          src: `img/bots/${process.env.VUE_APP_NAME.toLowerCase()}.png`,
           sizes: '512x512',
-          type: 'image/svg',
+          type: 'image/png',
           purpose: 'maskable any'
         }
       ]
