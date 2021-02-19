@@ -142,8 +142,6 @@ export default {
     box-sizing: border-box
     border: none
     padding: 10px 0 10px 12px
-    color: var(--text-primary)
-    background-color: whitesmoke
 
 
 .top-head-button
