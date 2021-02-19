@@ -86,7 +86,7 @@ export const saveUnknown = async (statement: string, context: string, percentage
   try {
     // see if it exists
     const filter = `AND({bot}="${bot}", LOWER({statement})="${statement.toLowerCase()}")`
-    const exists = await base('responses').select({ filterByFormula: filter }).firstPage()
+    const exists = await base('unknowns').select({ filterByFormula: filter }).firstPage()
     const existing = exists.length ? exists[0].getId() : ''
 
     if (existing){
