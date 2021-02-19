@@ -35,7 +35,7 @@
         </h3>
         <div
           v-for="(useritem, idx) in intent.user_says"
-          :key="useritem"
+          :key="`useritem-${idx}`"
           :index="idx"
           class="response-item"
         >
@@ -61,7 +61,7 @@
         </h3>
         <div
           v-for="(botitem, i) in intent.bot_says"
-          :key="botitem"
+          :key="`botitem-${i}`"
           :index="i"
           class="response-item"
         >
