@@ -1,48 +1,112 @@
 <template>
-  <div>
-    <div id="intent-list">
-      <div class="intent-head">
-        <h1>Bot Personality</h1>
-        <button><a href="/">Home</a></button>
-        <button @click="reload">Undo Changes</button>
+  <div class="bg-gray-100">
+    <div>
+      <header
+        x-data="{ mobileMenuOpen : false }"
+        class="flex flex-row justify-between space-x-4 bg-white py-6 px-6"
+      >
+        <div class="relative z-30 w-5/6 px-6 py-8 md:py-2 md:w-1/2">
+          <h1 class="text-5xl">Bot Personality</h1>
+          <h2 class="text-2xl">
+            Edit the question and answers for your bot's personality
+          </h2>
+        </div>
         <button
-          class="top-head-button traininglist"
-          title="View Stats"
-          aria-label="View Stats"
+          @click="mobileMenuOpen = !mobileMenuOpen"
+          class="inline-block md:hidden w-8 h-8 bg-gray-200 text-gray-600 p-1"
         >
-          <a href="/api/intents" target="_blank">
-            <i class="material-icons" aria-hidden="true">view_list</i>
-          </a>
+          <svg
+            fill="currentColor"
+            viewBox="0 0 20 20"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path
+              fill-rule="evenodd"
+              d="M3 5a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zM3 10a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zM3 15a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1z"
+              clip-rule="evenodd"
+            ></path>
+          </svg>
         </button>
-      </div>
-      <hr />
-      <button @click="expandCollapseAll()">
-        <i class="material-icons" aria-hidden="true">menu_open</i>
-      </button>
-      <div>
-        <IntentCategory
-          v-for="(category, idx) in categories"
-          :key="category.name"
-          :index="idx"
-          :category-obj="category"
-          @add-new="addNew"
-        />
-      </div>
-      <div style="margin: 20px">
-        <h2>Questions that your bot has no answer for</h2>
-        <h3>Please train your bot to respond to these statements</h3>
-        <div v-for="unknown in unknowns" :key="unknown.id">
-          Statement: {{ unknown.statement }}
-          <button @click="deleteUnknown(unknown.id)">Mark as trained</button>
-        </div>
-        <h3>Your bot is not confident of these phrases, please add training</h3>
-        <div v-for="unknown in unsure" :key="unknown.id">
-          Statement: {{ unknown.statement }} Confidence:{{ unknown.percentage }}
-          <button @click="deleteUnknown(unknown.id)">Mark as trained</button>
-        </div>
-      </div>
-      <!-- <IntentItem v-for="(intent, idx) in intents" :key="idx" :intent-obj="intent" /> -->
-      <!-- <div v-for="(intent, idx) in intents" :key="idx" class="intent-item">
+        <nav
+          class="absolute md:relative top-16 left-0 md:top-0 z-20 md:flex flex-col md:flex-row md:space-x-6 font-semibold w-full md:w-auto bg-white shadow-md rounded-lg md:rounded-none md:shadow-none md:bg-transparent p-6 pt-0 md:p-0"
+          :class="{ flex: mobileMenuOpen, hidden: !mobileMenuOpen }"
+          @click.away="mobileMenuOpen = false"
+        >
+          <div class="block py-1 text-indigo-600 hover:underline">
+            <a href="/">Home</a>
+          </div>
+          <div
+            class="block py-1 text-indigo-600 hover:underline"
+            title="View Stats"
+            aria-label="View Stats"
+          >
+            <a href="/api/intents" target="_blank">
+              View Bot Stats
+            </a>
+          </div>
+        </nav>
+      </header>
+
+      <tabs>
+        <tab title="Questions & Responses">
+          <div>
+            <div class="flex flex-row justify-between space-x-4 ">
+              <div
+                class="block py-1 text-indigo-600 hover:underline"
+                @click="expandCollapseAll()"
+              >
+                Expand/Collapse All
+              </div>
+              <div
+                class="block py-1 text-indigo-600 hover:underline"
+                @click="reload"
+              >
+                Undo Changes
+              </div>
+            </div>
+
+            <div>
+              <IntentCategory
+                v-for="(category, idx) in categories"
+                :key="category.name"
+                :index="idx"
+                :category-obj="category"
+                @add-new="addNew"
+              />
+            </div>
+          </div>
+        </tab>
+        <tab :title="`Needs Attention (${unknowns.length + unsure.length})`">
+          <div>
+            <div style="margin: 20px">
+              <h2>Questions that your bot has no answer for</h2>
+              <h3>Please train your bot to respond to these statements:</h3>
+              <div class="flex items-center justify-between my-4" v-for="unknown in unknowns" :key="unknown.id">
+                Statement: {{ unknown.statement }}
+                <button @click="deleteUnknown(unknown.id)">
+                  Mark as trained
+                </button>
+              </div>
+              <hr />
+              <h3>
+                Your bot is not confident of these phrases, please add training:
+              </h3>
+              <div class="flex items-center justify-between my-4" v-for="unknown in unsure" :key="unknown.id">
+                Statement: {{ unknown.statement }} Confidence:{{
+                  unknown.percentage
+                }}
+                <button @click="deleteUnknown(unknown.id)">
+                  Mark as trained
+                </button>
+              </div>
+            </div>
+          </div>
+        </tab>
+      </tabs>
+    </div>
+
+    <!-- <IntentItem v-for="(intent, idx) in intents" :key="idx" :intent-obj="intent" /> -->
+    <!-- <div v-for="(intent, idx) in intents" :key="idx" class="intent-item">
                 <div>
                     <h2>{{intent.intent_name}} <i class="material-icons" aria-hidden="true" @click="()=>intent.edit = !intent.edit">edit</i></h2>
                     <input v-if="intent.edit" v-model="intent.intent_name" type="text">
@@ -69,17 +133,21 @@
                     <button @click="saveIntent(intent)"><i class="material-icons" aria-hidden="true">save</i> Save</button>
                 </div>
             </div> -->
-    </div>
   </div>
 </template>
 <script>
 import * as axios from 'axios'
 import Vue from 'vue'
+import '@/style/index.css'
 import IntentCategory from '@/components/IntentCategory'
+import Tabs from '@/components/Tabs'
+import Tab from '@/components/Tab'
 export default {
   name: 'Edit',
   components: {
-    IntentCategory
+    IntentCategory,
+    Tab,
+    Tabs
   },
   data() {
     return {
@@ -87,7 +155,8 @@ export default {
       categories: [],
       unknowns: [],
       unsure: [],
-      expanded: false
+      expanded: false,
+      mobileMenuOpen: false
     }
   },
   async beforeMount() {
@@ -141,17 +210,31 @@ export default {
       axios.default.get('/api/intents/list'),
       axios.default.get('/api/intents/list/unknowns')
     ])
-    this.intents = this.createDataTree(data.data.map(t => {
+    this.intents = this.createDataTree(
+      data.data.map(t => {
         return Object.assign(t, this.emptyItem())
-      }))
+      })
+    )
     this.unknowns = unknowns.data.filter(t => t.percentage < 0.1)
     this.unsure = unknowns.data.filter(t => t.percentage >= 0.1)
-    general.childNodes = this.intents.filter(t => t.intent_name.startsWith(general.tag))
-    aboutBot.childNodes = this.intents.filter(t => t.intent_name.startsWith(aboutBot.tag))
-    aboutUser.childNodes = this.intents.filter(t => t.intent_name.startsWith(aboutUser.tag))
-    greetings.childNodes = this.intents.filter(t => t.intent_name.startsWith(greetings.tag))
-    emoji.childNodes = this.intents.filter(t => t.intent_name.startsWith(emoji.tag))
-    courtesy.childNodes = this.intents.filter(t => t.intent_name.startsWith(courtesy.tag))
+    general.childNodes = this.intents.filter(t =>
+      t.intent_name.startsWith(general.tag)
+    )
+    aboutBot.childNodes = this.intents.filter(t =>
+      t.intent_name.startsWith(aboutBot.tag)
+    )
+    aboutUser.childNodes = this.intents.filter(t =>
+      t.intent_name.startsWith(aboutUser.tag)
+    )
+    greetings.childNodes = this.intents.filter(t =>
+      t.intent_name.startsWith(greetings.tag)
+    )
+    emoji.childNodes = this.intents.filter(t =>
+      t.intent_name.startsWith(emoji.tag)
+    )
+    courtesy.childNodes = this.intents.filter(t =>
+      t.intent_name.startsWith(courtesy.tag)
+    )
   },
   methods: {
     reload() {
@@ -188,7 +271,8 @@ export default {
             })
             return
           }
-          intent.childNodes.unshift(Object.assign(this.emptyItem(), {
+          intent.childNodes.unshift(
+            Object.assign(this.emptyItem(), {
               intent_name: `${intent.intent_name}.${
                 intent.childNodes.length ? intent.childNodes.length + 1 : '1'
               }`,
@@ -201,7 +285,8 @@ export default {
               edit: true,
               dirty: true,
               parent: intent.output
-            }))
+            })
+          )
           intent.edit = true
         },
         save: async intent => {
@@ -215,8 +300,10 @@ export default {
           }
           if (intent.dirty) {
             try {
-              const updated = await axios.default.post('/api/intents/save',
-                intent)
+              const updated = await axios.default.post(
+                '/api/intents/save',
+                intent
+              )
               if (updated && updated.data) {
                 intent.id = updated.data.id
                 intent.dirty = false
@@ -243,7 +330,10 @@ export default {
     },
     createDataTree(dataset) {
       const hashTable = Object.create(null)
-      dataset.forEach(aData => (hashTable[aData.output || aData.id] = { ...aData, childNodes: [] }))
+      dataset.forEach(
+        aData =>
+          (hashTable[aData.output || aData.id] = { ...aData, childNodes: [] })
+      )
       const dataTree = []
       dataset.forEach(aData => {
         if (aData.parent) {
@@ -259,7 +349,9 @@ export default {
       list.splice(index, 1)
     },
     async deleteUnknown(id) {
-      const ret = await axios.default.delete(`/api/intents/list/unknowns/id/${id}`)
+      const ret = await axios.default.delete(
+        `/api/intents/list/unknowns/id/${id}`
+      )
       if (ret.status === 204) {
         Vue.$toast.open({
           message: 'Marked as trained',
@@ -278,7 +370,7 @@ export default {
       } else {
         this.expanded = true
       }
-      this.categories.forEach(t => t.edit = this.expanded)
+      this.categories.forEach(t => (t.edit = this.expanded))
     }
   }
 }
@@ -288,16 +380,10 @@ export default {
   background: transparent !important;
 }
 button {
-  background-color: #44c767;
   border-radius: 8px;
-  border: 1px solid #18ab29;
   display: inline-block;
   cursor: pointer;
-  color: #ffffff;
-  font-family: Arial;
   font-size: 14px;
-  height: 50px;
-  margin: 5px;
   padding: 4px 8px;
   text-decoration: none;
   text-shadow: 0px 1px 0px #2f6627;

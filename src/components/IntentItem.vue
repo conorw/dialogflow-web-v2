@@ -2,12 +2,12 @@
   <div class="intent-item" :class="intent.dirty ? 'dirty' : ''">
     <div>
       <div style="display:flex; justify-content: space-between;">
-        <h2 @click="() => (intent.edit = !intent.edit)">
+        <span @click="() => (intent.edit = !intent.edit)">
           <i class="material-icons" aria-hidden="true">{{
             intent.edit ? 'expand_less' : 'expand_more'
           }}</i>
           {{ intent.intent_name }}
-        </h2>
+        </span>
         <div>
           <button
             :class="intent.dirty ? 'dirty' : ''"
@@ -15,9 +15,9 @@
           >
             <i class="material-icons" aria-hidden="true">save</i> Save
           </button>
-          <button @click="expandCollapseAll()">
+          <!-- <button @click="expandCollapseAll()">
             <i class="material-icons" aria-hidden="true">menu_open</i>
-          </button>
+          </button> -->
         </div>
       </div>
       <input v-if="intent.edit" v-model="intent.intent_name" type="text" />

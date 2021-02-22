@@ -1,18 +1,18 @@
 <template>
-    <div class="category-item" :class="category.dirty ? 'dirty' : ''">
-        <div>
-            <div style="display:flex; justify-content: space-between;">
-                <h2 @click="()=>category.edit = !category.edit">
-                    <i class="material-icons" aria-hidden="true">{{category.edit?'expand_less':'expand_more'}}</i> {{category.name}} <span class="tooltip"><i class="material-icons" aria-hidden="true">info</i>
-                        <span class="tooltiptext">{{category.tooltip}}</span>
-                    </span>
-                </h2>
-                <div>
-                    <button @click="()=>$emit('add-new', category)"><i class="material-icons" aria-hidden="true">library_add</i>Add New "{{category.name}}" item</button>
-                    <button @click="expandCollapseAll()"><i class="material-icons" aria-hidden="true">menu_open</i></button>
-                </div>
+    <div class="bg-yellow-100 border-l-4 border-purple-400 rounded px-6" :class="category.dirty ? 'dirty' : ''">
+
+        <div class="flex items-center justify-between my-4">
+            <h2 @click="()=>category.edit = !category.edit">
+                <i class="material-icons" aria-hidden="true">{{category.edit?'expand_less':'expand_more'}}</i> {{category.name}} <span class="tooltip"><i class="material-icons" aria-hidden="true">info</i>
+                    <span class="tooltiptext">{{category.tooltip}}</span>
+                </span>
+            </h2>
+            <div>
+                <button @click="()=>$emit('add-new', category)">Add New "{{category.name}}" item<i class="material-icons" aria-hidden="true">library_add</i></button>
+                <!-- <button @click="expandCollapseAll()"><i class="material-icons" aria-hidden="true">menu_open</i></button> -->
             </div>
         </div>
+
         <div v-if="category.edit" class="item-details">
             <input v-model="search" style="height: 30px; width: 30%;" type="text" placeholder="Filter...">
             <IntentItem v-for="(subintent) in filteredList" :key="subintent.id" :intent-obj="subintent" />
@@ -59,13 +59,7 @@ export default {
 </script>
 <style scoped>
 
-.category-item{
-    margin: 20px;
-    padding: 10px;
-    border: 5px solid black;
-    border-radius: 10px;
-    background: lightyellow;
-}
+
 
 /* Tooltip container */
 .tooltip {
