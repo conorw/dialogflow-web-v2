@@ -939,6 +939,7 @@ export const getAgentJSON = async (): Promise<JSONIntent[]> => {
 }
 export const updateSingleIntent = async (intent: JSONIntent) => {
   let existing = null
+  console.log(intent)
   if (intent.id && !intent.id.toLowerCase().startsWith('new:')) {
     existing = await findIntentById(intent.id)
   }
@@ -951,6 +952,7 @@ export const updateSingleIntent = async (intent: JSONIntent) => {
       intent.bot_says,
       intent.parent
     )
+    console.log('New intent', {newIntent})
     // add the id to the table
     intent = { ...intent, id: newIntent[0].name || '' }
   } else {

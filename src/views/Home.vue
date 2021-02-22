@@ -538,6 +538,9 @@ body
     background: transparent
     border: none
 
+.top-head-icon
+    object-fit: cover
+
 .shake-enter-active
   animation: shake .3s cubic-bezier(0.31, 0.07, 0.39, 0.97) both
   transform: translate3d(0, 0, 0)

@@ -10,8 +10,8 @@ export default async (req: NowRequest, res: NowResponse) => {
     if (req.method == 'POST'){
         try {
             const sorted: JSONIntent = req.body
-            await updateSingleIntent(sorted)
-            res.send(sorted)
+            const newIntent = await updateSingleIntent(sorted)
+            res.send(newIntent)
         } catch (error){
             console.log(error)
             res.status(500).send(error)
