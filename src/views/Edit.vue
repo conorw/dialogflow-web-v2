@@ -76,25 +76,30 @@
             </div>
           </div>
         </tab>
-        <tab :title="`Needs Attention (${unknowns.length + unsure.length})`">
+        <tab :title="`Urgent Attention (${unknowns.length})`">
           <div>
             <div style="margin: 20px">
               <h2>Questions that your bot has no answer for</h2>
               <h3>Please train your bot to respond to these statements:</h3>
               <div class="flex items-center justify-between my-4" v-for="unknown in unknowns" :key="unknown.id">
-                Statement: {{ unknown.statement }}
+                <span class="font-bold">"{{ unknown.statement }}"</span>
                 <button @click="deleteUnknown(unknown.id)">
                   Mark as trained
                 </button>
               </div>
-              <hr />
+            </div>
+          </div>
+        </tab>
+        <tab :title="`Improve Training (${unsure.length})`">
+          <div>
+            <div style="margin: 20px">
               <h3>
                 Your bot is not confident of these phrases, please add training:
               </h3>
               <div class="flex items-center justify-between my-4" v-for="unknown in unsure" :key="unknown.id">
-                Statement: {{ unknown.statement }} Confidence:{{
-                  unknown.percentage
-                }}
+                <span class="font-bold">"{{ unknown.statement }}"</span> <span>Confidence:{{
+                  parseFloat(unknown.percentage).toFixed(2)
+                }}</span>
                 <button @click="deleteUnknown(unknown.id)">
                   Mark as trained
                 </button>
@@ -216,7 +221,7 @@ export default {
       })
     )
     this.unknowns = unknowns.data.filter(t => t.percentage < 0.1)
-    this.unsure = unknowns.data.filter(t => t.percentage >= 0.1)
+    this.unsure = unknowns.data.filter(t => t.percentage >= 0.1).sort((a, b) => parseFloat(a.percentage) - parseFloat(b.percentage))
     general.childNodes = this.intents.filter(t =>
       t.intent_name.startsWith(general.tag)
     )

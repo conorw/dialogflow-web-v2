@@ -646,6 +646,7 @@ body
 
 .confidence-score
     position: absolute
+    font-size: xx-small
     background: red
     color: white
     padding: 5px
