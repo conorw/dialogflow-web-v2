@@ -148,13 +148,13 @@ export const updateIntent = async (
       intent.inputContextNames.push(parent)
     }
   }
-  console.log('Messages', {messages: intent.messages, override})
+  console.log('Messages', { messages: intent.messages, override })
   if (!intent.messages || !intent.messages.length || override) {
     if (!intent.messages || !intent.messages.length) {
       intent.messages = [{ text: { text: answer } }]
     } else {
       const msg = intent.messages[0]
-      console.log('msg1', {msg, answer})
+      console.log('msg1', { msg, answer })
       if (msg) {
         msg!.text!.text = answer
       }
@@ -163,7 +163,7 @@ export const updateIntent = async (
     // check for duplicates before adding
     // eslint-disable-next-line no-lonely-if
     const msg = intent.messages[0]
-    console.log('msg', {msg, answer})
+    console.log('msg', { msg, answer })
     if (msg) {
       answer.forEach(ans => {
         if (
@@ -178,7 +178,7 @@ export const updateIntent = async (
     }
   }
   if (override) {
-    console.log('questions', {questions})
+    console.log('questions', { questions })
     intent.trainingPhrases = questions.map(t => {
       return { parts: [{ text: t }] }
     })
@@ -943,6 +943,13 @@ export const updateSingleIntent = async (intent: JSONIntent) => {
   if (intent.id && !intent.id.toLowerCase().startsWith('new:')) {
     existing = await findIntentById(intent.id)
   }
+  if (intent.id.toLowerCase().startsWith('new:')) {
+    // check the intent name
+    intent.intent_name = intent.intent_name
+      .toLowerCase()
+      .replace(/ /gi, '.')
+      .trim()
+  }
 
   if (!existing) {
     console.log('CREATING INTENT')
@@ -952,7 +959,7 @@ export const updateSingleIntent = async (intent: JSONIntent) => {
       intent.bot_says,
       intent.parent
     )
-    console.log('New intent', {newIntent})
+    console.log('New intent', { newIntent })
     // add the id to the table
     intent = { ...intent, id: newIntent[0].name || '' }
   } else {

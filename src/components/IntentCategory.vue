@@ -1,5 +1,5 @@
 <template>
-    <div class="bg-yellow-100 border-l-4 border-purple-400 rounded px-6" :class="category.dirty ? 'dirty' : ''">
+    <div class="bg-yellow-100 border-l-4 border-purple-400 rounded px-3" :class="category.dirty ? 'dirty' : ''">
 
         <div class="flex items-center justify-between my-4">
             <h2 @click="()=>category.edit = !category.edit">

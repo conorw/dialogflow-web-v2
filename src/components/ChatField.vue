@@ -123,7 +123,7 @@
         <span class="training-icons">
           <button
             aria-label="Cancel Conversation"
-            title="Cancel Canversation"
+            title="Cancel Conversation"
             class="top-head-button stop"
             @click="submit({ text: 'cancel' })"
           >

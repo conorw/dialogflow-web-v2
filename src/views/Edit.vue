@@ -81,10 +81,17 @@
             <div style="margin: 20px">
               <h2>Questions that your bot has no answer for</h2>
               <h3>Please train your bot to respond to these statements:</h3>
-              <div class="flex items-center justify-between my-4" v-for="unknown in unknowns" :key="unknown.id">
-                <span class="font-bold">"{{ unknown.statement }}"</span>
-                <button @click="deleteUnknown(unknown.id)">
+              <div
+                class="flex items-center justify-between my-4"
+                v-for="unknown in unknowns"
+                :key="unknown.id"
+              >
+                <span class="font-bold flex-1">"{{ unknown.statement }}"</span>
+                <button  @click="deleteUnknown(unknown.id)">
                   Mark as trained
+                </button>
+                <button  @click="addTraining(unknown)">
+                  Train Now
                 </button>
               </div>
             </div>
@@ -96,12 +103,24 @@
               <h3>
                 Your bot is not confident of these phrases, please add training:
               </h3>
-              <div class="flex items-center justify-between my-4" v-for="unknown in unsure" :key="unknown.id">
-                <span class="font-bold">"{{ unknown.statement }}"</span> <span>Confidence:{{
-                  parseFloat(unknown.percentage).toFixed(2)
-                }}</span>
+              <div
+                class="flex items-center justify-between my-4"
+                v-for="unknown in unsure"
+                :key="unknown.id"
+              >
+                <span class="font-bold  flex-1"
+                  >"{{ unknown.statement }}"</span
+                >
+                <span
+                  >Confidence:{{
+                    parseFloat(unknown.percentage).toFixed(2)
+                  }}</span
+                >
                 <button @click="deleteUnknown(unknown.id)">
                   Mark as trained
+                </button>
+                <button @click="addTraining(unknown)">
+                  Train Now
                 </button>
               </div>
             </div>
@@ -109,35 +128,73 @@
         </tab>
       </tabs>
     </div>
-
-    <!-- <IntentItem v-for="(intent, idx) in intents" :key="idx" :intent-obj="intent" /> -->
-    <!-- <div v-for="(intent, idx) in intents" :key="idx" class="intent-item">
-                <div>
-                    <h2>{{intent.intent_name}} <i class="material-icons" aria-hidden="true" @click="()=>intent.edit = !intent.edit">edit</i></h2>
-                    <input v-if="intent.edit" v-model="intent.intent_name" type="text">
-                    {{intent.parent}}
-                </div>
-                <div v-if="intent.edit" class="item-details">
-                    <div v-if="intent.intent_name!=='Default Fallback Intent'">
-                        <h3>User Says <i class="material-icons" aria-hidden="true" @click="addToList(intent.user_says, '')">add</i></h3>
-                        <div v-for="(useritem, i) in intent.user_says" :key="i" class="response-item">
-                            <textarea v-model="intent.user_says[i]" />
-                            <i class="material-icons" aria-hidden="true" @click="deleteFromList(intent.user_says, i)">delete</i>
-                        </div>
-                    </div>
-                    <div>
-                        <h3>Bot Says <i class="material-icons" aria-hidden="true" @click="addToList(intent.bot_says, '')">add</i></h3>
-                        <div v-for="(botitem, i) in intent.bot_says" :key="i" class="response-item">
-                            <div>
-                                <textarea v-model="intent.bot_says[i]" />
-                                <i class="material-icons" aria-hidden="true" @click="deleteFromList(intent.bot_says, i)">delete</i>
-                            </div>
-                        </div>
-                    </div>
-                    <hr>
-                    <button @click="saveIntent(intent)"><i class="material-icons" aria-hidden="true">save</i> Save</button>
-                </div>
-            </div> -->
+    <modal name="newintent" height="auto" width="80%">
+      <div class="m-10">
+        <h2 class="text-4xl">
+          Training for statement: "{{ unknown.statement }}"
+        </h2>
+        <hr />
+        <div class="mb-6 m-5">
+          <div class="flex flex-col mb-4">
+            <label
+              class="mb-2 font-bold text-lg text-grey-darkest"
+              for="category"
+              >*Select a suitable category for this question/statement</label
+            >
+            <select
+              class="border py-2 px-3 text-grey-darkest"
+              name="category"
+              id="first_name"
+              v-model="category"
+            >
+              <option></option>
+              <option>about.bot</option>
+              <option>about.user</option>
+              <option>greeting</option>
+              <option>emoji</option>
+              <option>courtesy</option>
+              <option>general</option>
+            </select>
+            <span
+              v-if="catError"
+              class="text-xs text-red-700"
+              id="passwordHelp"
+              >{{ catError }}</span
+            >
+          </div>
+          <div class="flex flex-col mb-4">
+            <label
+              class="mb-2 font-bold text-lg text-grey-darkest"
+              for="first_name"
+              >*Add a descriptive name so you can find/edit this response in the
+              future</label
+            >
+            <input
+              class="border py-2 px-3 text-grey-darkest"
+              type="text"
+              v-model="description"
+              name="first_name"
+              id="first_name"
+            />
+            <span
+              v-if="descError"
+              class="text-xs text-red-700"
+              id="passwordHelp"
+              >{{ descError }}</span
+            >
+          </div>
+          <intent-item-details :intent-obj="newintent" />
+          <button
+            @click="
+              createTraining(category, description, newintent, unknown.id)
+            "
+            class="block uppercase text-lg mx-auto p-4 rounded"
+          >
+            Create
+          </button>
+        </div>
+      </div>
+    </modal>
   </div>
 </template>
 <script>
@@ -147,21 +204,39 @@ import '@/style/index.css'
 import IntentCategory from '@/components/IntentCategory'
 import Tabs from '@/components/Tabs'
 import Tab from '@/components/Tab'
+import IntentItemDetails from '@/components/IntentItemDetails.vue'
 export default {
   name: 'Edit',
   components: {
     IntentCategory,
+    Tabs,
     Tab,
-    Tabs
+    IntentItemDetails
   },
   data() {
     return {
       intents: [],
       categories: [],
-      unknowns: [],
-      unsure: [],
+      allunknowns: [],
       expanded: false,
-      mobileMenuOpen: false
+      mobileMenuOpen: false,
+      newintent: {},
+      unknown: {},
+      catError: '',
+      descError: '',
+      addError: '',
+      category: '',
+      description: ''
+    }
+  },
+  computed: {
+    unknowns() {
+      return this.allunknowns.filter(t => t.percentage < 0.1)
+    },
+    unsure() {
+      return this.allunknowns
+        .filter(t => t.percentage >= 0.1)
+        .sort((a, b) => parseFloat(a.percentage) - parseFloat(b.percentage))
     }
   },
   async beforeMount() {
@@ -215,31 +290,17 @@ export default {
       axios.default.get('/api/intents/list'),
       axios.default.get('/api/intents/list/unknowns')
     ])
-    this.intents = this.createDataTree(
-      data.data.map(t => {
+    this.intents = this.createDataTree(data.data.map(t => {
         return Object.assign(t, this.emptyItem())
-      })
-    )
-    this.unknowns = unknowns.data.filter(t => t.percentage < 0.1)
-    this.unsure = unknowns.data.filter(t => t.percentage >= 0.1).sort((a, b) => parseFloat(a.percentage) - parseFloat(b.percentage))
-    general.childNodes = this.intents.filter(t =>
-      t.intent_name.startsWith(general.tag)
-    )
-    aboutBot.childNodes = this.intents.filter(t =>
-      t.intent_name.startsWith(aboutBot.tag)
-    )
-    aboutUser.childNodes = this.intents.filter(t =>
-      t.intent_name.startsWith(aboutUser.tag)
-    )
-    greetings.childNodes = this.intents.filter(t =>
-      t.intent_name.startsWith(greetings.tag)
-    )
-    emoji.childNodes = this.intents.filter(t =>
-      t.intent_name.startsWith(emoji.tag)
-    )
-    courtesy.childNodes = this.intents.filter(t =>
-      t.intent_name.startsWith(courtesy.tag)
-    )
+      }))
+    this.allunknowns = unknowns.data
+
+    general.childNodes = this.intents.filter(t => t.intent_name.startsWith(general.tag))
+    aboutBot.childNodes = this.intents.filter(t => t.intent_name.startsWith(aboutBot.tag))
+    aboutUser.childNodes = this.intents.filter(t => t.intent_name.startsWith(aboutUser.tag))
+    greetings.childNodes = this.intents.filter(t => t.intent_name.startsWith(greetings.tag))
+    emoji.childNodes = this.intents.filter(t => t.intent_name.startsWith(emoji.tag))
+    courtesy.childNodes = this.intents.filter(t => t.intent_name.startsWith(courtesy.tag))
   },
   methods: {
     reload() {
@@ -276,8 +337,7 @@ export default {
             })
             return
           }
-          intent.childNodes.unshift(
-            Object.assign(this.emptyItem(), {
+          intent.childNodes.unshift(Object.assign(this.emptyItem(), {
               intent_name: `${intent.intent_name}.${
                 intent.childNodes.length ? intent.childNodes.length + 1 : '1'
               }`,
@@ -290,8 +350,7 @@ export default {
               edit: true,
               dirty: true,
               parent: intent.output
-            })
-          )
+            }))
           intent.edit = true
         },
         save: async intent => {
@@ -305,12 +364,11 @@ export default {
           }
           if (intent.dirty) {
             try {
-              const updated = await axios.default.post(
-                '/api/intents/save',
-                intent
-              )
+              const updated = await axios.default.post('/api/intents/save',
+                intent)
               if (updated && updated.data) {
                 intent.id = updated.data.id
+                intent.intent_name = updated.data.intent_name
                 intent.dirty = false
                 Vue.$toast.open({
                   message: `Saved: ${intent.intent_name}`,
@@ -329,16 +387,17 @@ export default {
             }
           }
 
-          Promise.all(intent.childNodes.map(t => t.save(t)))
+          if (intent.childNodes) {
+            await Promise.all(intent.childNodes.map(t => t.save(t)))
+          }
+
+          return intent
         }
       }
     },
     createDataTree(dataset) {
       const hashTable = Object.create(null)
-      dataset.forEach(
-        aData =>
-          (hashTable[aData.output || aData.id] = { ...aData, childNodes: [] })
-      )
+      dataset.forEach(aData => (hashTable[aData.output || aData.id] = { ...aData, childNodes: [] }))
       const dataTree = []
       dataset.forEach(aData => {
         if (aData.parent) {
@@ -354,16 +413,74 @@ export default {
       list.splice(index, 1)
     },
     async deleteUnknown(id) {
-      const ret = await axios.default.delete(
-        `/api/intents/list/unknowns/id/${id}`
-      )
+      const ret = await axios.default.delete(`/api/intents/list/unknowns/id/${id}`)
       if (ret.status === 204) {
         Vue.$toast.open({
           message: 'Marked as trained',
           type: 'success',
           duration: 2000
         })
-        this.unknowns = this.unknowns.filter(t => t.id !== id)
+        this.allunknowns = this.allunknowns.filter(t => t.id !== id)
+      }
+    },
+    addTraining(unknown) {
+      console.log(unknown)
+      this.catError = ''
+      this.descError = ''
+      this.addError = ''
+      this.category = ''
+      this.description = ''
+      this.unknown = unknown
+      this.newintent = {
+        ...this.emptyItem(),
+        id: 'NEW:',
+        user_says: [unknown.statement.trim()],
+        bot_says: [''],
+        parent: '',
+        edit: true,
+        dirty: true,
+        intent_name: ''
+      }
+
+      this.$modal.show('newintent')
+    },
+    async createTraining(category, description, item, unknownid) {
+      console.log(item, { category, description })
+      this.catError = ''
+      this.descError = ''
+      if (!category) {
+        this.catError = 'You must select a category'
+        return
+      }
+      if (!description) {
+        this.descError = 'You must enter a description'
+        return
+      }
+      if (!item.bot_says.length || item.bot_says.includes('')) {
+        this.descError =
+          'Please add 1 or more ways in which your bot should respond'
+        return
+      }
+      if (!item.user_says.length || item.user_says.includes('')) {
+        this.descError =
+          'Please add 1 or more ways in which a user would say this'
+        return
+      }
+      const intent_name = `${category}.${description}`
+      this.newintent = {
+        ...item,
+        id: `NEW:${intent_name}`,
+        intent_name
+      }
+      const newIntent = await this.newintent.save(this.newintent)
+      if (newIntent) {
+        // add the intent to the category
+        if (unknownid) {
+          // delete from unknown list
+          await this.deleteUnknown(unknownid)
+        }
+
+        this.$modal.hide('newintent')
       }
     },
     addToList(list, text) {
@@ -375,7 +492,7 @@ export default {
       } else {
         this.expanded = true
       }
-      this.categories.forEach(t => (t.edit = this.expanded))
+      this.categories.forEach(t => t.edit = this.expanded)
     }
   }
 }

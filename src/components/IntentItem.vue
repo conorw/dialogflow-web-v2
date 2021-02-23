@@ -1,12 +1,11 @@
 <template>
-  <div class="intent-item" :class="intent.dirty ? 'dirty' : ''">
+  <div class="bg-yellow-100 border-l-4 border-indigo-400 rounded px-1 my-2" :class="intent.dirty ? 'dirty' : ''">
     <div>
       <div style="display:flex; justify-content: space-between;">
         <span @click="() => (intent.edit = !intent.edit)">
-          <i class="material-icons" aria-hidden="true">{{
+          <h2><i class="material-icons" aria-hidden="true">{{
             intent.edit ? 'expand_less' : 'expand_more'
-          }}</i>
-          {{ intent.intent_name }}
+          }}</i>{{ intent.intent_name }}</h2>
         </span>
         <div>
           <button
@@ -22,59 +21,12 @@
       </div>
       <input v-if="intent.edit" v-model="intent.intent_name" type="text" />
     </div>
-    <div v-if="intent.edit" class="item-details">
-      <div v-if="intent.intent_name !== 'Default Fallback Intent'">
-        <h3>
-          What a user might say
-          <i
-            class="material-icons"
-            aria-hidden="true"
-            @click="addToList(intent.user_says, '')"
-            >add</i
-          >
-        </h3>
-        <div
-          v-for="(useritem, idx) in intent.user_says"
-          :key="`useritem-${idx}`"
-          :index="idx"
-          class="response-item"
-        >
-          <i
-            class="material-icons"
-            aria-hidden="true"
-            @click="$delete(intent.user_says, idx)"
-            >delete</i
-          >
-          <InputField :querystr.sync="intent.user_says[idx]" />
-          <!-- <textarea v-model="intent.user_says[i]" /> -->
-        </div>
-      </div>
-      <div>
-        <h3>
-          How your bot should respond
-          <i
-            class="material-icons"
-            aria-hidden="true"
-            @click="addToList(intent.bot_says, '')"
-            >add</i
-          >
-        </h3>
-        <div
-          v-for="(botitem, i) in intent.bot_says"
-          :key="`botitem-${i}`"
-          :index="i"
-          class="response-item"
-        >
-          <i
-            class="material-icons"
-            aria-hidden="true"
-            @click="$delete(intent.bot_says, i)"
-            >delete</i
-          >
-          <InputField :querystr.sync="intent.bot_says[`${i}`]" />
-        </div>
-      </div>
-      <hr />
+    <intent-item-details
+      :intent-obj="intent"
+      v-if="intent.edit"
+    ></intent-item-details>
+    <hr />
+    <div v-if="intent.edit">
       <button @click="intent.addFollowUp(intent)">
         Add Follow Up Question & Response
       </button>
@@ -84,15 +36,16 @@
         :intent-obj="subintent"
       />
     </div>
+    <hr />
   </div>
 </template>
 
 <script>
-import InputField from '@/components/InputField'
+import IntentItemDetails from './IntentItemDetails.vue'
 export default {
   name: 'IntentItem',
   components: {
-    InputField
+    IntentItemDetails
   },
   props: {
     intentObj: {
@@ -129,32 +82,13 @@ export default {
     expandCollapseAll() {
       this.intent.edit = !this.intent.edit
       if (this.intent.childNodes) {
-        this.intent.childNodes.forEach(t => t.edit = this.intent.edit)
+        this.intent.childNodes.forEach(t => (t.edit = this.intent.edit))
       }
-    },
-    deleteFromList(list, text) {
-      const idx = list.findIndex(t => t === text)
-      console.log('DELETE ITEM', { list, text })
-      // eslint-disable-next-line no-param-reassign
-      // list.filter(t => t !== text)
-      this.$delete(list, idx)
-    },
-    addToList(list, text) {
-      list.push(text)
     }
   }
 }
 </script>
 <style scoped>
-.response-item {
-  display: flex;
-}
-.intent-item {
-  margin: 20px;
-  padding: 10px;
-  border: 2px solid black;
-  border-radius: 10px;
-}
 div.dirty {
   border: 5px solid red;
 }
