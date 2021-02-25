@@ -87,10 +87,13 @@
                 :key="unknown.id"
               >
                 <span class="font-bold flex-1">"{{ unknown.statement }}"</span>
-                <button  @click="deleteUnknown(unknown.id)">
+                <button @click="test(unknown.statement)">
+                  Test
+                </button>
+                <button @click="deleteUnknown(unknown.id)">
                   Mark as trained
                 </button>
-                <button  @click="addTraining(unknown)">
+                <button @click="addTraining(unknown)">
                   Train Now
                 </button>
               </div>
@@ -108,14 +111,15 @@
                 v-for="unknown in unsure"
                 :key="unknown.id"
               >
-                <span class="font-bold  flex-1"
-                  >"{{ unknown.statement }}"</span
-                >
+                <span class="font-bold  flex-1">"{{ unknown.statement }}"</span>
                 <span
                   >Confidence:{{
                     parseFloat(unknown.percentage).toFixed(2)
                   }}</span
                 >
+                <button @click="test(unknown.statement)">
+                  Test
+                </button>
                 <button @click="deleteUnknown(unknown.id)">
                   Mark as trained
                 </button>
@@ -205,6 +209,8 @@ import IntentCategory from '@/components/IntentCategory'
 import Tabs from '@/components/Tabs'
 import Tab from '@/components/Tab'
 import IntentItemDetails from '@/components/IntentItemDetails.vue'
+import * as uuidv1 from 'uuid/v1'
+import { Client } from 'dialogflow-gateway'
 export default {
   name: 'Edit',
   components: {
@@ -226,7 +232,9 @@ export default {
       descError: '',
       addError: '',
       category: '',
-      description: ''
+      description: '',
+      session: uuidv1(),
+      client: new Client(this.config.endpoint)
     }
   },
   computed: {
@@ -394,6 +402,30 @@ export default {
           return intent
         }
       }
+    },
+    test(statement) {
+      const request = {
+        session: this.session,
+        queryInput: {
+          text: {
+            text: statement,
+            languageCode: 'en'
+          }
+        }
+      }
+      this.client
+        .send(request)
+        .then(response => {
+          console.log(response)
+          Vue.$toast.open({
+                  message: `RESPONSE: ${response.queryResult.fulfillmentText}`,
+                  type: 'success',
+                  duration: 2000
+                })
+        })
+        .catch(error => {
+          this.error = error.message
+        })
     },
     createDataTree(dataset) {
       const hashTable = Object.create(null)
