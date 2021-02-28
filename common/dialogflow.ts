@@ -777,7 +777,7 @@ export const handleHelpIntent = async (
       : ''
     // if this is the intent-name question, return the entity options for the category
     if (topics) {
-      console.log('Lookup help', { topics, resource })
+      console.log('Lookup help', { topics, resource, topicList: params.topic.listValue?.values })
       // eslint-disable-next-line no-param-reassign
       intentresponse = await addHelpToResponse(
         intentresponse,
