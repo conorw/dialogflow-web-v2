@@ -126,7 +126,7 @@ export const updateIntent = async (intent: dialogflow.protos.google.cloud.dialog
     console.log('adding input context', { parent })
     if (!intent.inputContextNames) {
       intent.inputContextNames = [parent]
-    } else if (!intent.inputContextNames.find(t => t === parent)) {
+    } else if (!intent.inputContextNames.find((t: any) => t === parent)) {
       intent.inputContextNames.push(parent)
     }
   }
@@ -149,7 +149,7 @@ export const updateIntent = async (intent: dialogflow.protos.google.cloud.dialog
     if (msg) {
       answer.forEach(ans => {
         if (
-          !msg!.text!.text!.find(t => t.toLocaleLowerCase() === ans.toLowerCase())
+          !msg!.text!.text!.find((t: any) => t.toLocaleLowerCase() === ans.toLowerCase())
         ) {
           console.log('pusing new response', { ans })
           msg!.text!.text!.push(...ans)
@@ -171,7 +171,7 @@ export const updateIntent = async (intent: dialogflow.protos.google.cloud.dialog
         question
       })
       if (
-        !intent.trainingPhrases!.find(t => t.parts!.find(t => t.text!.toLocaleLowerCase() === question.toLowerCase()))
+        !intent.trainingPhrases!.find((t: any) => t.parts!.find((t: any) => t.text!.toLocaleLowerCase() === question.toLowerCase()))
       ) {
         console.log('Adding question', { question })
         intent.trainingPhrases!.push({ parts: [{ text: question }] })
@@ -340,7 +340,7 @@ export const handleTrainingFollowUpIntent = async (intentresponse: dialogflow.pr
     intentresponse.queryResult!.allRequiredParamsPresent
   ) {
     const params = intentresponse.queryResult!.parameters.fields
-    const parentContext = intentresponse.queryResult!.outputContexts!.find(t => t.name!.toLowerCase().includes(FOLLOWUP_PARENT))
+    const parentContext = intentresponse.queryResult!.outputContexts!.find((t: any) => t.name!.toLowerCase().includes(FOLLOWUP_PARENT))
     // const newContext = intentresponse.queryResult.outputContexts.find(t => t.name.toLowerCase().includes(FOLLOWUP_CONTEXT))
 
     console.log('CONTEXTS', { parentContext })
@@ -518,7 +518,7 @@ export const getFormattedFulfillment = (intentresponse: dialogflow.protos.google
         /* Convert Google Suggestions to text-only suggestions (like the webhook quick-replies) */
         const suggestions = fulfillment[
           component
-        ].suggestions!.suggestions!.map(suggestion => suggestion.title)
+        ].suggestions!.suggestions!.map((suggestion: any) => suggestion.title)
         formatted.components.push({
           name: 'SUGGESTIONS',
           content: suggestions
@@ -837,16 +837,16 @@ export const getAgentJSON = async (): Promise<JSONIntent[]> => {
   const [intents] = await Promise.all([findAllIntents('INTENT_VIEW_FULL')])
   const intentList: JSONIntent[] = []
   // res.send(intents)
-  intents.forEach(intent => {
+  intents.forEach((intent: any) => {
     if (intent && Array.isArray(intent)) {
       intent.forEach(t => {
         const user_says = t
           .trainingPhrases!.map((t: any) => t.parts!.map((r: any) => r.text!))
-          .reduce((a, b) => a.concat(b), [])
+          .reduce((a: any, b: any) => a.concat(b), [])
         const bot_says = t.messages
           ? t.messages
               .map((r: any) => r.text!.text!)
-              .reduce((a, b) => a!.concat(b!), [])
+              .reduce((a: any, b: any) => a!.concat(b!), [])
           : []
         intentList.push({
           id: t.name!,

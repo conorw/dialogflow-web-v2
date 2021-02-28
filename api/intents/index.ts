@@ -47,15 +47,18 @@ export default async (req: NowRequest, res: NowResponse) => {
                 getCheatSheet(),
                 getProgress(process.env.VUE_APP_NAME!)
             ])
-            const progressStr = progress? progress.map(t => {
+            if (!progress){
+                return
+            }
+            const progressStr = progress ? progress.map((t: any) => {
                 return `['${t.UpdateDate}',${t.Phrases},${t.Responses},${t.Score} ]`
-            }): ''
+            }) : ''
             const intentList = []
             // res.send(intents)
 
             const sorted = await getAgentJSON()
-            const phraseCount = sorted.map(t => t.user_says.length).reduce((a, b) => a + b)
-            const responseCount = sorted.map(t => t.bot_says.length).reduce((a, b) => a + b)
+            const phraseCount = sorted.map((t: any) => t.user_says.length).reduce((a: any, b: any) => a + b)
+            const responseCount = sorted.map((t: any) => t.bot_says.length).reduce((a: any, b: any) => a + b)
             const style = `<style>
             body{
                 font-family: Arial, Helvetica, sans-serif;
