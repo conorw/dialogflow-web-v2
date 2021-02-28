@@ -54,8 +54,8 @@ export const getTopicResources = async (topics: string[]) => {
     const filter = `OR(${topics.map((t: any) => `LOWER({topic})="${t.toLowerCase()}"`)})`
     const exists = await base('topics').select({ filterByFormula: filter }).all()
     // remove duplicate resources
-    let resources = exists.length ? exists.filter(t => !!t.fields.resources[0]).map(t => t.fields) : []
-    resources = resources.filter((v, i, a) => a.findIndex(t => t.resources[0] === v.resources[0]) === i)
+    let resources = exists.length ? exists.filter((t: any) => !!t.fields.resources[0]).map((t: any) => t.fields) : []
+    resources = resources.filter((v: any, i: any, a: any) => a.findIndex((t: any) => t.resources[0] === v.resources[0]) === i)
     console.log(filter, {fields: resources})
     return resources
   } catch (error){
