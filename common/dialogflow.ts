@@ -713,7 +713,6 @@ export const handleHelpIntent = async (intentresponse: dialogflow.protos.google.
       : ''
     // if this is the intent-name question, return the entity options for the category
     if (topics) {
-      console.log('Lookup help', { topics, resource, topicList: params.topic.listValue?.values })
       // eslint-disable-next-line no-param-reassign
       intentresponse = await addHelpToResponse(intentresponse,
         topics,
