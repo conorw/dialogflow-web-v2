@@ -200,7 +200,7 @@ export default {
         return {
             agent: null,
             messages: [],
-            training: true,
+            training: false,
             image: '',
             myAvatar: '',
             botImage: '',
@@ -311,7 +311,7 @@ export default {
         }
         this.image = localStorage.getItem('background') || '/img/backgrounds/Wintery-Sunburst.svg'
         this.myAvatar = localStorage.getItem('avatar') || '/img/avatars/SVG/flat/27-ninja.svg'
-        this.training = !!this.$route.query.training || true
+        this.training = !!this.$route.query.training || false
     },
     created(){
     /* Mute audio to comply with auto-play policies */
@@ -584,11 +584,11 @@ body
 
 .bot-chat
     width: 50% !important
-    height: 35% !important
+    height: 25% !important
+    z-index: 100000
     top: 15%
     position: absolute
     right: 30px
-    z-index: 2
 .bot-chat .rich-component
     text-align: center
     height: 100%
