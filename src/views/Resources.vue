@@ -42,6 +42,10 @@
               </div>
             </div>
           </div>
+          <p>Know an organisation or group that should be listed here?</p>
+          <a href="/#/?mode=feedback">
+              Suggest a resource
+          </a>
         </div>
       </tab>
       <tab title="Topics">

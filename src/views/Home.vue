@@ -297,6 +297,12 @@ export default {
             if (muted) this.stop_feedback()
         }
     },
+    mounted(){
+        const q = this.$route.query.mode
+        if(q){
+            this.send({ text: 'feedback' })
+        }
+    },
     beforeMount(){
         if (sessionStorage.getItem('bot') !== null){
             this.botDetails = JSON.parse(sessionStorage.getItem('bot'))
