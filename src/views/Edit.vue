@@ -28,7 +28,7 @@
           </svg>
         </button>
         <nav
-          class="absolute md:relative top-16 left-0 md:top-0 z-20 md:flex flex-col md:flex-row md:space-x-6 font-semibold w-full md:w-auto bg-white shadow-md rounded-lg md:rounded-none md:shadow-none md:bg-transparent p-6 pt-0 md:p-0"
+          class="absolute z-50 md:relative top-16 left-0 md:top-0 z-20 md:flex flex-col md:flex-row md:space-x-6 font-semibold w-full md:w-auto bg-white shadow-md rounded-lg md:rounded-none md:shadow-none p-6 pt-0 md:p-0"
           :class="{ flex: mobileMenuOpen, hidden: !mobileMenuOpen }"
           @click.away="mobileMenuOpen = false"
         >
