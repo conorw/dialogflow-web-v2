@@ -159,7 +159,7 @@ export const updateIntent = async (intent: dialogflow.protos.google.cloud.dialog
   }
   if (override) {
     console.log('questions', { questions })
-    intent.trainingPhrases = questions.map(t => {
+    intent.trainingPhrases = questions.map((t: any) => {
       return { parts: [{ text: t }] }
     })
   } else if (intent.trainingPhrases!.length) {
@@ -179,7 +179,7 @@ export const updateIntent = async (intent: dialogflow.protos.google.cloud.dialog
     })
   } else {
     // console.log('no phrases', {intent})
-    intent.trainingPhrases!.push(...questions.map(t => {
+    intent.trainingPhrases!.push(...questions.map((t: any) => {
         return { parts: [{ text: t }] }
       }))
   }
@@ -222,7 +222,7 @@ export const createIntent = async (displayName: string,
             '-')}`
         }
       ],
-      trainingPhrases: questions.map(t => {
+      trainingPhrases: questions.map((t: any) => {
         return { parts: [{ text: t }] }
       }),
       messages: [{ text: { text: answer } }]
@@ -297,7 +297,7 @@ If a suitable option is not available below, just type a new name`
           {
             platform: 'ACTIONS_ON_GOOGLE',
             suggestions: {
-              suggestions: subCategories.entities!.map(t => {
+              suggestions: subCategories.entities!.map((t: any) => {
                 return { title: t.value }
               })
             }
@@ -706,7 +706,7 @@ export const handleHelpIntent = async (intentresponse: dialogflow.protos.google.
     })
     const params = intentresponse.queryResult.parameters.fields
     const topics = params.topic.listValue
-      ? params.topic.listValue.values!.map(t => t.stringValue || '')
+      ? params.topic.listValue.values!.map((t: any) => t.stringValue || '')
       : []
     const resource = params['resource-type']
       ? params['resource-type'].stringValue
@@ -783,7 +783,7 @@ const addHelpToResponse = async (intentresponse: any,
   console.log('Getting resources', { topics, resource })
   const resources = await getTopicResources(topics)
   if (resources && resources.length) {
-    intentresponse.queryResult.fulfillmentMessages = resources.map(searchResult => {
+    intentresponse.queryResult.fulfillmentMessages = resources.map((searchResult: any) => {
         const buttons: any = []
         if (searchResult.resource_link) {
           buttons.push({
@@ -841,11 +841,11 @@ export const getAgentJSON = async (): Promise<JSONIntent[]> => {
     if (intent && Array.isArray(intent)) {
       intent.forEach(t => {
         const user_says = t
-          .trainingPhrases!.map(t => t.parts!.map(r => r.text!))
+          .trainingPhrases!.map((t: any) => t.parts!.map((r: any) => r.text!))
           .reduce((a, b) => a.concat(b), [])
         const bot_says = t.messages
           ? t.messages
-              .map(r => r.text!.text!)
+              .map((r: any) => r.text!.text!)
               .reduce((a, b) => a!.concat(b!), [])
           : []
         intentList.push({
@@ -900,7 +900,7 @@ export const updateSingleIntent = async (intent: JSONIntent) => {
   return intent
 }
 export const updateAllIntents = (sorted: JSONIntent[]) => {
-  return Promise.all(sorted.map(intent => {
+  return Promise.all(sorted.map((intent: any) => {
       // see if intent exists, if not add it
       return updateSingleIntent(intent)
     }))
