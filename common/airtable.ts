@@ -163,6 +163,22 @@ export const getBots = async () => {
     console.log(error)
   }
 }
+export const getResources = async () => {
+  try {
+    const exists = await base('resources').select().all()
+    return exists.map(t => t.fields)
+  } catch (error){
+    console.log(error)
+  }
+}
+export const getTopics = async () => {
+  try {
+    const exists = await base('topics').select().all()
+    return exists.map(t => t.fields)
+  } catch (error){
+    console.log(error)
+  }
+}
 export const getBot = async (id: string) => {
   try {
     const filter = `{bot}="${id}"`

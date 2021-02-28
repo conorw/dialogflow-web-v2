@@ -11,13 +11,13 @@
                 <i class="material-icons" aria-hidden="true">home</i>
             </button></a>
             <a
-                href="/#/edit"
+                href="/#/resources"
             > <button
                 class="top-head-button training"
-                aria-label="Training"
-                title="Training"
+                aria-label="Resources"
+                title="Resources"
             >
-                <i class="material-icons" aria-hidden="true">model_training</i>
+                <i class="material-icons" aria-hidden="true">support</i>
             </button></a>
             <a
                 href="https://newaccount1607080294888.freshdesk.com/support/solutions"

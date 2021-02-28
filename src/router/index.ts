@@ -26,6 +26,14 @@ const routes: Array<RouteConfig> = [
         // which is lazy-loaded when the route is visited.
         component: () => import(/* webpackChunkName: "Edit" */ '../views/Edit.vue')
     },
+    {
+        path: '/resources',
+        name: 'resources',
+        // route level code-splitting
+        // this generates a separate chunk (about.[hash].js) for this route
+        // which is lazy-loaded when the route is visited.
+        component: () => import(/* webpackChunkName: "Edit" */ '../views/Resources.vue')
+    },
     { path: '/404', component: () => import(/* webpackChunkName: "404" */ '../views/404.vue') },
     { path: '*', redirect: '/404' }
 ]
