@@ -1,51 +1,46 @@
 <template>
-    <header class="top-head">
-        <div class="top-head-container">
-            <a
-                href="/"
-            > <button
-                class="top-head-button home"
-                aria-label="Home"
-                title="Home"
-            >
-                <i class="material-icons" aria-hidden="true">home</i>
-            </button></a>
-            <a
-                href="/#/resources"
-            > <button
-                class="top-head-button training"
-                aria-label="Resources"
-                title="Resources"
-            >
-                <i class="material-icons" aria-hidden="true">support</i>
-            </button></a>
-            <a
-                href="https://newaccount1607080294888.freshdesk.com/support/solutions"
-                target="_blank"> <button
-                    class="top-head-button help"
-                    aria-label="Help"
-                    title="Help"
-                >
-                    <i class="material-icons" aria-hidden="true">help</i>
-                </button></a>
-            <button
-                class="top-head-button feedback"
-                aria-label="Feedback"
-                title="Feedback"
-                @click="submit({ text: 'feedback' })"
-            >
-                <i class="material-icons" aria-hidden="true">feedback</i>
-            </button>
-            <button
-                class="top-head-button settings"
-                aria-label="Settings"
-                title="Settings"
-                @click="openBackground"
-            >
-                <i class="material-icons" aria-hidden="true">app_settings_alt</i>
-            </button>
-            <div class="top-head-info">
-                <!-- <div class="top-head-subtitle">
+  <header class="top-head">
+    <div class="top-head-container">
+      <a href="/">
+        <button class="top-head-button home" aria-label="Home" title="Home">
+          <i class="material-icons" aria-hidden="true">home</i>
+        </button></a
+      >
+      <a href="/#/resources">
+        <button
+          class="top-head-button training"
+          aria-label="Resources"
+          title="Resources"
+        >
+          <i class="material-icons" aria-hidden="true">support</i>
+        </button></a
+      >
+      <a
+        href="https://newaccount1607080294888.freshdesk.com/support/solutions"
+        target="_blank"
+      >
+        <button class="top-head-button help" aria-label="Help" title="Help">
+          <i class="material-icons" aria-hidden="true">help</i>
+        </button></a
+      >
+      <button
+        class="top-head-button feedback"
+        aria-label="Feedback"
+        title="Feedback"
+        @click="submit({ text: 'feedback' })"
+      >
+        <i class="material-icons" aria-hidden="true">feedback</i>
+      </button>
+      <button
+        class="top-head-button settings"
+        aria-label="Settings"
+        title="Settings"
+        @click="openBackground"
+      >
+        <i class="material-icons" aria-hidden="true">app_settings_alt</i>
+      </button>
+      <div class="top-head-info">
+        <!-- <div class="top-head-subtitle">
                     {{(translations[lang()] && translations[lang()].poweredBy) ||
                         translations[config.fallback_lang].poweredBy}}
                     <a
@@ -56,61 +51,66 @@
                     >Dialogflow Gateway</a
                     >
                 </div> -->
-                <span style="display:none">Voice:
-                    <select @change="onchange($event)">
-                        <option v-for="option in voices" :key="option.voiceURI" :value="option.voiceURI">
-                            {{option.name}}
-                        </option>
-                    </select>
-                </span>
-            </div>
-        </div>
-        <slot />
-        <modal name="background" height="auto" width="80%">
-            <ChooseBackground @background="background" />
-        </modal>
-    </header>
+        <span style="display:none"
+          >Voice:
+          <select @change="onchange($event)">
+            <option
+              v-for="option in voices"
+              :key="option.voiceURI"
+              :value="option.voiceURI"
+            >
+              {{ option.name }}
+            </option>
+          </select>
+        </span>
+      </div>
+    </div>
+    <slot />
+    <modal name="background" height="auto" width="80%">
+      <ChooseBackground @background="background" />
+    </modal>
+  </header>
 </template>
 
 <script>
 import ChooseBackground from '@/components/ChooseBackground'
 export default {
-    name: 'TopHead',
-    components: {
-        ChooseBackground
+  name: 'TopHead',
+  components: {
+    ChooseBackground
+  },
+  props: {
+    agent: {
+      type: Object,
+      default: null
     },
-    props: {
-        agent: {
-            type: Object,
-            default: null
-        },
-        voices: {
-            type: Array,
-            default: null
-        },
-        selectedvoice: {
-            type: String,
-            default: ''
-        }
+    voices: {
+      type: Array,
+      default: null
     },
-    methods: {
-        openBackground(){
-            this.$modal.show('background')
-        },
-        background(bck){
-            console.log(bck)
-            this.$modal.hide('background')
-            this.$emit('background', bck)
-        },
-        onchange(event){
-            this.$emit('update:selectedvoice', event.target.value)
-        },
-        submit(submission){
-            if (submission.text && submission.text.length > 0){
-                this.$emit('submit', submission)
-            }
-        }
+    selectedvoice: {
+      type: String,
+      default: ''
     }
+  },
+  methods: {
+    openBackground() {
+      this.$modal.show('background')
+    },
+    background(bck) {
+      console.log(bck)
+      this.$modal.hide('background')
+      this.$emit('background', bck)
+    },
+    onchange(event) {
+      this.$emit('update:selectedvoice', event.target.value)
+    },
+    submit(submission) {
+      if (submission.text && submission.text.length > 0) {
+        this.$emit('submit', submission)
+      }
+    }
+  }
 }
 </script>
 <style lang="sass" scoped>
@@ -155,6 +155,4 @@ export default {
     a[href]
         color: var(--text-primary)
         text-decoration: none
-
 </style>
-

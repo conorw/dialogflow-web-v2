@@ -30,7 +30,6 @@
         <nav
           class="absolute z-50 md:relative top-16 left-0 md:top-0 z-20 md:flex flex-col md:flex-row md:space-x-6 font-semibold w-full md:w-auto bg-white shadow-md rounded-lg md:rounded-none md:shadow-none p-6 pt-0 md:p-0"
           :class="{ flex: mobileMenuOpen, hidden: !mobileMenuOpen }"
-          @click.away="mobileMenuOpen = false"
         >
           <div class="block py-1 text-indigo-600 hover:underline">
             <a href="/">Home</a>
@@ -418,10 +417,10 @@ export default {
         .then(response => {
           console.log(response)
           Vue.$toast.open({
-                  message: `RESPONSE: ${response.queryResult.fulfillmentText}`,
-                  type: 'success',
-                  duration: 2000
-                })
+            message: `RESPONSE: ${response.queryResult.fulfillmentText}`,
+            type: 'success',
+            duration: 2000
+          })
         })
         .catch(error => {
           this.error = error.message
@@ -429,7 +428,7 @@ export default {
     },
     createDataTree(dataset) {
       const hashTable = Object.create(null)
-      dataset.forEach(aData => (hashTable[aData.output || aData.id] = { ...aData, childNodes: [] }))
+      dataset.forEach(aData => hashTable[aData.output || aData.id] = { ...aData, childNodes: [] })
       const dataTree = []
       dataset.forEach(aData => {
         if (aData.parent) {

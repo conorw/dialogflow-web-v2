@@ -1,40 +1,45 @@
 <template>
-    <div class="rich-card" tabindex="0">
-        <img v-if="imageUri" class="rich-card-image" :src="imageUri" :alt="imageTitle || title">
-        <div class="rich-card-content">
-            <div v-if="title" class="rich-card-title">{{title}}</div>
-            <hr>
-            <div v-if="subtitle" class="rich-card-subtitle">{{subtitle}}</div>
-            <div v-if="text" class="rich-card-text">{{text}}</div>
-            <div :class="{'rich-card-actions': $slots.default}"><slot /></div>
-        </div>
+  <div class="rich-card" tabindex="0">
+    <img
+      v-if="imageUri"
+      class="rich-card-image"
+      :src="imageUri"
+      :alt="imageTitle || title"
+    />
+    <div class="rich-card-content">
+      <div v-if="title" class="rich-card-title">{{ title }}</div>
+      <hr />
+      <div v-if="subtitle" class="rich-card-subtitle">{{ subtitle }}</div>
+      <div v-if="text" class="rich-card-text">{{ text }}</div>
+      <div :class="{ 'rich-card-actions': $slots.default }"><slot /></div>
     </div>
+  </div>
 </template>
 <script>
 export default {
-    name: 'RichCard',
-    props: {
-        text: {
-            type: String,
-            default: null
-        },
-        imageUri: {
-            type: String,
-            default: null
-        },
-        imageTitle: {
-            type: String,
-            default: null
-        },
-        subtitle: {
-            type: String,
-            default: null
-        },
-        title: {
-            type: String,
-            default: null
-        }
+  name: 'RichCard',
+  props: {
+    text: {
+      type: String,
+      default: null
+    },
+    imageUri: {
+      type: String,
+      default: null
+    },
+    imageTitle: {
+      type: String,
+      default: null
+    },
+    subtitle: {
+      type: String,
+      default: null
+    },
+    title: {
+      type: String,
+      default: null
     }
+  }
 }
 </script>
 
@@ -85,6 +90,4 @@ export default {
 
 .rich-card-actions
     padding-top: 16px
-
 </style>
-

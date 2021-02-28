@@ -1,5 +1,7 @@
 <template>
-    <ul class="rich-carousel"><slot /></ul>
+  <ul class="rich-carousel">
+    <slot />
+  </ul>
 </template>
 
 <style lang="sass" scoped>
@@ -36,6 +38,6 @@
 
 <script>
 export default {
-    name: 'RichCarousel'
+  name: 'RichCarousel'
 }
 </script>

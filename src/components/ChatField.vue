@@ -3,10 +3,7 @@
     <div class="chat-field-container">
       <!-- Here are the suggestions -->
       <transition name="chat-field-suggestions-animation">
-        <div
-          v-if="query.length == 0"
-          class="chat-field-suggestions"
-        >
+        <div v-if="query.length == 0" class="chat-field-suggestions">
           <slot />
         </div>
       </transition>
@@ -36,9 +33,9 @@
           "
           @keydown="inputHandler"
           @focus="
-            microphone = false;
-            should_listen = false;
-            $emit('typing');
+            microphone = false
+            should_listen = false
+            $emit('typing')
           "
         />
         <!-- </transition> -->
@@ -59,10 +56,7 @@
           "
           @click="submit({ text: query })"
         >
-          <i
-            class="material-icons"
-            aria-hidden="true"
-          >arrow_upward</i>
+          <i class="material-icons" aria-hidden="true">arrow_upward</i>
         </button>
 
         <!-- Microphone Button -->
@@ -81,10 +75,7 @@
           :class="{ mic_active: microphone }"
           @click="microphone = !microphone"
         >
-          <i
-            class="material-icons"
-            aria-hidden="true"
-          >mic</i>
+          <i class="material-icons" aria-hidden="true">mic</i>
         </button>
         <!-- </transition> -->
       </div>
@@ -94,10 +85,7 @@
           class="top-head-button emoji"
           @click="toogleDialogEmoji"
         >
-          <i
-            class="material-icons"
-            aria-hidden="true"
-          >emoji_emotions</i>
+          <i class="material-icons" aria-hidden="true">emoji_emotions</i>
         </button>
         <button
           class="top-head-button gif"
@@ -105,10 +93,7 @@
           title="GIF"
           @click="openGiphy"
         >
-          <i
-            class="material-icons"
-            aria-hidden="true"
-          >gif</i>
+          <i class="material-icons" aria-hidden="true">gif</i>
         </button>
         <button
           class="top-head-button stickers"
@@ -116,9 +101,7 @@
           title="stickers"
           @click="openStickers"
         >
-          <img
-            src="/img/stickers.png"
-          >
+          <img src="/img/stickers.png" />
         </button>
         <span class="training-icons">
           <button
@@ -127,26 +110,17 @@
             class="top-head-button stop"
             @click="submit({ text: 'cancel' })"
           >
-            <i
-              class="material-icons"
-              aria-hidden="true"
-            >cancel</i>
+            <i class="material-icons" aria-hidden="true">cancel</i>
           </button>
         </span>
-        <span
-          v-if="training == true"
-          class="training-icons"
-        >
+        <span v-if="training == true" class="training-icons">
           <button
             class="top-head-button start"
             title="Start training"
             aria-label="Start training"
             @click="submit({ text: 'training' })"
           >
-            <i
-              class="material-icons"
-              aria-hidden="true"
-            >model_training</i>
+            <i class="material-icons" aria-hidden="true">model_training</i>
           </button>
           <button
             aria-label="Cancel"
@@ -154,24 +128,15 @@
             class="top-head-button stop"
             @click="submit({ text: 'cancel' })"
           >
-            <i
-              class="material-icons"
-              aria-hidden="true"
-            >cancel</i>
+            <i class="material-icons" aria-hidden="true">cancel</i>
           </button>
-          <a
-            href="/api/intents"
-            target="_blank"
-          >
+          <a href="/api/intents" target="_blank">
             <button
               class="top-head-button traininglist"
               title="View Training List"
               aria-label="View Training List"
             >
-              <i
-                class="material-icons"
-                aria-hidden="true"
-              >view_list</i>
+              <i class="material-icons" aria-hidden="true">view_list</i>
             </button>
           </a>
           <button
@@ -180,10 +145,7 @@
             title="Feedback"
             @click="submit({ text: 'feedback' })"
           >
-            <i
-              class="material-icons"
-              aria-hidden="true"
-            >feedback</i>
+            <i class="material-icons" aria-hidden="true">feedback</i>
           </button>
           <button
             class="top-head-button topics"
@@ -191,23 +153,13 @@
             title="Troubling Topics"
             @click="submit({ text: 'Add Troubling Topics' })"
           >
-            <i
-              class="material-icons"
-              aria-hidden="true"
-            >report</i>
+            <i class="material-icons" aria-hidden="true">report</i>
           </button>
         </span>
       </div>
     </div>
-    <modal
-      name="example"
-      height="auto"
-      width="80%"
-    >
-      <giphy-search
-        :api="getApi"
-        @select="select"
-      />
+    <modal name="example" height="auto" width="80%">
+      <giphy-search :api="getApi" @select="select" />
     </modal>
   </div>
 </template>
@@ -233,7 +185,7 @@ export default {
       default: true
     }
   },
-  data(){
+  data() {
     return {
       query: '',
       submissionText: '',
@@ -246,10 +198,10 @@ export default {
     }
   },
   computed: {
-    getApi(){
+    getApi() {
       return this.api
     },
-    microphone_supported(){
+    microphone_supported() {
       return (
         window.webkitSpeechRecognition ||
         window.SpeechRecognition ||
@@ -259,19 +211,19 @@ export default {
   },
   watch: {
     /* Toggle microphone */
-    microphone(activate){
-      if (activate){
+    microphone(activate) {
+      if (activate) {
         this.should_listen = true
         this.$emit('listening')
 
-        if (window.webkitSpeechRecognition || window.SpeechRecognition){
+        if (window.webkitSpeechRecognition || window.SpeechRecognition) {
           this.recognition =
             new window.webkitSpeechRecognition() ||
             new window.SpeechRecognition()
           this.recognition.interimResults = true
           this.recognition.lang = this.lang()
           this.recognition.onresult = event => {
-            for (let i = event.resultIndex; i < event.results.length; ++i){
+            for (let i = event.resultIndex; i < event.results.length; ++i) {
               this.query = event.results[i][0].transcript // <- push results to the Text input
             }
           }
@@ -284,74 +236,78 @@ export default {
 
           this.recognition.onerror = () => this.microphone = false
           this.recognition.start()
-        } else if (window.MediaRecorder){
+        } else if (window.MediaRecorder) {
           navigator.mediaDevices
-          .getUserMedia({ audio: true })
-          .then(stream => {
-            this.recorder = new window.MediaRecorder(stream)
-            this.recorder.addEventListener('dataavailable', recording => {
-              const reader = new FileReader()
-              reader.readAsDataURL(recording.data)
-              reader.onloadend = () => {
-                this.submit({
-                  audio: reader.result.replace(/^data:.+;base64,/, '')
-                })
-              }
-            })
+            .getUserMedia({ audio: true })
+            .then(stream => {
+              this.recorder = new window.MediaRecorder(stream)
+              this.recorder.addEventListener('dataavailable', recording => {
+                const reader = new FileReader()
+                reader.readAsDataURL(recording.data)
+                reader.onloadend = () => {
+                  this.submit({
+                    audio: reader.result.replace(/^data:.+;base64,/, '')
+                  })
+                }
+              })
 
-            hark(this.recorder.stream).on('stopped_speaking',
-              () => this.microphone = false) // <- Speech end detection
-            this.recorder.start()
-          })
-          .catch(() => this.microphone = false)
+              hark(this.recorder.stream).on('stopped_speaking',
+                () => this.microphone = false) // <- Speech end detection
+              this.recorder.start()
+            })
+            .catch(() => this.microphone = false)
         }
       } else if (this.recognition) this.recognition.abort()
       else if (this.recorder) this.recorder.stop()
     }
   },
-  mounted(){
+  mounted() {
     const vueRef = this
-    this.$nextTick(() => { vueRef.$refs.inputField.focus() })
+    this.$nextTick(() => {
+      vueRef.$refs.inputField.focus()
+    })
   },
   methods: {
-    openGiphy(){
+    openGiphy() {
       this.api = 'gifs'
       this.$modal.show('example')
     },
-    openStickers(){
+    openStickers() {
       this.api = 'stickers'
       this.$modal.show('example')
     },
-    select(gif){
+    select(gif) {
       this.$modal.hide('example')
-      this.submit({text: gif})
+      this.submit({ text: gif })
     },
-    inputHandler(e){
-      if (e.keyCode === 13 && !e.shiftKey){
+    inputHandler(e) {
+      if (e.keyCode === 13 && !e.shiftKey) {
         e.preventDefault()
         this.submit({ text: this.query })
       }
     },
-    toogleDialogEmoji(){
+    toogleDialogEmoji() {
       this.showDialog = !this.showDialog
     },
-    onSelectEmoji(emoji){
+    onSelectEmoji(emoji) {
       this.query += emoji.data
       // Optional
       this.toogleDialogEmoji()
     },
-    listen(){
+    listen() {
       if (this.should_listen) this.microphone = true
     },
-    submit(submission){
+    submit(submission) {
       const vueRef = this
-      if (submission.text && submission.text.length > 0){
+      if (submission.text && submission.text.length > 0) {
         this.submissionText = submission.text
         vueRef.$emit('submit', submission)
         vueRef.query = ''
         vueRef.showDialog = false
       } else if (submission.audio) vueRef.$emit('submit', submission)
-      this.$nextTick(() => { vueRef.$refs.inputField.focus() })
+      this.$nextTick(() => {
+        vueRef.$refs.inputField.focus()
+      })
     }
   }
 }

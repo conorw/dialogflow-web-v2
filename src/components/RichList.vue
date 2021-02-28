@@ -1,9 +1,11 @@
 <template>
-    <div class="rich-list">
-        <div v-if="title" class="rich-list-title">{{title}}</div>
-        <div v-if="subtitle" class="rich-list-subtitle">Subtitle</div>
-        <ul :aria-label="title" class="rich-list-content"><slot /></ul>
-    </div>
+  <div class="rich-list">
+    <div v-if="title" class="rich-list-title">{{ title }}</div>
+    <div v-if="subtitle" class="rich-list-subtitle">Subtitle</div>
+    <ul :aria-label="title" class="rich-list-content">
+      <slot />
+    </ul>
+  </div>
 </template>
 
 <style lang="sass" scoped>
@@ -30,16 +32,16 @@
 
 <script>
 export default {
-    name: 'RichList',
-    props: {
-        title: {
-            type: String,
-            default: null
-        },
-        subtitle: {
-            type: String,
-            default: null
-        }
+  name: 'RichList',
+  props: {
+    title: {
+      type: String,
+      default: null
+    },
+    subtitle: {
+      type: String,
+      default: null
     }
+  }
 }
 </script>

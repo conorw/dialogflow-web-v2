@@ -1,16 +1,22 @@
 <template>
-    <li class="rich-list-item" tabindex="0">
-        <a
-            class="rich-list-item-content"
-            target="_blank"
-            rel="noopener noreferrer"
-            :href="uri">
-            <div class="rich-list-item-title">{{title}}</div>
-            <span class="rich-list-item-description">{{description}}</span>
-            <span class="rich-list-item-footer">{{footer}}</span>
-        </a>
-        <img v-if="imageUri" class="rich-list-item-image" :src="imageUri" :alt="imageTitle">
-    </li>
+  <li class="rich-list-item" tabindex="0">
+    <a
+      class="rich-list-item-content"
+      target="_blank"
+      rel="noopener noreferrer"
+      :href="uri"
+    >
+      <div class="rich-list-item-title">{{ title }}</div>
+      <span class="rich-list-item-description">{{ description }}</span>
+      <span class="rich-list-item-footer">{{ footer }}</span>
+    </a>
+    <img
+      v-if="imageUri"
+      class="rich-list-item-image"
+      :src="imageUri"
+      :alt="imageTitle"
+    />
+  </li>
 </template>
 
 <style lang="sass" scoped>
@@ -60,32 +66,32 @@
 
 <script>
 export default {
-    name: 'RichListItem',
-    props: {
-        imageUri: {
-            type: String,
-            default: null
-        },
-        imageTitle: {
-            type: String,
-            default: null
-        },
-        title: {
-            type: String,
-            default: null
-        },
-        description: {
-            type: String,
-            default: null
-        },
-        footer: {
-            type: String,
-            default: null
-        },
-        uri: {
-            type: String,
-            default: null
-        }
+  name: 'RichListItem',
+  props: {
+    imageUri: {
+      type: String,
+      default: null
+    },
+    imageTitle: {
+      type: String,
+      default: null
+    },
+    title: {
+      type: String,
+      default: null
+    },
+    description: {
+      type: String,
+      default: null
+    },
+    footer: {
+      type: String,
+      default: null
+    },
+    uri: {
+      type: String,
+      default: null
     }
+  }
 }
 </script>

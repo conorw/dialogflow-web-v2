@@ -1,14 +1,21 @@
 <template>
-    <div class="rich-media">
-        <div class="rich-media-head">
-            <div class="rich-media-info">
-                <div v-if="name" class="rich-media-title">{{name}}</div>
-                <div v-if="description" class="rich-media-subtitle">{{description}}</div>
-            </div>
-            <img v-if="iconUri" class="rich-media-image" :src="iconUri" :alt="iconTitle">
+  <div class="rich-media">
+    <div class="rich-media-head">
+      <div class="rich-media-info">
+        <div v-if="name" class="rich-media-title">{{ name }}</div>
+        <div v-if="description" class="rich-media-subtitle">
+          {{ description }}
         </div>
-        <audio class="rich-media-controls" controls :src="uri" />
+      </div>
+      <img
+        v-if="iconUri"
+        class="rich-media-image"
+        :src="iconUri"
+        :alt="iconTitle"
+      />
     </div>
+    <audio class="rich-media-controls" controls :src="uri" />
+  </div>
 </template>
 
 <style lang="sass" scoped>
@@ -51,28 +58,28 @@
 
 <script>
 export default {
-    name: 'RichMedia',
-    props: {
-        name: {
-            type: String,
-            default: null
-        },
-        description: {
-            type: String,
-            default: null
-        },
-        iconUri: {
-            type: String,
-            default: null
-        },
-        iconTitle: {
-            type: String,
-            default: null
-        },
-        uri: {
-            type: String,
-            default: null
-        }
+  name: 'RichMedia',
+  props: {
+    name: {
+      type: String,
+      default: null
+    },
+    description: {
+      type: String,
+      default: null
+    },
+    iconUri: {
+      type: String,
+      default: null
+    },
+    iconTitle: {
+      type: String,
+      default: null
+    },
+    uri: {
+      type: String,
+      default: null
     }
+  }
 }
 </script>

@@ -1,24 +1,35 @@
 <template>
-    <div class="rich-table-card">
-        <div class="rich-table-card-head">
-            <div class="rich-table-info">
-                <div v-if="title" class="rich-table-card-title">{{title}}</div>
-                <div v-if="subtitle" class="rich-table-card-subtitle">{{subtitle}}</div>
-            </div>
-            <img v-if="imageUri" class="rich-table-card-image" :src="imageUri" :alt="imageTitle">
+  <div class="rich-table-card">
+    <div class="rich-table-card-head">
+      <div class="rich-table-info">
+        <div v-if="title" class="rich-table-card-title">{{ title }}</div>
+        <div v-if="subtitle" class="rich-table-card-subtitle">
+          {{ subtitle }}
         </div>
-        <div class="rich-table-card-scrollable">
-            <table class="rich-table-card-table" cellspacing="0" cellpadding="0">
-                <tr>
-                    <th v-for="(head, head_id) in header" :key="head_id">{{head.header}}</th>
-                </tr>
-                <tr v-for="(row, row_id) in rows" :key="row_id">
-                    <td v-for="(cell, cell_id) in row.cells" :key="cell_id">{{cell.text}}</td>
-                </tr>
-            </table>
-        </div>
-        <div :class="{'rich-table-actions': $slots.default}"><slot /></div>
+      </div>
+      <img
+        v-if="imageUri"
+        class="rich-table-card-image"
+        :src="imageUri"
+        :alt="imageTitle"
+      />
     </div>
+    <div class="rich-table-card-scrollable">
+      <table class="rich-table-card-table" cellspacing="0" cellpadding="0">
+        <tr>
+          <th v-for="(head, head_id) in header" :key="head_id">
+            {{ head.header }}
+          </th>
+        </tr>
+        <tr v-for="(row, row_id) in rows" :key="row_id">
+          <td v-for="(cell, cell_id) in row.cells" :key="cell_id">
+            {{ cell.text }}
+          </td>
+        </tr>
+      </table>
+    </div>
+    <div :class="{ 'rich-table-actions': $slots.default }"><slot /></div>
+  </div>
 </template>
 
 <style lang="sass" scoped>
@@ -89,32 +100,32 @@
 
 <script>
 export default {
-    name: 'RichTableCard',
-    props: {
-        title: {
-            type: String,
-            default: null
-        },
-        subtitle: {
-            type: String,
-            default: null
-        },
-        imageUri: {
-            type: String,
-            default: null
-        },
-        imageTitle: {
-            type: String,
-            default: null
-        },
-        header: {
-            type: Array,
-            default: null
-        },
-        rows: {
-            type: Array,
-            default: null
-        }
+  name: 'RichTableCard',
+  props: {
+    title: {
+      type: String,
+      default: null
+    },
+    subtitle: {
+      type: String,
+      default: null
+    },
+    imageUri: {
+      type: String,
+      default: null
+    },
+    imageTitle: {
+      type: String,
+      default: null
+    },
+    header: {
+      type: Array,
+      default: null
+    },
+    rows: {
+      type: Array,
+      default: null
     }
+  }
 }
 </script>

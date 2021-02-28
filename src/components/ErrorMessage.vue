@@ -1,8 +1,8 @@
 <template>
-    <div class="error-message">
-        <i class="material-icons error-message-icon" aria-hidden="true">error</i>
-        <div class="error-message-description">{{message}}</div>
-    </div>
+  <div class="error-message">
+    <i class="material-icons error-message-icon" aria-hidden="true">error</i>
+    <div class="error-message-description">{{ message }}</div>
+  </div>
 </template>
 
 <style lang="sass" scoped>
@@ -22,12 +22,12 @@
 
 <script>
 export default {
-    name: 'ErrorMessage',
-    props: {
-        message: {
-            type: String,
-            default: null
-        }
+  name: 'ErrorMessage',
+  props: {
+    message: {
+      type: String,
+      default: null
     }
+  }
 }
 </script>

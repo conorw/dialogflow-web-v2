@@ -6,30 +6,24 @@ import { search } from './search'
 export const agentsClient = new dialogflow.AgentsClient({
   credentials: {
     // <-- Initialize with service account
-    private_key: process.env.SERVICE_ACCOUNT_PRIVATE_KEY!.replace(
-      /\\n/gm,
-      '\n'
-    ),
+    private_key: process.env.SERVICE_ACCOUNT_PRIVATE_KEY!.replace(/\\n/gm,
+      '\n'),
     client_email: process.env.SERVICE_ACCOUNT_EMAIL!
   }
 })
 export const intentClient = new dialogflow.IntentsClient({
   credentials: {
     // <-- Initialize with service account
-    private_key: process.env.SERVICE_ACCOUNT_PRIVATE_KEY!.replace(
-      /\\n/gm,
-      '\n'
-    ),
+    private_key: process.env.SERVICE_ACCOUNT_PRIVATE_KEY!.replace(/\\n/gm,
+      '\n'),
     client_email: process.env.SERVICE_ACCOUNT_EMAIL!
   }
 })
 export const entityClient = new dialogflow.EntityTypesClient({
   credentials: {
     // <-- Initialize with service account
-    private_key: process.env.SERVICE_ACCOUNT_PRIVATE_KEY!.replace(
-      /\\n/gm,
-      '\n'
-    ),
+    private_key: process.env.SERVICE_ACCOUNT_PRIVATE_KEY!.replace(/\\n/gm,
+      '\n'),
     client_email: process.env.SERVICE_ACCOUNT_EMAIL
   }
 })
@@ -37,10 +31,8 @@ export const entityClient = new dialogflow.EntityTypesClient({
 export const sessionClient = new dialogflow.SessionsClient({
   credentials: {
     // <-- Initialize with service account
-    private_key: process.env.SERVICE_ACCOUNT_PRIVATE_KEY!.replace(
-      /\\n/gm,
-      '\n'
-    ),
+    private_key: process.env.SERVICE_ACCOUNT_PRIVATE_KEY!.replace(/\\n/gm,
+      '\n'),
     client_email: process.env.SERVICE_ACCOUNT_EMAIL
   }
 })
@@ -49,10 +41,8 @@ export const sessionClient = new dialogflow.SessionsClient({
 export const conextClient = new dialogflow.ContextsClient({
   credentials: {
     // <-- Initialize with service account
-    private_key: process.env.SERVICE_ACCOUNT_PRIVATE_KEY!.replace(
-      /\\n/gm,
-      '\n'
-    ),
+    private_key: process.env.SERVICE_ACCOUNT_PRIVATE_KEY!.replace(/\\n/gm,
+      '\n'),
     client_email: process.env.SERVICE_ACCOUNT_EMAIL
   }
 })
@@ -67,14 +57,10 @@ const trainingCategories = [
 
 const FOLLOWUP_PARENT = 'parent-intent'
 
-export const findAllIntents = async (
-  intentView:
+export const findAllIntents = async (intentView:
     | 'INTENT_VIEW_FULL'
-    | 'INTENT_VIEW_UNSPECIFIED' = 'INTENT_VIEW_FULL'
-) => {
-  let parent = intentClient.projectPath(
-    process.env.PERSONALITY_ACCOUNT_PROJECT_ID!
-  )
+    | 'INTENT_VIEW_UNSPECIFIED' = 'INTENT_VIEW_FULL') => {
+  let parent = intentClient.projectPath(process.env.PERSONALITY_ACCOUNT_PROJECT_ID!)
   parent = `${parent}/agent`
   const ret = await intentClient.listIntents({ parent, intentView })
   return ret
@@ -105,9 +91,7 @@ export const findIntent = async (intentDisplayName: string) => {
   return intent
 }
 export const findEntity = async (entityName: string) => {
-  let parent = entityClient.projectPath(
-    process.env.TRAINING_ACCOUNT_PROJECT_ID!
-  )
+  let parent = entityClient.projectPath(process.env.TRAINING_ACCOUNT_PROJECT_ID!)
   parent = `${parent}/agent`
   const entities = await entityClient.listEntityTypes({ parent })
   let entity
@@ -126,14 +110,12 @@ export const findEntity = async (entityName: string) => {
   }
   return entity
 }
-export const updateIntent = async (
-  intent: dialogflow.protos.google.cloud.dialogflow.v2.IIntent,
+export const updateIntent = async (intent: dialogflow.protos.google.cloud.dialogflow.v2.IIntent,
   displayName: string,
   questions: string[],
   answer: string[],
   parent: string = '',
-  override: boolean = false
-) => {
+  override: boolean = false) => {
   // let parent = intentClient.projectPath(process.env.PERSONALITY_ACCOUNT_PROJECT_ID)
   // parent = `${parent}/agent`
   // console.log(parent)
@@ -167,9 +149,7 @@ export const updateIntent = async (
     if (msg) {
       answer.forEach(ans => {
         if (
-          !msg!.text!.text!.find(
-            t => t.toLocaleLowerCase() === ans.toLowerCase()
-          )
+          !msg!.text!.text!.find(t => t.toLocaleLowerCase() === ans.toLowerCase())
         ) {
           console.log('pusing new response', { ans })
           msg!.text!.text!.push(...ans)
@@ -191,11 +171,7 @@ export const updateIntent = async (
         question
       })
       if (
-        !intent.trainingPhrases!.find(t =>
-          t.parts!.find(
-            t => t.text!.toLocaleLowerCase() === question.toLowerCase()
-          )
-        )
+        !intent.trainingPhrases!.find(t => t.parts!.find(t => t.text!.toLocaleLowerCase() === question.toLowerCase()))
       ) {
         console.log('Adding question', { question })
         intent.trainingPhrases!.push({ parts: [{ text: question }] })
@@ -203,24 +179,18 @@ export const updateIntent = async (
     })
   } else {
     // console.log('no phrases', {intent})
-    intent.trainingPhrases!.push(
-      ...questions.map(t => {
+    intent.trainingPhrases!.push(...questions.map(t => {
         return { parts: [{ text: t }] }
-      })
-    )
+      }))
   }
   const newintent = await intentClient.updateIntent({ intent })
   return newintent
 }
-export const createIntent = async (
-  displayName: string,
+export const createIntent = async (displayName: string,
   questions: string[],
   answer: string[],
-  inputContext?: string
-) => {
-  let parent = intentClient.projectPath(
-    process.env.PERSONALITY_ACCOUNT_PROJECT_ID!
-  )
+  inputContext?: string) => {
+  let parent = intentClient.projectPath(process.env.PERSONALITY_ACCOUNT_PROJECT_ID!)
   parent = `${parent}/agent`
   if (inputContext) {
     inputContext.startsWith(`${parent}/sessions/-/contexts)`)
@@ -248,10 +218,8 @@ export const createIntent = async (
               response: { stringValue: answer[0] }
             }
           },
-          name: `${parent}/sessions/-/contexts/${displayName.replace(
-            /\./gi,
-            '-'
-          )}`
+          name: `${parent}/sessions/-/contexts/${displayName.replace(/\./gi,
+            '-')}`
         }
       ],
       trainingPhrases: questions.map(t => {
@@ -263,9 +231,7 @@ export const createIntent = async (
   // console.log(newintent)
   return newintent
 }
-export const handleTrainingIntent = async (
-  intentresponse: dialogflow.protos.google.cloud.dialogflow.v2.IDetectIntentResponse
-) => {
+export const handleTrainingIntent = async (intentresponse: dialogflow.protos.google.cloud.dialogflow.v2.IDetectIntentResponse) => {
   console.log('TRAINING!!!')
 
   if (
@@ -358,19 +324,15 @@ If a suitable option is not available below, just type a new name`
         console.log('Create new intent')
         await createIntent(combinedName, [question1], [answer])
       }
-      await updateParentContext(
-        intentresponse.queryResult!.outputContexts!,
+      await updateParentContext(intentresponse.queryResult!.outputContexts!,
         combinedName,
         question1,
-        answer
-      )
+        answer)
     }
   }
   return intentresponse
 }
-export const handleTrainingFollowUpIntent = async (
-  intentresponse: dialogflow.protos.google.cloud.dialogflow.v2.IDetectIntentResponse
-) => {
+export const handleTrainingFollowUpIntent = async (intentresponse: dialogflow.protos.google.cloud.dialogflow.v2.IDetectIntentResponse) => {
   // console.log('TRAINING FOLLOWUP!!!', intentresponse)
 
   if (
@@ -378,9 +340,7 @@ export const handleTrainingFollowUpIntent = async (
     intentresponse.queryResult!.allRequiredParamsPresent
   ) {
     const params = intentresponse.queryResult!.parameters.fields
-    const parentContext = intentresponse.queryResult!.outputContexts!.find(t =>
-      t.name!.toLowerCase().includes(FOLLOWUP_PARENT)
-    )
+    const parentContext = intentresponse.queryResult!.outputContexts!.find(t => t.name!.toLowerCase().includes(FOLLOWUP_PARENT))
     // const newContext = intentresponse.queryResult.outputContexts.find(t => t.name.toLowerCase().includes(FOLLOWUP_CONTEXT))
 
     console.log('CONTEXTS', { parentContext })
@@ -430,20 +390,16 @@ export const handleTrainingFollowUpIntent = async (
       }
       // intentresponse.queryResult.outputContexts = intentresponse.queryResult.outputContexts.filter(t => !t.name.toLowerCase().includes(FOLLOWUP_PARENT))
       // intentresponse.queryResult.outputContexts.push(parentContext)
-      await updateParentContext(
-        intentresponse.queryResult!.outputContexts!,
+      await updateParentContext(intentresponse.queryResult!.outputContexts!,
         combinedName,
         question1,
-        answer
-      )
+        answer)
     }
   }
   return intentresponse
 }
 
-export const getFormattedFulfillment = (
-  intentresponse: dialogflow.protos.google.cloud.dialogflow.v2.IDetectIntentResponse
-) => {
+export const getFormattedFulfillment = (intentresponse: dialogflow.protos.google.cloud.dialogflow.v2.IDetectIntentResponse) => {
   const fulfillment = intentresponse.queryResult!.fulfillmentMessages
 
   if (!fulfillment) {
@@ -598,9 +554,7 @@ export const getFormattedFulfillment = (
   return fulfillment
 }
 
-export const handleFeedbackIntent = async (
-  intentresponse: dialogflow.protos.google.cloud.dialogflow.v2.IDetectIntentResponse
-) => {
+export const handleFeedbackIntent = async (intentresponse: dialogflow.protos.google.cloud.dialogflow.v2.IDetectIntentResponse) => {
   if (
     intentresponse.queryResult &&
     intentresponse.queryResult!.parameters &&
@@ -617,10 +571,8 @@ export const handleFeedbackIntent = async (
   }
   return intentresponse
 }
-export const setFallbackFailure = (
-  intentresponse: dialogflow.protos.google.cloud.dialogflow.v2.IDetectIntentResponse,
-  count: number
-) => {
+export const setFallbackFailure = (intentresponse: dialogflow.protos.google.cloud.dialogflow.v2.IDetectIntentResponse,
+  count: number) => {
   if (
     intentresponse.queryResult &&
     intentresponse.queryResult.outputContexts &&
@@ -645,9 +597,7 @@ export const setFallbackFailure = (
   }
   return false
 }
-export const handleFallbackIntent = async (
-  intentresponse: dialogflow.protos.google.cloud.dialogflow.v2.IDetectIntentResponse
-) => {
+export const handleFallbackIntent = async (intentresponse: dialogflow.protos.google.cloud.dialogflow.v2.IDetectIntentResponse) => {
   if (
     intentresponse.queryResult &&
     intentresponse.queryResult.outputContexts &&
@@ -674,11 +624,9 @@ export const handleFallbackIntent = async (
       } else if (count > 3) {
         const fallbackMsg = `Sorry.\n
             I still dont know how to reply so I have searched the internet for the term "${intentresponse.queryResult.queryText}"..\n`
-        intentresponse = await addSearchToResponse(
-          intentresponse.queryResult.queryText!,
+        intentresponse = await addSearchToResponse(intentresponse.queryResult.queryText!,
           intentresponse,
-          fallbackMsg
-        )
+          fallbackMsg)
         await setFallbackFailure(intentresponse, 0)
       } else {
         await setFallbackFailure(intentresponse, count)
@@ -687,9 +635,7 @@ export const handleFallbackIntent = async (
   }
   return intentresponse
 }
-export const handleTopicIntent = async (
-  intentresponse: dialogflow.protos.google.cloud.dialogflow.v2.IDetectIntentResponse
-) => {
+export const handleTopicIntent = async (intentresponse: dialogflow.protos.google.cloud.dialogflow.v2.IDetectIntentResponse) => {
   if (
     intentresponse.queryResult &&
     intentresponse.queryResult.parameters &&
@@ -704,16 +650,12 @@ export const handleTopicIntent = async (
   }
   return intentresponse
 }
-export const updateParentContext = async (
-  contexts: dialogflow.protos.google.cloud.dialogflow.v2.IContext[],
+export const updateParentContext = async (contexts: dialogflow.protos.google.cloud.dialogflow.v2.IContext[],
   combinedName: string,
   question1: string,
-  answer: string
-) => {
+  answer: string) => {
   try {
-    const parentContext = contexts.find(t =>
-      t.name!.toLowerCase().includes(FOLLOWUP_PARENT)
-    )
+    const parentContext = contexts.find(t => t.name!.toLowerCase().includes(FOLLOWUP_PARENT))
     if (parentContext && parentContext.parameters) {
       parentContext.parameters.fields = {
         ...parentContext.parameters.fields,
@@ -728,9 +670,7 @@ export const updateParentContext = async (
     console.log(error)
   }
 }
-export const handleSearchIntent = async (
-  intentresponse: dialogflow.protos.google.cloud.dialogflow.v2.IDetectIntentResponse
-) => {
+export const handleSearchIntent = async (intentresponse: dialogflow.protos.google.cloud.dialogflow.v2.IDetectIntentResponse) => {
   console.log('SEARCH!!!')
 
   if (
@@ -747,18 +687,14 @@ export const handleSearchIntent = async (
     if (q) {
       console.log('Searching web')
       // eslint-disable-next-line no-param-reassign
-      intentresponse = await addSearchToResponse(
-        q,
+      intentresponse = await addSearchToResponse(q,
         intentresponse,
-        'Search Result'
-      )
+        'Search Result')
     }
   }
   return intentresponse
 }
-export const handleHelpIntent = async (
-  intentresponse: dialogflow.protos.google.cloud.dialogflow.v2.IDetectIntentResponse
-) => {
+export const handleHelpIntent = async (intentresponse: dialogflow.protos.google.cloud.dialogflow.v2.IDetectIntentResponse) => {
   if (
     intentresponse.queryResult &&
     intentresponse.queryResult.parameters &&
@@ -779,23 +715,19 @@ export const handleHelpIntent = async (
     if (topics) {
       console.log('Lookup help', { topics, resource, topicList: params.topic.listValue?.values })
       // eslint-disable-next-line no-param-reassign
-      intentresponse = await addHelpToResponse(
-        intentresponse,
+      intentresponse = await addHelpToResponse(intentresponse,
         topics,
-        resource || ''
-      )
+        resource || '')
     }
   }
   return intentresponse
 }
-const addSearchToResponse = async (
-  q: string,
+const addSearchToResponse = async (q: string,
   intentresponse: any,
-  title?: string
-) => {
+  title?: string) => {
   const searchResult = await search(q)
   if (searchResult) {
-    const buttons = []
+    const buttons: any = []
     if (searchResult.AbstractURL) {
       buttons.push({
         title: `View on ${searchResult.AbstractSource}`,
@@ -846,17 +778,14 @@ const addSearchToResponse = async (
   }
   return intentresponse
 }
-const addHelpToResponse = async (
-  intentresponse: any,
+const addHelpToResponse = async (intentresponse: any,
   topics: string[],
-  resource?: string
-) => {
+  resource?: string) => {
   console.log('Getting resources', { topics, resource })
   const resources = await getTopicResources(topics)
   if (resources && resources.length) {
-    intentresponse.queryResult.fulfillmentMessages = resources.map(
-      searchResult => {
-        const buttons = []
+    intentresponse.queryResult.fulfillmentMessages = resources.map(searchResult => {
+        const buttons: any = []
         if (searchResult.resource_link) {
           buttons.push({
             title: 'Open Website',
@@ -892,8 +821,7 @@ const addHelpToResponse = async (
             buttons
           }
         }
-      }
-    )
+      })
   }
   return intentresponse
 }
@@ -938,7 +866,7 @@ export const getAgentJSON = async (): Promise<JSONIntent[]> => {
   })
 }
 export const updateSingleIntent = async (intent: JSONIntent) => {
-  let existing = null
+  let existing: any = null
   console.log(intent)
   if (intent.id && !intent.id.toLowerCase().startsWith('new:')) {
     existing = await findIntentById(intent.id)
@@ -953,40 +881,32 @@ export const updateSingleIntent = async (intent: JSONIntent) => {
 
   if (!existing) {
     console.log('CREATING INTENT')
-    const newIntent = await createIntent(
-      intent.intent_name,
+    const newIntent = await createIntent(intent.intent_name,
       intent.user_says,
       intent.bot_says,
-      intent.parent
-    )
+      intent.parent)
     console.log('New intent', { newIntent })
     // add the id to the table
     intent = { ...intent, id: newIntent[0].name || '' }
   } else {
     console.log('UPDATING INTENT')
     // otherwise update existing with details
-    await updateIntent(
-      existing,
+    await updateIntent(existing,
       intent.intent_name,
       intent.user_says,
       intent.bot_says,
       intent.parent,
-      true
-    )
+      true)
   }
   return intent
 }
 export const updateAllIntents = (sorted: JSONIntent[]) => {
-  return Promise.all(
-    sorted.map(intent => {
+  return Promise.all(sorted.map(intent => {
       // see if intent exists, if not add it
       return updateSingleIntent(intent)
-    })
-  )
+    }))
 }
-export const handleTrainingIntentList = (
-  intentresponse: dialogflow.protos.google.cloud.dialogflow.v2.IDetectIntentResponse
-) => {
+export const handleTrainingIntentList = (intentresponse: dialogflow.protos.google.cloud.dialogflow.v2.IDetectIntentResponse) => {
   const newFulfillment: any = [
     {
       platform: 'ACTIONS_ON_GOOGLE',

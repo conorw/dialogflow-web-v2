@@ -1,10 +1,7 @@
 <template>
-    <button
-        class="top-head-action"
-        :title="title"
-        :aria-label="title">
-        <i aria-hidden="true" class="material-icons">{{icon}}</i>
-    </button>
+  <button class="top-head-action" :title="title" :aria-label="title">
+    <i aria-hidden="true" class="material-icons">{{ icon }}</i>
+  </button>
 </template>
 
 <style lang="sass" scoped>
@@ -28,16 +25,16 @@
 
 <script>
 export default {
-    name: 'TopHeadAction',
-    props: {
-        title: {
-            type: String,
-            default: ''
-        },
-        icon: {
-            type: String,
-            default: ''
-        }
+  name: 'TopHeadAction',
+  props: {
+    title: {
+      type: String,
+      default: ''
+    },
+    icon: {
+      type: String,
+      default: ''
     }
+  }
 }
 </script>

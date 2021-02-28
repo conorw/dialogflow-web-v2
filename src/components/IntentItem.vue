@@ -1,11 +1,17 @@
 <template>
-  <div class="bg-yellow-100 border-l-4 border-indigo-400 rounded px-1 my-2" :class="intent.dirty ? 'dirty' : ''">
+  <div
+    class="bg-yellow-100 border-l-4 border-indigo-400 rounded px-1 my-2"
+    :class="intent.dirty ? 'dirty' : ''"
+  >
     <div>
       <div style="display:flex; justify-content: space-between;">
         <span @click="() => (intent.edit = !intent.edit)">
-          <h2><i class="material-icons" aria-hidden="true">{{
-            intent.edit ? 'expand_less' : 'expand_more'
-          }}</i>{{ intent.intent_name }}</h2>
+          <h2>
+            <i class="material-icons" aria-hidden="true">{{
+              intent.edit ? 'expand_less' : 'expand_more'
+            }}</i
+            >{{ intent.intent_name }}
+          </h2>
         </span>
         <div>
           <button
@@ -82,7 +88,7 @@ export default {
     expandCollapseAll() {
       this.intent.edit = !this.intent.edit
       if (this.intent.childNodes) {
-        this.intent.childNodes.forEach(t => (t.edit = this.intent.edit))
+        this.intent.childNodes.forEach(t => t.edit = this.intent.edit)
       }
     }
   }

@@ -2,7 +2,7 @@
   <div class="container mx-auto">
     <header class="p-4 shadow-sm">
       <a @click="$router.go(-1)"
-        ><div class="inline-block text-lg"><h1>< Back</h1></div></a
+        ><div class="inline-block text-lg"><h1>&lt; Back</h1></div></a
       >
     </header>
     <tabs>
@@ -44,7 +44,7 @@
           </div>
           <p>Know an organisation or group that should be listed here?</p>
           <a href="/#/?mode=feedback">
-              Suggest a resource
+            Suggest a resource
           </a>
         </div>
       </tab>
@@ -65,9 +65,10 @@
                 </h2>
                 <div
                   v-for="resource in topic.resources"
-                  v-bind:key="resource.name" class="font-light text-sm text-gray-700 "
+                  v-bind:key="resource.name"
+                  class="font-light text-sm text-gray-700 "
                 >
-                {{resource.name}}
+                  {{ resource.name }}
                   <div v-if="resource.tel">
                     <a :href="resource.tel">Call Now</a>
                   </div>
@@ -126,8 +127,11 @@ export default {
             .map(s => s.topic)
         }
       })
-    this.topicList = [...new Set(this.topics.map(t=>t.topic))].map(r=>{
-      return {topic: r, resources: this.resources.filter(s=>s.topics.find(q=>q===r))}
+    this.topicList = [...new Set(this.topics.map(t => t.topic))].map(r => {
+      return {
+        topic: r,
+        resources: this.resources.filter(s => s.topics.find(q => q === r))
+      }
     })
     // console.log(this.topicList)
     // console.log(this.resources)
@@ -145,5 +149,4 @@ export default {
   }
 }
 </script>
-<style>
-</style>
+<style></style>

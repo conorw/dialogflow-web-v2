@@ -1,5 +1,5 @@
 <template lang="html">
-  <div class='tab' v-show='isActive'>
+  <div class="tab" v-show="isActive">
     <slot></slot>
   </div>
 </template>
@@ -12,7 +12,7 @@ export default {
       default: 'Tab'
     }
   },
-  data () {
+  data() {
     return {
       isActive: true
     }
@@ -20,6 +20,4 @@ export default {
 }
 </script>
 
-<style lang="css">
-  
-</style>
+<style lang="css"></style>

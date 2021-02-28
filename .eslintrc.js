@@ -5,18 +5,9 @@ module.exports = {
   },
   extends: [
     'plugin:vue/essential',
-    'plugin:prettier/recommended',
     'eslint:recommended'
   ],
   rules: {
-    'prettier/prettier': [
-      'warn',
-      {
-        singleQuote: true,
-        semi: false,
-        trailingComma: 'none'
-      }
-    ],
     'no-console': process.env.NODE_ENV === 'production' ? 'error' : 'off',
     'no-debugger': process.env.NODE_ENV === 'production' ? 'error' : 'off',
     'linebreak-style': 0,

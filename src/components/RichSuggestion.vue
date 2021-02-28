@@ -8,26 +8,23 @@
   >
     {{ title }}
   </a>
-  <button
-    v-else
-    class="rich-suggestion"
-  >
+  <button v-else class="rich-suggestion">
     {{ title }}
   </button>
 </template>
 <script>
 export default {
-    name: 'RichSuggestion',
-    props: {
-        uri: {
-            type: String,
-            default: null
-        },
-        title: {
-            type: String,
-            default: null
-        }
+  name: 'RichSuggestion',
+  props: {
+    uri: {
+      type: String,
+      default: null
+    },
+    title: {
+      type: String,
+      default: null
     }
+  }
 }
 </script>
 
@@ -51,4 +48,3 @@ export default {
         text-decoration: none
         border: var(--border)
 </style>
-

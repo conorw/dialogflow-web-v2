@@ -1,8 +1,15 @@
 <template>
-    <a class="rich-card-button" target="_blank" rel="noopener noreferrer" :href="uri">
-        <i class="material-icons rich-card-button-icon" aria-hidden="true">{{uri ? 'arrow_forward' : 'reply'}}</i>
-        <span class="rich-card-button-title">{{title}}</span>
-    </a>
+  <a
+    class="rich-card-button"
+    target="_blank"
+    rel="noopener noreferrer"
+    :href="uri"
+  >
+    <i class="material-icons rich-card-button-icon" aria-hidden="true">{{
+      uri ? 'arrow_forward' : 'reply'
+    }}</i>
+    <span class="rich-card-button-title">{{ title }}</span>
+  </a>
 </template>
 
 <style lang="sass" scoped>
@@ -27,16 +34,16 @@
 
 <script>
 export default {
-    name: 'RichCardButton',
-    props: {
-        uri: {
-            type: String,
-            default: null
-        },
-        title: {
-            type: String,
-            default: null
-        }
+  name: 'RichCardButton',
+  props: {
+    uri: {
+      type: String,
+      default: null
+    },
+    title: {
+      type: String,
+      default: null
     }
+  }
 }
 </script>

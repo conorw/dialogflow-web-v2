@@ -34,7 +34,7 @@ export const saveProgress = async (progress: any) => {
         {
           'fields': progress
         }
-      ]) 
+      ])
     }
   } catch (error){
     console.log(error)
@@ -76,7 +76,7 @@ export const getBotResponses = async (bot: string) => {
   try {
     const filter = `{bot}="${bot}"`
     const exists = await base('responses').select({ filterByFormula: filter }).all()
-    return exists.map(t => t.fields)
+    return exists.map((t: any) => t.fields)
   } catch (error){
     console.log(error)
   }
@@ -118,7 +118,7 @@ export const getBotUnknowns = async () => {
   try {
     const filter = `AND({bot}="${process.env.SERVICE_ACCOUNT_PROJECT_ID}",{completed}=0)`
     const exists = await base('unknowns').select({ filterByFormula: filter }).all()
-    return exists.map(t => {
+    return exists.map((t: any) => {
       return {...t.fields, id: t.id}
     })
   } catch (error){
@@ -141,7 +141,7 @@ export const updateBotResponses = async (intents: JSONIntent[]) => {
     // remove all current responses for the bot
     await removeBotResponses(bot)
     console.log('Removed bot responses')
-    await Promise.all(chunk(intents, 10).map(t => base('responses').create(t.map((r: { user_says: any[]; bot_says: any[] }) => {
+    await Promise.all(chunk(intents, 10).map((t: any) => base('responses').create(t.map((r: { user_says: any[]; bot_says: any[] }) => {
       return {fields: {...r, user_says: r.user_says.join('|'), bot_says: r.bot_says.join('|')}}
     }))))
     return intents
@@ -158,7 +158,7 @@ export const updateDBIntentId = async (bot: string, intentName: string, id: stri
 export const getBots = async () => {
   try {
     const exists = await base('bots').select().all()
-    return exists.map(t => t.fields)
+    return exists.map((t: any) => t.fields)
   } catch (error){
     console.log(error)
   }
@@ -166,7 +166,7 @@ export const getBots = async () => {
 export const getResources = async () => {
   try {
     const exists = await base('resources').select().all()
-    return exists.map(t => t.fields)
+    return exists.map((t: any) => t.fields)
   } catch (error){
     console.log(error)
   }
@@ -174,7 +174,7 @@ export const getResources = async () => {
 export const getTopics = async () => {
   try {
     const exists = await base('topics').select().all()
-    return exists.map(t => t.fields)
+    return exists.map((t: any) => t.fields)
   } catch (error){
     console.log(error)
   }
@@ -205,7 +205,7 @@ export const saveTopic = async (answer: string) => {
 export const getCheatSheet = async () => {
   try {
     const ret = await base('cheatsheet').select({ sort: [{ field: 'Category' }] }).all()
-    return ret.map(t => t.fields)
+    return ret.map((t: any) => t.fields)
   } catch (error){
     console.log(error)
   }

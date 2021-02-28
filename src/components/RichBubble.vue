@@ -1,55 +1,58 @@
 <template>
-    <transition name="bounce" mode="out-in">
-        <img
-            v-if="isURL(text)"
-            :key="text"
-            class="rich-bubble img"
-            :src="text"
-            tabindex="0"
-            :class="{'me': me, 'loading': loading}">
+  <transition name="bounce" mode="out-in">
+    <img
+      v-if="isURL(text)"
+      :key="text"
+      class="rich-bubble img"
+      :src="text"
+      tabindex="0"
+      :class="{ me: me, loading: loading }"
+    />
 
-        <div
-            v-else
-            :key="text"
-            v-resize-text="{ratio:1.9, minFontSize: '12px', delay: 200}"
-            class="rich-bubble bubble-text"
-            tabindex="0"
-            :class="{'me': me, 'loading': loading}">
-            {{text || '....'}}
-        </div>
-    </transition>
+    <div
+      v-else
+      :key="text"
+      v-resize-text="{ ratio: 1.9, minFontSize: '12px', delay: 200 }"
+      class="rich-bubble bubble-text"
+      tabindex="0"
+      :class="{ me: me, loading: loading }"
+    >
+      {{ text || '....' }}
+    </div>
+  </transition>
 </template>
 
 <script lang="ts">
 export default {
-    name: 'RichBubble',
-    props: {
-        text: {
-            type: String,
-            required: false,
-            default: ''
-        },
-        me: {
-            type: Boolean
-        },
-        loading: {
-            type: Boolean
-        }
+  name: 'RichBubble',
+  props: {
+    text: {
+      type: String,
+      required: false,
+      default: ''
     },
-    methods: {
-        isURL(str: string){
-            if (!str.startsWith('http')){
-                return false
-            }
-            const pattern = new RegExp('^(https?:\\/\\/)?' + // protocol
-            '((([a-z\\d]([a-z\\d-]*[a-z\\d])*)\\.?)+[a-z]{2,}|' + // domain name
-            '((\\d{1,3}\\.){3}\\d{1,3}))' + // OR ip (v4) address
-            '(\\:\\d+)?(\\/[-a-z\\d%_.~+]*)*' + // port and path
-            '(\\?[;&a-z\\d%_.~+=-]*)?' + // query string
-            '(\\#[-a-z\\d_]*)?$', 'i') // fragment locator
-            return pattern.test(str)
-        }
+    me: {
+      type: Boolean
+    },
+    loading: {
+      type: Boolean
     }
+  },
+  methods: {
+    isURL(str: string) {
+      if (!str.startsWith('http')) {
+        return false
+      }
+      const pattern = new RegExp('^(https?:\\/\\/)?' + // protocol
+        '((([a-z\\d]([a-z\\d-]*[a-z\\d])*)\\.?)+[a-z]{2,}|' + // domain name
+        '((\\d{1,3}\\.){3}\\d{1,3}))' + // OR ip (v4) address
+        '(\\:\\d+)?(\\/[-a-z\\d%_.~+]*)*' + // port and path
+        '(\\?[;&a-z\\d%_.~+=-]*)?' + // query string
+          '(\\#[-a-z\\d_]*)?$',
+        'i') // fragment locator
+      return pattern.test(str)
+    }
+  }
 }
 </script>
 <style lang="sass" scoped>
@@ -117,5 +120,4 @@ export default {
         opacity: 1
     100%
         opacity: 0
-
 </style>
