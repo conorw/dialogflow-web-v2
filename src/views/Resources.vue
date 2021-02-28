@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="container mx-auto">
     <header class="p-4 shadow-sm">
       <a @click="$router.go(-1)"
         ><div class="inline-block text-lg"><h1>< Back</h1></div></a
@@ -145,4 +145,5 @@ export default {
   }
 }
 </script>
-<style></style>
+<style>
+</style>

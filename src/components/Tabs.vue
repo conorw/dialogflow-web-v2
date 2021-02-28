@@ -73,7 +73,6 @@ export default {
     display: inline-block;
     color: black;
     padding: 20px;
-    min-width: 800px;
     border-radius: 10px;
     min-height: 400px;
   }
