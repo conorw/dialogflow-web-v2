@@ -44,14 +44,14 @@ export const getProgress = async (group: string) => {
   try {
     const filter = `{Group}="${group}"`
     const exists = await base('progress').select({ filterByFormula: filter, sort: [{ field: 'UpdateDate' }] }).all()
-    return exists.map(t => t.fields)
+    return exists.map((t: any) => t.fields)
   } catch (error){
     console.log(error)
   }
 }
 export const getTopicResources = async (topics: string[]) => {
   try {
-    const filter = `OR(${topics.map(t => `LOWER({topic})="${t.toLowerCase()}"`)})`
+    const filter = `OR(${topics.map((t: any) => `LOWER({topic})="${t.toLowerCase()}"`)})`
     const exists = await base('topics').select({ filterByFormula: filter }).all()
     // remove duplicate resources
     let resources = exists.length ? exists.filter(t => !!t.fields.resources[0]).map(t => t.fields) : []
@@ -67,7 +67,7 @@ export const removeBotResponses = async (bot: string) => {
   try {
     const filter = `{bot}="${bot}"`
     const exists = await base('responses').select({ filterByFormula: filter }).all()
-    return Promise.all(chunk(exists.map(t => t.id), 10).map(t => base('responses').destroy(t)))
+    return Promise.all(chunk(exists.map((t: any) => t.id), 10).map((t: any) => base('responses').destroy(t)))
   } catch (error){
     console.log(error)
   }
